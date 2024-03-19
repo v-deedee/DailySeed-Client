@@ -1,4 +1,4 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 
@@ -8,11 +8,11 @@ function LoginStack({ signIn }) {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: false
+        headerShown: false,
       }}
     >
       {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
-      <Stack.Screen name='Login'>
+      <Stack.Screen name="Login">
         {() => <LoginScreen signIn={signIn} />}
       </Stack.Screen>
       <Stack.Screen name="Register" component={RegisterScreen} />
