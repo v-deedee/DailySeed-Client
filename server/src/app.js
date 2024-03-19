@@ -14,14 +14,6 @@ dotenv.config();
 const PORT = process.env.PORT || 5050;
 const HOSTNAME = process.env.HOSTNAME || 'localhost';
 
-// Connect to Database
-try {
-    await sequelize.authenticate();
-    console.log('Database connected successfully.');
-} catch (error) {
-    console.error('Unable to connect to the database:', error);
-}
-
 // Init Epxress App
 const app = express();
 
@@ -55,3 +47,11 @@ app.use('/', expressMiddleware(apolloServer, {
 httpServer.listen(PORT, HOSTNAME, () => {
     console.log(`Server started running at ${HOSTNAME}:${PORT}`);
 });
+
+// Connect to Database
+try {
+    await sequelize.authenticate();
+    console.log('Database connected successfully.');
+} catch (error) {
+    console.error('Unable to connect to the database:', error);
+}
