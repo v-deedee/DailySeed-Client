@@ -13,7 +13,9 @@ function LoginStack({ signIn }) {
     >
       {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
       <Stack.Screen name="Login">
-        {() => <LoginScreen signIn={signIn} />}
+        {(navigation) => (
+          <LoginScreen signIn={signIn} navigation={navigation.navigation} />
+        )}
       </Stack.Screen>
       <Stack.Screen name="Register" component={RegisterScreen} />
     </Stack.Navigator>
