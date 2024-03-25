@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import http from "http";
 import dotenv from 'dotenv';
-import sequelize from "../config/database.js";
+import sequelize from "./utils/database.js";
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
@@ -41,7 +41,11 @@ const apolloServer = new ApolloServer({
 await apolloServer.start();
 
 app.use('/', expressMiddleware(apolloServer, {
-    context: async ({ req }) => ({ token: req.headers.token }),
+    context: async ({ req, res }) => {
+        const token = req.headers.authorization || '';
+
+
+    },
 }));
 
 httpServer.listen(PORT, HOSTNAME, () => {
