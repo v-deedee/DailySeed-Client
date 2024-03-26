@@ -4,9 +4,12 @@
 client/node_modules/
 server/node_modules/
 
+# Dist
+server/dist/
+client/dist/
+
 # Expo
 client/.expo/
-client/dist/
 client/web-build/
 
 # Native
