@@ -1,4 +1,4 @@
-export default Roles = {
+export default {
   ADMIN: "admin",
   USER: "user",
 };
