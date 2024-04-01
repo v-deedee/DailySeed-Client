@@ -221,3 +221,40 @@ const styles = StyleSheet.create({
 });
 
 export default Calendar;
+
+const days = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  return (
+    days[currentDate.getDay()] +
+    ", " +
+    months[currentDate.getMonth()] +
+    " " +
+    currentDate.getDate()
+  );
+};
+
+export { getCurrentDate };

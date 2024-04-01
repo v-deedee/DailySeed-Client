@@ -1,10 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
 import ShopScreen from "../screens/ShopScreen";
 import StatisticsScreen from "../screens/StatisticsScreen";
 import SettingScreen from "../screens/SettingScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import HomeStack from "./HomeStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,8 +18,8 @@ export default function UserTabs({ signOut }) {
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="HomeStack"
+        component={HomeStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <FontAwesome6 name="house" color={color} size={20} />
