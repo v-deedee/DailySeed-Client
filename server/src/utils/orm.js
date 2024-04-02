@@ -1,19 +1,22 @@
 import { Sequelize } from "sequelize";
+import dotenv from "dotenv";
 
-const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
-const sequelize = new Sequelize(PGDATABASE, PGUSER, PGPASSWORD, {
-    host: PGHOST,
-    dialect: 'postgres',
-    port: 50013,
+dotenv.config();
+const { DB_TYPE, DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD, DB_PORT } = process.env;
+
+const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
+    host: DB_HOST,
+    dialect: DB_TYPE,
+    port: parseInt(DB_PORT),
     dialectOptions: {
         ssl: {
             require: true,
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
         },
         // options: {
         //     project: ENDPOINT_ID
         // }
-    }
+    },
 });
 
 export default sequelize;
