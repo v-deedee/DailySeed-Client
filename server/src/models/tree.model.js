@@ -25,15 +25,5 @@ export default function (sequelize, DataTypes) {
         },
     });
 
-    Tree.associate = (models) => {
-        models.Tree.belongsTo(models.User, {
-            onDelete: "CASCADE",
-        });
-        models.Tree.belongsTo(models.Seed);
-        models.Tree.belongsToMany(models.Criteria, {
-            through: "TreeCriteria",
-        });
-    };
-
     return Tree;
 }

@@ -20,10 +20,7 @@ export default function (sequelize, DataTypes) {
     });
 
     Criteria.associate = (models) => {
-        models.Criteria.belongsTo(models.Habit, {
-            onDelete: "CASCADE",
-        });
-        models.Criteria.belongsToMany(models.Tree, {
+        Criteria.Tree = models.Criteria.belongsToMany(models.Tree, {
             through: "TreeCriteria",
         });
     };

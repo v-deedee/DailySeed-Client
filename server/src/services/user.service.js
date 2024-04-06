@@ -6,7 +6,7 @@ class UserService {
     constructor() {}
     create = async (data) =>
         User.create(data, {
-            include: [{ model: Profile }],
+            include: [{ association: User.Profile }],
         });
 }
 

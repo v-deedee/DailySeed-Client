@@ -21,12 +21,15 @@ export default function (sequelize, DataTypes) {
     });
 
     User.associate = (models) => {
-        models.User.hasOne(models.Profile);
-        models.User.belongsToMany(models.Seed, {
-            through: "UserSeed",
+        User.Profile = models.User.hasOne(models.Profile, {
+            onDelete: "CASCADE",
         });
-        models.User.hasMany(models.Tree);
-        models.User.hasMany(models.Habit);
+        User.Tree = models.User.hasMany(models.Tree, {
+            onDelete: "CASCADE",
+        });
+        User.Habit = models.User.hasMany(models.Habit, {
+            onDelete: "CASCADE",
+        });
     };
 
     return User;

@@ -6,9 +6,12 @@ export default class UserController {
     constructor() {}
     create = async (req, res) => {
         const data = {
-            username: "onyzabao2err",
+            username: "onyzabao1",
             password: "onlyzabao",
             role: "admin",
+            Profile: {
+                money: 100,
+            },
         };
 
         const user = await UserService.create(data);

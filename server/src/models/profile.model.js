@@ -15,11 +15,5 @@ export default function (sequelize, DataTypes) {
         },
     });
 
-    Profile.associate = (models) => {
-        models.Profile.belongsTo(models.User, {
-            onDelete: "CASCADE",
-        });
-    };
-
     return Profile;
 }

@@ -16,10 +16,9 @@ export default function (sequelize, DataTypes) {
     });
 
     Habit.associate = (models) => {
-        models.Habit.belongsTo(models.User, {
+        Habit.Criteria = models.Habit.hasMany(models.Criteria, {
             onDelete: "CASCADE",
         });
-        models.Habit.hasMany(models.Criteria);
     };
 
     return Habit;

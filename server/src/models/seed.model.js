@@ -20,10 +20,10 @@ export default function (sequelize, DataTypes) {
     });
 
     Seed.associate = (models) => {
-        models.Seed.belongsToMany(models.User, {
+        Seed.Tree = models.Seed.hasMany(models.Tree);
+        Seed.User = models.Seed.belongsToMany(models.User, {
             through: "UserSeed",
         });
-        models.Seed.hasMany(models.Tree);
     };
 
     return Seed;
