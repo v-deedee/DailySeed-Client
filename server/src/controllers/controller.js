@@ -1,6 +1,6 @@
 import _ from "lodash";
-import auth from "../middlewares/auth";
-import error from "../constants/error.code";
+import auth from "../middlewares/auth.js";
+import error from "../constants/error.code.js";
 
 export default function (router, apis) {
     apis.forEach((element) => {
@@ -12,10 +12,7 @@ export default function (router, apis) {
             const roles = e.roles;
             const statuses = e.statuses;
             if (_.isEmpty(roles)) {
-                router[httpMethod](
-                    `${path}`,
-                    catchAsync(controller, method)
-                );
+                router[httpMethod](`${path}`, catchAsync(controller, method));
             } else {
                 router[httpMethod](
                     `${path}`,
@@ -32,10 +29,8 @@ const catchAsync = (controller, method) => async (req, res, next) => {
         const body = _.cloneDeep(req.body);
         delete body.password;
         await controller[method](req, res, next);
-    } catch (e) {
-        res.status(e.status || 500).json({
-            code: e.code || error.INTERNAL_SERVER_ERROR.code,
-            message: e.message || error.INTERNAL_SERVER_ERROR.message
-        });
+    } catch (err) {
+        console.log(err);
+        next(err);
     }
 };

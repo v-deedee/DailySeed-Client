@@ -1,5 +1,5 @@
 import Joi from "joi";
-import errorCode from "../constants/error.code";
+import errorCode from "../constants/error.code.js";
 
 class AuthValidator {
     login_validate = (data) => {

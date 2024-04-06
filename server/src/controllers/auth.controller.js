@@ -1,9 +1,9 @@
-import error from "../constants/error.code";
-import User from "../models/user";
-import { HttpError } from "../utils/http.error";
+import error from "../constants/error.code.js";
+import User from "../models/user.model.js";
+import { HttpError } from "../utils/http.error.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import authValidator from "../services/auth.validator";
+import authValidator from "../services/auth.validator.js";
 
 export default class AuthController {
     constructor() {}

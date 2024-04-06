@@ -1,11 +1,11 @@
-import UserController from "../controllers/user.controller";
+import UserController from "../controllers/user.controller.js";
 
 export default [
     {
         controller: UserController,
         methods: [
             {
-                httpMethod: "get",
+                httpMethod: "post",
                 path: "/user/create",
                 method: "create",
             },
