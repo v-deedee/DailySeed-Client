@@ -43,7 +43,7 @@ npm run start
 
 ## User
 
-1. Create user
+1.  Create user
 
     `POST /user`
 
@@ -72,7 +72,7 @@ npm run start
         }
         ```
 
-2. View user's profile
+2.  View user's profile
 
     `GET /user`
 
@@ -91,6 +91,71 @@ npm run start
             data: {
                 user: {
                     // User's data
+                }
+            }
+        }
+        ```
+
+3.  Update user's profile
+
+    `PUT /user/profile`
+
+    Request
+
+    - Header
+
+        `Authorization: Bearer <user's token>`
+
+    - Body
+
+        ```js
+        {
+            email: "example@mail.com",
+        }
+        ```
+
+    Response
+
+    - If OK
+
+        ```js
+        {
+            ok: true,
+            data: {
+                profile: {
+                    // Profile's data
+                }
+            }
+        }
+        ```
+
+4.  Update user's profile picture
+
+    `PUT /user/profile/picture`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+    -   Body
+
+        `form-data`
+
+              Key: profile_picture
+              Value: pic.png
+
+    Response
+
+    - If OK
+
+        ```js
+        {
+            ok: true,
+            data: {
+                profile: {
+                    // Profile's data
                 }
             }
         }
