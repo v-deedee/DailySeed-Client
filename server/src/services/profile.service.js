@@ -10,6 +10,8 @@ class ProfileService {
             attributes: { exclude: ["createdAt", "updatedAt"] },
             where: conditions,
         });
+
+    update = async (instance, data) => instance.update(data);
 }
 
 export default new ProfileService();

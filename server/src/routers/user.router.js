@@ -27,6 +27,28 @@ export default [
                 method: "viewUser",
                 roles: [userRole.USER],
             },
+            // Update profile
+            {
+                httpMethod: "put",
+                path: "/user/profile",
+                method: "updateProfile",
+                roles: [userRole.USER],
+                schema: {
+                    type: "object",
+                    properties: {
+                        email: { type: "string" },
+                    },
+                    required: ["email"],
+                },
+            },
+            // Update profile picture
+            {
+                httpMethod: "put",
+                path: "/user/profile/picture",
+                method: "updatePicture",
+                roles: [userRole.USER],
+                file: "profile_picture",
+            },
         ],
     },
 ];

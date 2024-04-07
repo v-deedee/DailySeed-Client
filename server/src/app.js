@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import router from "./routers/index.js";
-import errorHandler from "./middlewares/error.handler.js";
+import errorHandle from "./middlewares/error.handle.js";
 
 // Init Epxress App
 const app = express();
@@ -11,7 +11,7 @@ app.use(cookieParser());
 app.use(cors());
 
 app.use("/", router);
-app.use(errorHandler);
+app.use(errorHandle);
 
 app.use((req, res) => {
     res.status(200).json({

@@ -1,7 +1,8 @@
 import _ from "lodash";
 import auth from "../middlewares/auth.js";
-import catchAsync from "../middlewares/catch.async.js";
-import validate from "../middlewares/validate.js";
+import errorCatch from "../middlewares/error.catch.js";
+import validate from "../middlewares/body.validate.js";
+import upload from "../middlewares/file.upload.js";
 
 export default function (router, apis) {
     apis.forEach((element) => {
@@ -12,20 +13,23 @@ export default function (router, apis) {
             const method = e.method;
             const roles = e.roles;
             const schema = e.schema;
-            if (_.isEmpty(roles)) {
-                router[httpMethod](
-                    `${path}`,
-                    validate(schema),
-                    catchAsync(controller, method)
-                );
-            } else {
-                router[httpMethod](
-                    `${path}`,
-                    auth(roles),
-                    validate(schema),
-                    catchAsync(controller, method)
-                );
+            const file = e.file;
+
+            const middlewares = [];
+            if (!_.isEmpty(roles)) {
+                middlewares.push(auth(roles));
             }
+
+            if (!_.isEmpty(file)) {
+                middlewares.push(upload.single(file));
+            }
+
+            if (!_.isEmpty(schema)) {
+                middlewares.push(validate(schema));
+            }
+
+            middlewares.push(errorCatch(controller, method));
+            router[httpMethod](`${path}`, middlewares);
         });
     });
 }
