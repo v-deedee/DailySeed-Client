@@ -17,6 +17,10 @@ export default function (sequelize, DataTypes) {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
+        active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+        },
     });
 
     Criteria.associate = (models) => {

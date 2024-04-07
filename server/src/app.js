@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import router from "./routers/router.js";
+import router from "./routers/index.js";
 import errorHandler from "./middlewares/error.handler.js";
 
 // Init Epxress App

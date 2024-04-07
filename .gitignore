@@ -40,3 +40,6 @@ yarn-error.*
 
 # VS Code
 .vscode/
+
+# SQL Script
+server/script.sql

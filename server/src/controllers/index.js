@@ -1,6 +1,7 @@
 import _ from "lodash";
 import auth from "../middlewares/auth.js";
-import error from "../constants/error.code.js";
+import catchAsync from "../middlewares/catch.async.js";
+import validate from "../middlewares/validate.js";
 
 export default function (router, apis) {
     apis.forEach((element) => {
@@ -10,27 +11,21 @@ export default function (router, apis) {
             const path = e.path;
             const method = e.method;
             const roles = e.roles;
-            const statuses = e.statuses;
+            const schema = e.schema;
             if (_.isEmpty(roles)) {
-                router[httpMethod](`${path}`, catchAsync(controller, method));
+                router[httpMethod](
+                    `${path}`,
+                    validate(schema),
+                    catchAsync(controller, method)
+                );
             } else {
                 router[httpMethod](
                     `${path}`,
                     auth(roles),
+                    validate(schema),
                     catchAsync(controller, method)
                 );
             }
         });
     });
 }
-
-const catchAsync = (controller, method) => async (req, res, next) => {
-    try {
-        const body = _.cloneDeep(req.body);
-        delete body.password;
-        await controller[method](req, res, next);
-    } catch (err) {
-        console.log(err);
-        next(err);
-    }
-};

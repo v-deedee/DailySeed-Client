@@ -8,6 +8,13 @@ export default [
                 httpMethod: "post",
                 path: "/auth/login",
                 method: "login",
+                schema: {
+                    type: "object",
+                    properties: {
+                        username: { type: "string" },
+                        password: { type: "string" },
+                    },
+                },
             },
         ],
     },

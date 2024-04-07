@@ -38,8 +38,8 @@ export default {
         },
     },
 
-    PARAMS_INVALID: {
-        code: "PARAMS_INVALID",
+    BODY_INVALID: {
+        code: "BODY_INVALID",
     },
 
     URL_NOT_FOUND: {
