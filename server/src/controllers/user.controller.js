@@ -1,6 +1,7 @@
 import error from "../constants/error.code.js";
 import { HttpError } from "../utils/http.error.js";
 import UserService from "../services/user.service.js";
+import ProfileService from "../services/profile.service.js";
 import userRole from "../constants/user.role.js";
 import bcrypt from "bcrypt";
 
@@ -9,14 +10,15 @@ export default class UserController {
 
     viewProfile = async (req, res) => {
         const { user } = req;
-        const profile = await UserService.view({ id: user.id });
-        
+
+        const profile = await ProfileService.find({ UserId: user.id });
+
         res.status(200).json({
             ok: true,
             data: {
                 profile: profile,
-            }
-        })
+            },
+        });
     };
 
     createUser = async (req, res) => {
@@ -31,11 +33,19 @@ export default class UserController {
 
         const user = await UserService.create(body);
 
-        delete user.password;
+        const payload = {
+            id: user.id,
+            username: user.username,
+            profile: {
+                id: user.Profile.id,
+                money: user.Profile.money,
+                picture: user.Profile.picture,
+            },
+        }
         res.status(200).json({
             ok: true,
             data: {
-                user: user,
+                user: payload,
             },
         });
     };

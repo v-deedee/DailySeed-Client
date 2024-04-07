@@ -15,15 +15,6 @@ class UserService {
         User.create(data, {
             include: [{ association: User.Profile }],
         });
-
-    view = async (conditions) =>
-        User.findOne({
-            attributes: ["username"],
-            where: conditions,
-            include: [
-                { association: User.Profile, attributes: ["money", "picture"] },
-            ],
-        });
 }
 
 export default new UserService();
