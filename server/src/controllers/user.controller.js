@@ -8,15 +8,25 @@ import bcrypt from "bcrypt";
 export default class UserController {
     constructor() {}
 
-    viewProfile = async (req, res) => {
+    viewUser = async (req, res) => {
         const { user } = req;
 
         const profile = await ProfileService.find({ UserId: user.id });
-
+        
+        const payload = {
+            id: user.id,
+            username: user.username,
+            profile: {
+                id: profile.id,
+                email: profile.email,
+                money: profile.money,
+                picture: profile.picture,
+            },
+        };
         res.status(200).json({
             ok: true,
             data: {
-                profile: profile,
+                user: payload,
             },
         });
     };
@@ -29,7 +39,9 @@ export default class UserController {
             bcrypt.genSaltSync(12),
             null
         );
-        body.Profile = {};
+        body.Profile = {
+            email: body.email,
+        };
 
         const user = await UserService.create(body);
 
@@ -38,10 +50,11 @@ export default class UserController {
             username: user.username,
             profile: {
                 id: user.Profile.id,
+                email: user.Profile.email,
                 money: user.Profile.money,
                 picture: user.Profile.picture,
             },
-        }
+        };
         res.status(200).json({
             ok: true,
             data: {

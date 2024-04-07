@@ -5,25 +5,26 @@ export default [
     {
         controller: UserController,
         methods: [
-            // Create new user
+            // Create user
             {
                 httpMethod: "post",
-                path: "/user/create",
+                path: "/user",
                 method: "createUser",
                 schema: {
                     type: "object",
                     properties: {
                         username: { type: "string" },
                         password: { type: "string" },
+                        email: { type: "string" },
                     },
-                    required: ["username", "password"],
+                    required: ["username", "password", "email"],
                 },
             },
-            // View user profile
+            // View user
             {
                 httpMethod: "get",
-                path: "/user/profile",
-                method: "viewProfile",
+                path: "/user",
+                method: "viewUser",
                 roles: [userRole.USER],
             },
         ],

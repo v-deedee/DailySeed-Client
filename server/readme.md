@@ -15,6 +15,7 @@ npm run start
     `POST /auth/login`
 
     Request:
+
     - Body
         ```js
         {
@@ -24,6 +25,7 @@ npm run start
         ```
 
     Response:
+
     - If OK
         ```js
         {
@@ -43,18 +45,21 @@ npm run start
 
 1. Create user
 
-    `POST /user/create`
+    `POST /user`
 
     Request
+
     - Body
         ```js
         {
             username: "example",
-            password: "example"
+            password: "example",
+            email: "example@gmail.com"
         }
         ```
 
     Response
+
     - If OK
         ```js
         {
@@ -69,21 +74,23 @@ npm run start
 
 2. View user's profile
 
-    `GET /user/profile`
+    `GET /user`
 
     Request
+
     - Header
 
         `Authorization: Bearer <user's token>`
 
     Response
+
     - If OK
         ```js
         {
             ok: true,
             data: {
-                profile: {
-                    // Profile's data
+                user: {
+                    // User's data
                 }
             }
         }

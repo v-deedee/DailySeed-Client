@@ -5,6 +5,11 @@ export default function (sequelize, DataTypes) {
             primaryKey: true,
             autoIncrement: true,
         },
+        email: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
+        },
         money: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
