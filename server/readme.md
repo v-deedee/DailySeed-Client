@@ -164,3 +164,36 @@ npm run start
             }
         }
         ```
+
+5.  Update password
+
+    `PUT /api/user/password`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+    -   Body
+
+        ```js
+        {
+            password: "example",
+            newPassword: "example",
+        }
+        ```
+    Response
+
+    -   If OK
+
+        ```js
+        {
+            ok: true,
+            data: {
+                user: {
+                    // User's data
+                }
+            }
+        }
+        ```

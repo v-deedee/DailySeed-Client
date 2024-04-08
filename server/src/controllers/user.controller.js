@@ -5,6 +5,7 @@ import ProfileService from "../services/profile.service.js";
 import userRole from "../constants/user.role.js";
 import bcrypt from "bcrypt";
 import CloudHanlder from "../utils/cloud.handler.js";
+import _ from "lodash";
 
 export default class UserController {
     constructor() {}
@@ -26,9 +27,7 @@ export default class UserController {
         };
         res.status(200).json({
             ok: true,
-            data: {
-                user: payload,
-            },
+            data: payload,
         });
     };
 
@@ -42,7 +41,6 @@ export default class UserController {
         );
         body.Profile = {
             email: body.email,
-            picture: "default",
         };
 
         const user = await UserService.create(body);

@@ -16,7 +16,7 @@ export default function (sequelize, DataTypes) {
         },
         picture: {
             type: DataTypes.STRING,
-            defaultValue: "https://res.cloudinary.com/dvzkzyy1c/image/upload/v1712504544/default/yhlz6kj6pqq67ejb2jlb.png",
+            defaultValue: "default",
         },
     });
 

@@ -7,10 +7,11 @@ export default (schema) => (req, res, next) => {
     let validator = new Validator();
     const result = validator.validate(body, schema);
     if (result.errors.length) {
+        // console.log(result);
         return res.status(400).json({
             ok: false,
             ...errorCode.BODY_INVALID,
-            message: result.errors.map((x) => x.message).join(", "),
+            message: result.errors.map((x) => x.stack).join(", "),
         });
     }
 
