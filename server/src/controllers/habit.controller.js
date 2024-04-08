@@ -12,10 +12,8 @@ export default class HabitController {
         const { user } = req;
         body.UserId = user.id;
         // Handle association create
-        body.Criteria = body.criteria;
-        delete body.criteria;
-
-        const habit = await HabitService.create(body);
+        body.habit.Criteria = body.criteria;
+        const habit = await HabitService.create(body.habit);
 
         const payload = {
             habit: _.pick(habit, ["id", "name", "icon", "duration"]),
