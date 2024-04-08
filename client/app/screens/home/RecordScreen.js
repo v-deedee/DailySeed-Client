@@ -6,66 +6,79 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Slider, Icon } from "@rneui/themed";
+import { Slider } from "@rneui/themed";
 import { getCurrentDate } from "../../components/Calendar";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Entypo from "react-native-vector-icons/Entypo";
 import { useState } from "react";
+
+const critiria = [
+  {
+    name: "Emotion",
+    levels: [
+      {
+        label: "Bad",
+        icon: "☹️",
+      },
+      {
+        label: "Normal",
+        icon: "😐",
+      },
+      {
+        label: "Good",
+        icon: "😀",
+      },
+    ],
+  },
+  {
+    name: "Housework",
+    levels: [
+      {
+        label: "Đéo làm",
+        icon: "👎",
+      },
+      {
+        label: "Bad",
+        icon: "👊",
+      },
+      {
+        label: "Good",
+        icon: "👍",
+      },
+      {
+        label: "Excellent",
+        icon: "👏",
+      },
+    ],
+  },
+];
 
 const RecordScreen = ({ navigation }) => {
   const currentDate = getCurrentDate();
 
-  const [value, setValue] = useState(0);
+  const [values, setValues] = useState([0, 0]);
 
-  const interpolate = (start, end) => {
-    let k = (value - 0) / 10; // 0 =>min  && 10 => MAX
+  const interpolate = (start, end, value, maxValue) => {
+    let k = (value - 0) / maxValue;
     return Math.ceil((1 - k) * start + k * end) % 256;
   };
 
-  const color = () => {
-    let r = interpolate(255, 0);
-    let g = interpolate(0, 205);
-    let b = interpolate(0, 0);
+  const color = (value, maxValue) => {
+    let r = interpolate(255, 0, value, maxValue);
+    let g = interpolate(0, 205, value, maxValue);
+    let b = interpolate(0, 0, value, maxValue);
     return `rgb(${r},${g},${b})`;
-  };
-
-  const iconName = () => {
-    if (value >= 8) return "emoji-happy";
-    else if (value >= 5) return "emoji-neutral";
-    else return "emoji-sad";
-  };
-
-  const changeStatus = () => {
-    if (value >= 8)
-      return (
-        <Text style={[styles.statusContent, { backgroundColor: color() }]}>
-          Good
-        </Text>
-      );
-    else if (value >= 5)
-      return (
-        <Text style={[styles.statusContent, { backgroundColor: color() }]}>
-          Normal
-        </Text>
-      );
-    else
-      return (
-        <Text style={[styles.statusContent, { backgroundColor: color() }]}>
-          Bad
-        </Text>
-      );
   };
 
   const closeRecord = () => {
     navigation.navigate("Home");
   };
 
-  const addCritiria = () => {
-    navigation.navigate("Add");
+  const editCritiria = () => {
+    navigation.navigate("Edit");
   };
 
   const submitRecord = () => {
-    navigation.navigate("Home", { progress: value });
+    navigation.navigate("Home", { progress: 5 });
   };
 
   return (
@@ -73,7 +86,7 @@ const RecordScreen = ({ navigation }) => {
       <StatusBar />
 
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerButton}>
+        <TouchableOpacity style={styles.headerButton} onPress={editCritiria}>
           <MaterialIcons name="settings" color={"#ACAC9A"} size={30} />
         </TouchableOpacity>
 
@@ -85,40 +98,69 @@ const RecordScreen = ({ navigation }) => {
       </View>
 
       <ScrollView>
-        <View style={styles.recordContent}>
-          <View style={styles.titleBox}>
-            <Text style={styles.titleContent}>Emotion</Text>
+        {critiria.map((critirion, index) => (
+          <View style={styles.recordContent} key={index}>
+            <View style={styles.titleBox}>
+              <Text style={styles.titleContent}>{critirion.name}</Text>
+            </View>
+            <Slider
+              value={values[index]}
+              onValueChange={(value) => {
+                let newValues = [...values];
+                newValues[index] = value;
+                setValues(newValues);
+              }}
+              maximumValue={critirion.levels.length - 1}
+              minimumValue={0}
+              minimumTrackTintColor="#50AA75"
+              step={1}
+              allowTouchTrack
+              trackStyle={{
+                height: 20,
+                borderRadius: 999,
+                backgroundColor: "transparent",
+              }}
+              thumbStyle={{
+                height: 40,
+                width: 40,
+                backgroundColor: "transparent",
+              }}
+              thumbProps={{
+                children: (
+                  <Text style={{ fontSize: 35, marginTop: -5 }}>
+                    {critirion.levels[values[index]].icon}
+                  </Text>
+                ),
+                // children: (
+                //   <Image
+                //     width={40}
+                //     source={require("../../../assets/turtle.png")}
+                //     style={{ width: 40, height: 40 }}
+                //   />
+                // ),
+              }}
+            />
+            <View style={styles.statusBox}>
+              <Text>Status: </Text>
+              <Text
+                style={[
+                  styles.statusContent,
+                  {
+                    backgroundColor: color(
+                      values[index],
+                      critirion.levels.length - 1,
+                    ),
+                  },
+                ]}
+              >
+                {critirion.levels[values[index]].label}
+              </Text>
+            </View>
           </View>
-          <Slider
-            value={value}
-            onValueChange={setValue}
-            maximumValue={10}
-            minimumValue={0}
-            minimumTrackTintColor="#50AA75"
-            step={1}
-            allowTouchTrack
-            trackStyle={{
-              height: 20,
-              borderRadius: 999,
-              backgroundColor: "transparent",
-            }}
-            thumbStyle={{
-              height: 40,
-              width: 40,
-              backgroundColor: "#F9FDB8",
-            }}
-            thumbProps={{
-              children: <Entypo name={iconName()} size={40} color={color()} />,
-            }}
-          />
-          <View style={styles.statusBox}>
-            <Text>Status: </Text>
-            {changeStatus()}
-          </View>
-        </View>
+        ))}
 
         <View style={styles.addBox}>
-          <TouchableOpacity style={styles.addButton} onPress={addCritiria}>
+          <TouchableOpacity style={styles.addButton} onPress={editCritiria}>
             <MaterialIcons name="add-box" color={"#50AA75"} size={35} />
             <Text style={{ color: "#50AA75", fontWeight: "bold" }}>
               Add your own critiria
@@ -160,6 +202,7 @@ const styles = StyleSheet.create({
     height: "auto",
     backgroundColor: "#FFFFFF",
     marginHorizontal: 20,
+    marginVertical: 10,
     borderRadius: 20,
   },
   titleBox: {
