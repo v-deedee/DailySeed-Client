@@ -16,14 +16,8 @@ export default class UserController {
         const profile = await ProfileService.find({ UserId: user.id });
 
         const payload = {
-            id: user.id,
-            username: user.username,
-            profile: {
-                id: profile.id,
-                email: profile.email,
-                money: profile.money,
-                picture: profile.picture,
-            },
+            user: _.pick(user, ["id", "username"]),
+            profile: _.pick(profile, ["id", "email", "picture", "money"]),
         };
         res.status(200).json({
             ok: true,
@@ -46,20 +40,12 @@ export default class UserController {
         const user = await UserService.create(body);
 
         const payload = {
-            id: user.id,
-            username: user.username,
-            profile: {
-                id: user.Profile.id,
-                email: user.Profile.email,
-                money: user.Profile.money,
-                picture: user.Profile.picture,
-            },
+            user: _.pick(user, ["id", "username"]),
+            profile: _.pick(user.Profile, ["id", "email", "picture", "money"]),
         };
         res.status(200).json({
             ok: true,
-            data: {
-                user: payload,
-            },
+            data: payload,
         });
     };
 
@@ -70,24 +56,39 @@ export default class UserController {
         const profile = await ProfileService.find({ UserId: user.id });
         const updatedProfile = await ProfileService.update(profile, body);
 
+        const payload = {
+            profile: _.pick(updatedProfile, [
+                "id",
+                "email",
+                "picture",
+                "money",
+            ]),
+        };
+
         res.status(200).json({
             ok: true,
-            data: {
-                profile: updatedProfile,
-            },
+            data: payload,
         });
     };
 
     updatePicture = async (req, res) => {
         const { user } = req;
+        const { file } = req;
+        if (!file)
+            throw new HttpError({
+                ...errorCode.BODY_INVALID,
+                message: "Missing file to upload",
+                status: 400,
+            });
+
         const profile = await ProfileService.find({ UserId: user.id });
 
         // Remove old picture
         await CloudHanlder.remove(profile.picture);
 
         // Encoding picture
-        const b64 = Buffer.from(req.file.buffer).toString("base64");
-        let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+        const b64 = Buffer.from(file.buffer).toString("base64");
+        let dataURI = "data:" + file.mimetype + ";base64," + b64;
         const picture = await CloudHanlder.upload(dataURI, "profile-picture");
 
         // Upload new picture
@@ -95,11 +96,17 @@ export default class UserController {
             picture: picture.public_id,
         });
 
+        const payload = {
+            profile: _.pick(updatedProfile, [
+                "id",
+                "email",
+                "picture",
+                "money",
+            ]),
+        };
         res.status(200).json({
             ok: true,
-            data: {
-                profile: updatedProfile,
-            },
+            data: payload,
         });
     };
 
