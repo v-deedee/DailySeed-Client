@@ -43,6 +43,10 @@ export default {
             code: "HABIT_NOT_FOUND",
             message: "Your habit is not in the system",
         },
+        HABIT_UPDATE_INVALID: {
+            code: "HABIT_UPDATE_INVALID",
+            message: "Your habit is not ready to be updated",
+        },
     },
 
     BODY_INVALID: {

@@ -13,6 +13,10 @@ export default function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        duration: {
+            type: DataTypes.INTEGER,
+            defaultValue: 7, // Days
+        },
         active: {
             type: DataTypes.BOOLEAN,
             defaultValue: true,

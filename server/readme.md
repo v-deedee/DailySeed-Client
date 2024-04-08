@@ -125,8 +125,11 @@ npm run start
 
         ```js
         {
-            name: "DSA",
-            icon: ":computer:",
+            habit: {
+                name: "DSA",
+                icon: ":computer:",
+                duration: 7 // Optional
+            },
             criteria: [
                 {
                     name: "0 Problem",
