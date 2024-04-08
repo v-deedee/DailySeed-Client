@@ -5,9 +5,10 @@ import { Sequelize, DataTypes } from "sequelize";
 
 import sequelize from "../config/sequelize.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __filename = import.meta.url;
+const __dirname = process.cwd();
 const base = basename(__filename);
+
 const db = {};
 
 const files = readdirSync(__dirname).filter(
