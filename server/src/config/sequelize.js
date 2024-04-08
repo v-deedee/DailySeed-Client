@@ -2,7 +2,8 @@ import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 
 dotenv.config();
-const { DB_TYPE, DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD, DB_PORT } = process.env;
+const { DB_TYPE, DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD, DB_PORT } =
+    process.env;
 
 const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
     host: DB_HOST,
@@ -13,10 +14,14 @@ const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
             require: true,
             rejectUnauthorized: false,
         },
-        // options: {
-        //     project: ENDPOINT_ID
-        // }
     },
 });
+
+try {
+    await sequelize.authenticate();
+    console.log("Database connected successfully.");
+} catch (error) {
+    console.error("Unable to connect to the database:", error);
+}
 
 export default sequelize;

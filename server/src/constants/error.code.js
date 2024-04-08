@@ -34,12 +34,23 @@ export default {
         },
         PASSWORD_INVALID: {
             code: "PASSWORD_INVALID",
-            message: "Your password or your username is incorrect",
+            message: "Your password is incorrect",
         },
     },
 
-    PARAMS_INVALID: {
-        code: "PARAMS_INVALID",
+    HABIT: {
+        HABIT_NOT_FOUND: {
+            code: "HABIT_NOT_FOUND",
+            message: "Your habit is not in the system",
+        },
+        HABIT_UPDATE_INVALID: {
+            code: "HABIT_UPDATE_INVALID",
+            message: "Your habit is not ready to be updated",
+        },
+    },
+
+    BODY_INVALID: {
+        code: "BODY_INVALID",
     },
 
     URL_NOT_FOUND: {
