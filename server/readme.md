@@ -28,23 +28,6 @@ npm run start
         }
         ```
 
-    Response:
-
-    - If OK
-        ```js
-        {
-            ok: true,
-            data: {
-                token: "Bearer <token>",
-                payload: {
-                    id: 1,
-                    username: "example",
-                    role: "user"
-                }
-            }
-        }
-        ```
-
 ## User
 
 1.  Create user
@@ -62,20 +45,6 @@ npm run start
         }
         ```
 
-    Response
-
-    -   If OK
-        ```js
-        {
-            ok: true,
-            data: {
-                user: {
-                    // User's data
-                }
-            }
-        }
-        ```
-
 2.  View user's profile
 
     `GET /api/user`
@@ -85,20 +54,6 @@ npm run start
     -   Header
 
         `Authorization: Bearer <user's token>`
-
-    Response
-
-    -   If OK
-        ```js
-        {
-            ok: true,
-            data: {
-                user: {
-                    // User's data
-                }
-            }
-        }
-        ```
 
 3.  Update user's profile
 
@@ -115,21 +70,6 @@ npm run start
         ```js
         {
             email: "example@mail.com",
-        }
-        ```
-
-    Response
-
-    -   If OK
-
-        ```js
-        {
-            ok: true,
-            data: {
-                profile: {
-                    // Profile's data
-                }
-            }
         }
         ```
 
@@ -150,21 +90,6 @@ npm run start
               Key: profile_picture
               Value: pic.png
 
-    Response
-
-    -   If OK
-
-        ```js
-        {
-            ok: true,
-            data: {
-                profile: {
-                    // Profile's data
-                }
-            }
-        }
-        ```
-
 5.  Update password
 
     `PUT /api/user/password`
@@ -183,17 +108,38 @@ npm run start
             newPassword: "example",
         }
         ```
-    Response
 
-    -   If OK
+## Habit
+
+1.  Create habit
+
+    `POST /api/habit`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+    -   Body
 
         ```js
         {
-            ok: true,
-            data: {
-                user: {
-                    // User's data
-                }
-            }
+            name: "DSA",
+            icon: ":computer:",
+            criteria: [
+                {
+                    name: "0 Problem",
+                    icon: ":zero:",
+                    score: 0
+                },
+                {
+                    name: "1 Problem",
+                    icon: ":one:",
+                    score: 1
+                },
+                // Min 2 criterion, max 5 criterion
+            ]
+
         }
         ```
