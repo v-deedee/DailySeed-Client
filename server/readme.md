@@ -23,8 +23,8 @@ npm run start
     - Body
         ```js
         {
-            username: "example",
-            password: "exameple"
+            "username": "example",
+            "password": "example"
         }
         ```
 
@@ -39,9 +39,9 @@ npm run start
     -   Body
         ```js
         {
-            username: "example",
-            password: "example",
-            email: "example@gmail.com"
+            "username": "example",
+            "password": "example",
+            "email": "example@gmail.com"
         }
         ```
 
@@ -69,7 +69,7 @@ npm run start
 
         ```js
         {
-            email: "example@mail.com",
+            "email": "example@mail.com",
         }
         ```
 
@@ -104,8 +104,8 @@ npm run start
 
         ```js
         {
-            password: "example",
-            newPassword: "example",
+            "password": "example",
+            "newPassword": "example",
         }
         ```
 
@@ -125,21 +125,21 @@ npm run start
 
         ```js
         {
-            habit: {
-                name: "DSA",
-                icon: ":computer:",
-                duration: 7 // Optional
+            "habit": {
+                "name": "DSA",
+                "icon": ":computer:",
+                "duration": 7 // Optional
             },
-            criteria: [
+            "criteria": [
                 {
-                    name: "0 Problem",
-                    icon: ":zero:",
-                    score: 0
+                    "name": "0 Problem",
+                    "icon": ":zero:",
+                    "score": 0
                 },
                 {
-                    name: "1 Problem",
-                    icon: ":one:",
-                    score: 1
+                    "name": "1 Problem",
+                    "icon": ":one:",
+                    "score": 1
                 },
                 // Min 2 criterion, max 5 criterion
             ]
