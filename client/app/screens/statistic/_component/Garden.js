@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Grass, LeftCornerLand, LeftLand, MiddleLand, NormalTree, RightCornerLand, RightLand, Shovel, TreeAvatar, TreeBox } from './Tree';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ImageBackground } from 'react-native';
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 import { BottomSheet } from "@rneui/themed";
 
@@ -75,9 +75,10 @@ export default function Garden() {
 
     const handleTool = (cell, rowIndex, cellIndex) => {
         if (isPlantTree) {
-            handlePlantTree(cell, rowIndex, cellIndex);
-        } else if (isRemoveTree) {
-            handleRemoveTree(cell, rowIndex, cellIndex);
+            return handlePlantTree(cell, rowIndex, cellIndex);
+        }
+        if (isRemoveTree) {
+            return handleRemoveTree(cell, rowIndex, cellIndex);
         }
     };
 
@@ -143,7 +144,8 @@ const styles = StyleSheet.create({
 
     gardern: {
         flex: 3,
-        backgroundColor: '#fbf5e5',
+        // backgroundColor: '#fbf5e5',
+
         width: '100%',
         height: '100%'
     },

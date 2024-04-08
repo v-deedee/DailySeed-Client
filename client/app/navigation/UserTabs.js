@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import ShopScreen from "../screens/ShopScreen";
+import ShopScreen from "../screens/shop/ShopScreen";
 import StatisticsScreen from "../screens/statistic/StatisticsScreen";
 import SettingScreen from "../screens/SettingScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
