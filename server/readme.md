@@ -6,13 +6,17 @@ Start server
 npm run start
 ```
 
+# Cloud URL
+
+`res.cloudinary.com/dvzkzyy1c/image/upload/f_auto,q_auto/`
+
 # APIs
 
 ## Auth
 
 1. Login
 
-    `POST /auth/login`
+    `POST /api/auth/login`
 
     Request:
 
@@ -45,11 +49,11 @@ npm run start
 
 1.  Create user
 
-    `POST /user`
+    `POST /api/user`
 
     Request
 
-    - Body
+    -   Body
         ```js
         {
             username: "example",
@@ -60,7 +64,7 @@ npm run start
 
     Response
 
-    - If OK
+    -   If OK
         ```js
         {
             ok: true,
@@ -74,17 +78,17 @@ npm run start
 
 2.  View user's profile
 
-    `GET /user`
+    `GET /api/user`
 
     Request
 
-    - Header
+    -   Header
 
         `Authorization: Bearer <user's token>`
 
     Response
 
-    - If OK
+    -   If OK
         ```js
         {
             ok: true,
@@ -98,15 +102,15 @@ npm run start
 
 3.  Update user's profile
 
-    `PUT /user/profile`
+    `PUT /api/user/profile`
 
     Request
 
-    - Header
+    -   Header
 
         `Authorization: Bearer <user's token>`
 
-    - Body
+    -   Body
 
         ```js
         {
@@ -116,7 +120,7 @@ npm run start
 
     Response
 
-    - If OK
+    -   If OK
 
         ```js
         {
@@ -131,7 +135,7 @@ npm run start
 
 4.  Update user's profile picture
 
-    `PUT /user/profile/picture`
+    `PUT /api/user/profile/picture`
 
     Request
 
@@ -148,7 +152,7 @@ npm run start
 
     Response
 
-    - If OK
+    -   If OK
 
         ```js
         {

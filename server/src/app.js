@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
-app.use("/", router);
+app.use("/api/", router);
 app.use(errorHandle);
 
 app.use((req, res) => {

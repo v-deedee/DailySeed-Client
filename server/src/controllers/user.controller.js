@@ -4,7 +4,7 @@ import UserService from "../services/user.service.js";
 import ProfileService from "../services/profile.service.js";
 import userRole from "../constants/user.role.js";
 import bcrypt from "bcrypt";
-import uploadHandle from "../utils/upload.handle.js";
+import CloudHanlder from "../utils/cloud.handler.js";
 
 export default class UserController {
     constructor() {}
@@ -81,14 +81,19 @@ export default class UserController {
 
     updatePicture = async (req, res) => {
         const { user } = req;
+        const profile = await ProfileService.find({ UserId: user.id });
 
+        // Remove old picture
+        await CloudHanlder.remove(profile.picture);
+
+        // Encoding picture
         const b64 = Buffer.from(req.file.buffer).toString("base64");
         let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
-        const picture = await uploadHandle(dataURI, "profile-picture");
+        const picture = await CloudHanlder.upload(dataURI, "profile-picture");
 
-        const profile = await ProfileService.find({ UserId: user.id });
+        // Upload new picture
         const updatedProfile = await ProfileService.update(profile, {
-            picture: picture.url,
+            picture: picture.public_id,
         });
 
         res.status(200).json({
