@@ -38,6 +38,13 @@ export default {
         },
     },
 
+    HABIT: {
+        HABIT_NOT_FOUND: {
+            code: "HABIT_NOT_FOUND",
+            message: "Your habit is not in the system",
+        },
+    },
+
     BODY_INVALID: {
         code: "BODY_INVALID",
     },

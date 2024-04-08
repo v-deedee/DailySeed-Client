@@ -34,6 +34,13 @@ export default [
                     },
                 },
             },
+            // View habit
+            {
+                httpMethod: "get",
+                path: "/habit/:id",
+                method: "viewHabit",
+                roles: [userRole.USER], 
+            }
         ],
     },
 ];

@@ -14,6 +14,12 @@ class HabitService {
         Habit.findOne({
             attributes: { exclude: ["createdAt", "updatedAt"] },
             where: conditions,
+            include: [
+                {
+                    association: Habit.Criteria,
+                    attributes: { exclude: ["createdAt", "updatedAt"] },
+                },
+            ],
         });
 
     update = async (instance, data) => instance.update(data);
