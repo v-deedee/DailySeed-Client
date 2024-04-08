@@ -13,7 +13,7 @@ class HabitService {
     find = async (conditions) =>
         Habit.findOne({
             where: conditions,
-            include: [{ association: Habit.Criteria }],
+            include: [{ association: Habit.Criteria, where: { active: true } }],
         });
 
     update = async (instance, data) => instance.update(data);
