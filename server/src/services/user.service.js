@@ -15,6 +15,8 @@ class UserService {
         User.create(data, {
             include: [{ association: User.Profile }],
         });
+
+    update = async (instance, data) => instance.update(data);
 }
 
 export default new UserService();

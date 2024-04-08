@@ -1,4 +1,4 @@
-import error from "../constants/error.code.js";
+import errorCode from "../constants/error.code.js";
 import { HttpError } from "../utils/http.error.js";
 import UserService from "../services/user.service.js";
 import ProfileService from "../services/profile.service.js";
@@ -42,6 +42,7 @@ export default class UserController {
         );
         body.Profile = {
             email: body.email,
+            picture: "default",
         };
 
         const user = await UserService.create(body);
@@ -100,6 +101,38 @@ export default class UserController {
             ok: true,
             data: {
                 profile: updatedProfile,
+            },
+        });
+    };
+
+    updatePassword = async (req, res) => {
+        const { body } = req;
+        const { user } = req;
+
+        if (!bcrypt.compareSync(body.password, user.password))
+            throw new HttpError({
+                ...errorCode.AUTH.PASSWORD_INVALID,
+                status: 400,
+            });
+
+        const data = {
+            password: bcrypt.hashSync(
+                body.newPassword,
+                bcrypt.genSaltSync(12),
+                null
+            ),
+        };
+        const updatedUser = await UserService.update(user, data);
+
+        const payload = {
+            id: updatedUser.id,
+            username: updatedUser.id,
+            updatedAt: updatedUser.updatedAt,
+        };
+        res.status(200).json({
+            ok: true,
+            data: {
+                user: payload,
             },
         });
     };

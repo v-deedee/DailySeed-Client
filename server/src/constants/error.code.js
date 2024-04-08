@@ -34,7 +34,7 @@ export default {
         },
         PASSWORD_INVALID: {
             code: "PASSWORD_INVALID",
-            message: "Your password or your username is incorrect",
+            message: "Your password is incorrect",
         },
     },
 

@@ -49,6 +49,21 @@ export default [
                 roles: [userRole.USER],
                 file: "profile_picture",
             },
+            // Update password
+            {
+                httpMethod: "put",
+                path: "/user/password",
+                method: "updatePassword",
+                roles: [userRole.USER],
+                schema: {
+                    type: "object",
+                    properties: {
+                        password: { type: "string" },
+                        newPassword: { type: "string" },
+                    },
+                    required: ["password", "newPassword"],
+                },
+            },
         ],
     },
 ];
