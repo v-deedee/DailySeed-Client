@@ -30,12 +30,14 @@ export default class HabitController {
     viewHabit = async (req, res) => {
         const { params } = req;
 
-        const habit = await HabitService.find({ id: params.id });
+        const habit = await HabitService.findOne({ id: params.id });
         if (!habit)
             throw new HttpError({
                 ...errorCode.HABIT.HABIT_NOT_FOUND,
                 status: 400,
             });
+
+        console.log(habit);
 
         const payload = {
             habit: _.pick(habit, ["id", "name", "icon", "duration"]),
@@ -53,7 +55,7 @@ export default class HabitController {
         const { params } = req;
         const { body } = req;
 
-        const habit = await HabitService.find({ id: params.id });
+        const habit = await HabitService.findOne({ id: params.id });
         if (!habit)
             throw new HttpError({
                 ...errorCode.HABIT.HABIT_NOT_FOUND,

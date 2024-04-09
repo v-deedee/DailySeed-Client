@@ -1,5 +1,6 @@
 import userRole from "../constants/user.role.js";
 import UserController from "../controllers/user.controller.js";
+import userValidation from "../validations/user.validation.js";
 
 export default [
     {
@@ -10,15 +11,7 @@ export default [
                 httpMethod: "post",
                 path: "/user",
                 method: "createUser",
-                schema: {
-                    type: "object",
-                    properties: {
-                        username: { type: "string" },
-                        password: { type: "string" },
-                        email: { type: "string" },
-                    },
-                    required: ["username", "password", "email"],
-                },
+                schema: userValidation.create,
             },
             // View user
             {
@@ -33,13 +26,7 @@ export default [
                 path: "/user/profile",
                 method: "updateProfile",
                 roles: [userRole.USER],
-                schema: {
-                    type: "object",
-                    properties: {
-                        email: { type: "string" },
-                    },
-                    required: ["email"],
-                },
+                schema: userValidation.updateProfile,
             },
             // Update profile picture
             {
@@ -55,14 +42,7 @@ export default [
                 path: "/user/password",
                 method: "updatePassword",
                 roles: [userRole.USER],
-                schema: {
-                    type: "object",
-                    properties: {
-                        password: { type: "string" },
-                        newPassword: { type: "string" },
-                    },
-                    required: ["password", "newPassword"],
-                },
+                schema: userValidation.udpatePassword,
             },
         ],
     },

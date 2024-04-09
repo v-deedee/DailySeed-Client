@@ -10,9 +10,10 @@ class HabitService {
             include: [{ association: Habit.Criteria }],
         });
 
-    find = async (conditions) =>
+    findOne = async (conditions, attributes) =>
         Habit.findOne({
             where: conditions,
+            attributes: attributes,
             include: [{ association: Habit.Criteria, where: { active: true } }],
         });
 
