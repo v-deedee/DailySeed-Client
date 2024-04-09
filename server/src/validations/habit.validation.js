@@ -49,7 +49,7 @@ export default {
                     active: Joi.boolean().when("id", {
                         is: Joi.exist(),
                         then: Joi.optional(),
-                        otherwise: Joi.required(),
+                        otherwise: Joi.forbidden(),
                     }),
                 }).required()
             )

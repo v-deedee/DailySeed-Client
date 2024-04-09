@@ -37,8 +37,6 @@ export default class HabitController {
                 status: 400,
             });
 
-        console.log(habit);
-
         const payload = {
             habit: _.pick(habit, ["id", "name", "icon", "duration"]),
             criteria: habit.Criteria.map((criterion) =>
@@ -77,26 +75,39 @@ export default class HabitController {
             updatedHabit = await HabitService.update(habit, body.habit);
         }
 
-        let updatedCriteria = habit.Criteria;
+        let updatedCriteria = [];
         if (body.criteria) {
             for (const criterion of body.criteria) {
                 let updatedCriterion;
 
                 if (!criterion.id) {
+                    // Create
                     criterion.HabitId = habit.id;
                     updatedCriterion = await CriteriaService.create(criterion);
                 } else {
-                    let toUpdateCriterion = habit.Criteria.find(
+                    // Update
+                    let i = habit.Criteria.findIndex(
                         (c) => c.id == criterion.id
                     );
+                    if (i == -1)
+                        throw new HttpError({
+                            ...errorCode.HABIT.CRITERION_NOT_FOUND,
+                            status: 400,
+                        });
+
+                    let toUpdateCriterion = habit.Criteria[i];
                     updatedCriterion = await CriteriaService.update(
                         toUpdateCriterion,
                         criterion
                     );
+
+                    habit.Criteria.splice(i, 1);
                 }
 
                 updatedCriteria.push(updatedCriterion);
             }
+
+            updatedCriteria = updatedCriteria.concat(habit.Criteria);
         }
 
         const payload = {
