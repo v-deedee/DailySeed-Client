@@ -27,7 +27,7 @@ export default class User {
           console.log(token)
           await saveTokenToLocalStorage(token);
           
-          await UserSingleton.getInstance().setUser(user);
+          UserSingleton.getInstance().setUser(user);
           console.log('Token saved successfully:', user);
           return true;
         } else {
