@@ -13,7 +13,7 @@ import Feather from "react-native-vector-icons/Feather";
 import { Dialog } from "@rneui/themed";
 import { useState } from "react";
 
-const critiria = [
+const habits = [
   {
     name: "Emotion",
     levels: [
@@ -55,85 +55,130 @@ const critiria = [
 ];
 
 const EditScreen = ({ navigation }) => {
-  const [openAddNewCrModal, setOpenAddNewCrModal] = useState(false);
+  const [openEditHabitModal, setOpenEditHabitModel] = useState(false);
+  const [openAddHabitModal, setOpenAddHabitModal] = useState(false);
   const [openAddIconModal, setOpenAddIconModal] = useState(false);
 
-  const [newCrName, setNewCrName] = useState("");
+  const [currentHabitId, setCurrentHabitId] = useState(0);
+  const [currentHabitName, setCurrentHabitName] = useState("");
+
+  const [newHabitName, setNewHabitName] = useState("");
+  const [newIcon, setNewIcon] = useState("");
+  const [newIconLabel, setNewIconLabel] = useState("");
 
   const closeScreen = () => {
     navigation.navigate("Record");
   };
 
-  const toggleNewCrModal = () => {
-    setOpenAddNewCrModal(!openAddNewCrModal);
+  const toggleEditHabitModal = () => {
+    setOpenEditHabitModel(!openEditHabitModal);
+  };
+
+  const toggleAddHabitModal = () => {
+    setOpenAddHabitModal(!openAddHabitModal);
   };
 
   const togleAddIconModal = () => {
     setOpenAddIconModal(!openAddIconModal);
   };
 
-  const addNewCritirion = () => {
-    if (newCrName.length > 0) {
-      critiria.push({
-        name: newCrName,
+  const editHabit = () => {
+    habits[currentHabitId].name = currentHabitName;
+    setCurrentHabitName("");
+    toggleEditHabitModal();
+  };
+
+  const addNewHabit = () => {
+    if (newHabitName.length > 0) {
+      habits.push({
+        name: newHabitName,
         levels: [],
       });
-      setNewCrName("");
+      setNewHabitName("");
     }
-    toggleNewCrModal();
+    toggleAddHabitModal();
+  };
+
+  const addNewIcon = () => {
+    if (newIcon.length > 0) {
+      habits[currentHabitId].levels.push({
+        label: newIconLabel,
+        icon: newIcon,
+      });
+      setNewIcon("");
+      setNewIconLabel("");
+    }
+    togleAddIconModal();
   };
 
   return (
     <View style={styles.container}>
       <StatusBar />
+
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Edit critiria</Text>
+        <Text style={styles.headerText}>Custom habits</Text>
         <TouchableOpacity style={styles.headerButton} onPress={closeScreen}>
           <MaterialIcons name="close" color={"#ACAC9A"} size={30} />
         </TouchableOpacity>
       </View>
 
-      <View style={{ alignItems: "center" }}>
-        <View
-          style={{
-            alignItems: "center",
-            margin: 15,
-            flexDirection: "row",
-            gap: 10,
-          }}
-        >
-          <Feather name="edit" color="#3B6C78" size={20} />
-          <Text style={{ fontWeight: "bold", color: "#3B6C78" }}>
-            Edit icons in the block by tapping on it
-          </Text>
-        </View>
-      </View>
-
       <ScrollView>
-        {critiria.map((critirion, index) => (
+        {/* Note */}
+        <View style={{ alignItems: "center" }}>
+          <View
+            style={{
+              alignItems: "center",
+              margin: 15,
+              flexDirection: "row",
+              gap: 10,
+            }}
+          >
+            {/* <Feather name="edit" color="#3B6C78" size={20} /> */}
+            <Text style={{ fontWeight: "bold", color: "#3B6C78" }}>
+              Edit icons in the block by tapping on it
+            </Text>
+          </View>
+        </View>
+
+        {habits.map((habit, index) => (
           <View style={styles.recordContent} key={index}>
-            <View style={styles.editTitleBox}>
-              <Text style={styles.titleContent}>Title:</Text>
-              <View style={styles.inputView}>
-                <TextInput
-                  style={styles.inputText}
-                  placeholder="Enter new title"
-                  value={critirion.name}
-                  // onChangeText={(text) => setUsername(text)}
-                />
+            <View style={styles.titleBox}>
+              <View>
+                <Text style={styles.titleContent}>{habit.name}</Text>
+              </View>
+              <View style={styles.actionIconBox}>
+                <TouchableOpacity
+                  style={styles.actionIcon}
+                  onPress={() => {
+                    setCurrentHabitName(habit.name);
+                    toggleEditHabitModal();
+                  }}
+                >
+                  <Feather name="edit" color="#fff" size={15} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionIcon}>
+                  <MaterialIcons name="delete" color="#fff" size={15} />
+                </TouchableOpacity>
               </View>
             </View>
 
             <View style={styles.editLevelBox}>
-              {critirion.levels.map((level) => (
-                <TouchableOpacity style={styles.levelBlock} key={level.icon}>
+              {habit.levels.map((level, index) => (
+                <TouchableOpacity
+                  style={styles.levelBlock}
+                  key={"icon" + index}
+                >
                   <Text style={styles.levelIcon}>{level.icon}</Text>
                   <Text style={styles.levelLabel}>{level.label}</Text>
                 </TouchableOpacity>
               ))}
               <TouchableOpacity
                 style={styles.levelBlock}
-                onPress={togleAddIconModal}
+                onPress={() => {
+                  setCurrentHabitId(index);
+                  togleAddIconModal();
+                }}
               >
                 <AntDesign
                   name="pluscircle"
@@ -146,59 +191,100 @@ const EditScreen = ({ navigation }) => {
             </View>
           </View>
         ))}
-
         <View style={styles.addBox}>
-          <TouchableOpacity style={styles.addButton} onPress={toggleNewCrModal}>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={toggleAddHabitModal}
+          >
             <MaterialIcons name="add-box" color={"#50AA75"} size={35} />
             <Text style={{ color: "#50AA75", fontWeight: "bold" }}>
-              Add your own critiria
+              Add your own habits
             </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
+      {/* Submit button */}
       <View style={styles.submitBox}>
         <TouchableOpacity style={styles.submitButton}>
           <Text style={styles.submitText}>Done</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Add new critirion modal */}
+      {/* Edit habit name modal */}
       <Dialog
-        isVisible={openAddNewCrModal}
-        onBackdropPress={toggleNewCrModal}
+        isVisible={openEditHabitModal}
+        onBackdropPress={toggleEditHabitModal}
         overlayStyle={{
           borderRadius: 30,
         }}
       >
         <View style={{ alignItems: "center", paddingBottom: 20 }}>
-          <Dialog.Title title="Add new critirion" titleStyle={{}} />
+          <Dialog.Title title="Edit name" titleStyle={{}} />
         </View>
+
         <View style={styles.modalInputView}>
           <TextInput
             style={styles.modalInputText}
-            placeholder="Enter critirion name"
+            placeholder="Enter habit name"
             selectionColor="#ccc"
-            value={newCrName}
-            onChangeText={(text) => setNewCrName(text)}
+            value={currentHabitName}
+            onChangeText={(text) => setCurrentHabitName(text)}
           />
         </View>
         <View style={styles.modalButtonGroup}>
           <TouchableOpacity
             style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-            onPress={toggleNewCrModal}
+            onPress={toggleEditHabitModal}
           >
             <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            onPress={addNewCritirion}
+            onPress={editHabit}
           >
             <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
           </TouchableOpacity>
         </View>
       </Dialog>
 
+      {/* Add new habit modal */}
+      <Dialog
+        isVisible={openAddHabitModal}
+        onBackdropPress={toggleAddHabitModal}
+        overlayStyle={{
+          borderRadius: 30,
+        }}
+      >
+        <View style={{ alignItems: "center", paddingBottom: 20 }}>
+          <Dialog.Title title="Add new habit" titleStyle={{}} />
+        </View>
+        <View style={styles.modalInputView}>
+          <TextInput
+            style={styles.modalInputText}
+            placeholder="Enter habit name"
+            selectionColor="#ccc"
+            value={newHabitName}
+            onChangeText={(text) => setNewHabitName(text)}
+          />
+        </View>
+        <View style={styles.modalButtonGroup}>
+          <TouchableOpacity
+            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
+            onPress={toggleAddHabitModal}
+          >
+            <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
+            onPress={addNewHabit}
+          >
+            <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
+          </TouchableOpacity>
+        </View>
+      </Dialog>
+
+      {/* Add new icon modal */}
       <Dialog
         isVisible={openAddIconModal}
         onBackdropPress={togleAddIconModal}
@@ -210,26 +296,27 @@ const EditScreen = ({ navigation }) => {
           <Dialog.Title title="Add icon" titleStyle={{}} />
         </View>
 
-        <View style={styles.editTitleBox}>
-          <Text style={styles.titleContent}>Icon:</Text>
-          <View style={[styles.inputView, { width: "80%" }]}>
-            <TextInput
-              style={styles.inputText}
-              placeholder="Choose an icon from keyboard"
-              // value={critirion.name}
-              // onChangeText={(text) => setUsername(text)}
-            />
-          </View>
+        <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Icon</Text>
+        <View style={styles.modalInputView}>
+          <TextInput
+            style={styles.modalInputText}
+            placeholder="Choose an icon from keyboard"
+            selectionColor="#ccc"
+            value={newIcon}
+            onChangeText={(text) => setNewIcon(text)}
+          />
         </View>
 
-        <Text>Label</Text>
+        <View style={{ height: 20 }}></View>
+
+        <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Label</Text>
         <View style={styles.modalInputView}>
           <TextInput
             style={styles.modalInputText}
             placeholder="Enter icon label"
             selectionColor="#ccc"
-            value={newCrName}
-            // onChangeText={(text) => setNewCrName(text)}
+            value={newIconLabel}
+            onChangeText={(text) => setNewIconLabel(text)}
           />
         </View>
         <View style={styles.modalButtonGroup}>
@@ -241,7 +328,7 @@ const EditScreen = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            // onPress={addNewCritirion}
+            onPress={addNewIcon}
           >
             <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
           </TouchableOpacity>
@@ -271,16 +358,26 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#474838",
   },
-  contentBlock: {
-    padding: 20,
-  },
-  editTitleBox: {
+  titleBox: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
   },
+
   titleContent: {
+    fontSize: 16,
     fontWeight: "600",
     marginRight: 5,
+  },
+  actionIconBox: {
+    marginTop: -50,
+    flexDirection: "row",
+    gap: 10,
+  },
+  actionIcon: {
+    backgroundColor: "#3B6C78",
+    borderRadius: 999,
+    padding: 10,
   },
   editLevelBox: {
     padding: 10,
@@ -309,7 +406,6 @@ const styles = StyleSheet.create({
   },
   inputText: {
     height: 50,
-    // color: "#003f5c",
   },
   modalInputView: {
     width: "100%",
@@ -320,11 +416,9 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     padding: 20,
-    // marginVertical: 20,
   },
   modalInputText: {
     height: 50,
-    // color: "#003f5c",
     fontWeight: "bold",
   },
   recordContent: {
@@ -335,6 +429,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 20,
   },
+
   addBox: {
     padding: 20,
     height: "auto",
@@ -356,10 +451,7 @@ const styles = StyleSheet.create({
   modalButton: {
     alignItems: "center",
     flex: 1,
-    // width: "40%",
-    // paddingHorizontal: 30,
     paddingVertical: 15,
-    // margin: 5,
     height: "auto",
     borderRadius: 10,
   },
