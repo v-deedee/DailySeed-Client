@@ -15,6 +15,7 @@ const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
             rejectUnauthorized: false,
         },
     },
+    logging: false,
 });
 
 try {

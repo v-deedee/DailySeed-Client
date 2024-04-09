@@ -146,3 +146,53 @@ npm run start
 
         }
         ```
+
+2.  View Habit
+
+    `GET /api/habit/:id`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+3.  Update Habit
+
+    `PUT /api/habit/:id`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+    -   Body
+
+        ```js
+        {
+            // Only provide the fields that need to be updated
+            "habit": {
+                "name": "example",
+                "icon": ":smile:",
+                "duration": 7 // Day
+                "active": false // Set false if want to delete this habit
+            },
+            criteria: [
+                {
+                    "id": 4 // If update criterion, specify id
+                    "name": "test",
+                    "icon": "test",
+                    "score": 5,
+                    "active": false // Set false if want to delete this criterion
+                },
+                {
+                    // If create criterion, specify all fieds below (exclude id)
+                    "name": "new",
+                    "icon": "new",
+                    "score": 6
+                }
+                // More criterion
+            ]
+        }
+        ```

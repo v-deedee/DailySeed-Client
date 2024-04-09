@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   View,
   Text,
   TextInput,
@@ -7,14 +8,23 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
+import User from "../services/models/user";
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     console.log("Register with username:", username, "and password:", password);
+    const data = await User.register(username, password, email);
+    if(data.ok) {
+      navigation.navigate("Login");
+      alert('Successful account registration');
+    } else {
+      console.log(data.message);
+      alert(data.message);
+    }
   };
 
   const handleLoginPress = () => {
@@ -29,7 +39,6 @@ const RegisterScreen = ({ navigation }) => {
       />
       <View style={styles.inputView}>
         <TextInput
-          secureTextEntry
           style={styles.inputText}
           placeholder="Email"
           placeholderTextColor="#003f5c"

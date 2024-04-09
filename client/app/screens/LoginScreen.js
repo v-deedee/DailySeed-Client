@@ -7,19 +7,24 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
+import User from "../services/models/user"
 
 const LoginScreen = ({ navigation, signIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    console.log(
-      "Logging in with username:",
-      username,
-      "and password:",
-      password,
-    );
-    signIn();
+  const handleLogin = async () => {
+    try {
+      const loggedIn = await User.login(username, password);
+      if (loggedIn) {
+        console.log('Login successful!');
+        signIn();
+      } else {
+        console.error('Login failed!');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    }
   };
 
   const handleRegisterPress = () => {

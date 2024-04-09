@@ -33,7 +33,7 @@ const critiria = [
     name: "Housework",
     levels: [
       {
-        label: "Đéo làm",
+        label: "Không làm",
         icon: "👎",
       },
       {

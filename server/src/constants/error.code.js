@@ -47,6 +47,10 @@ export default {
             code: "HABIT_UPDATE_INVALID",
             message: "Your habit is not ready to be updated",
         },
+        CRITERION_NOT_FOUND: {
+            code: "CRITERION_NOT_FOUND",
+            message: "Your criterion is not in the system",
+        },
     },
 
     BODY_INVALID: {

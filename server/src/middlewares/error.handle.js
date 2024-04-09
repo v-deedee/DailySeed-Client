@@ -1,10 +1,14 @@
-import { BaseError, ValidationError } from "sequelize";
+import { ValidationError } from "sequelize";
 import errorCode from "../constants/error.code.js";
 
 export default (err, req, res, next) => {
+    console.log("-".repeat(35));
     console.log(err);
+    console.log("-".repeat(35));
 
     if (err instanceof ValidationError) {
+        err.status = 400;
+        err.code = errorCode.BODY_INVALID.code;
         err.message = err.errors[0].message;
     }
 

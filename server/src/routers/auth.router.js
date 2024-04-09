@@ -1,4 +1,5 @@
 import AuthController from "../controllers/auth.controller.js";
+import authValidation from "../validations/auth.validation.js";
 
 export default [
     {
@@ -8,13 +9,7 @@ export default [
                 httpMethod: "post",
                 path: "/auth/login",
                 method: "login",
-                schema: {
-                    type: "object",
-                    properties: {
-                        username: { type: "string" },
-                        password: { type: "string" },
-                    },
-                },
+                schema: authValidation.login,
             },
         ],
     },

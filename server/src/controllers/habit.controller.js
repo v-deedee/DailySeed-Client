@@ -30,7 +30,7 @@ export default class HabitController {
     viewHabit = async (req, res) => {
         const { params } = req;
 
-        const habit = await HabitService.find({ id: params.id });
+        const habit = await HabitService.findOne({ id: params.id });
         if (!habit)
             throw new HttpError({
                 ...errorCode.HABIT.HABIT_NOT_FOUND,
@@ -53,7 +53,7 @@ export default class HabitController {
         const { params } = req;
         const { body } = req;
 
-        const habit = await HabitService.find({ id: params.id });
+        const habit = await HabitService.findOne({ id: params.id });
         if (!habit)
             throw new HttpError({
                 ...errorCode.HABIT.HABIT_NOT_FOUND,
@@ -75,26 +75,39 @@ export default class HabitController {
             updatedHabit = await HabitService.update(habit, body.habit);
         }
 
-        let updatedCriteria = habit.Criteria;
+        let updatedCriteria = [];
         if (body.criteria) {
             for (const criterion of body.criteria) {
                 let updatedCriterion;
 
                 if (!criterion.id) {
+                    // Create
                     criterion.HabitId = habit.id;
                     updatedCriterion = await CriteriaService.create(criterion);
                 } else {
-                    let toUpdateCriterion = habit.Criteria.find(
+                    // Update
+                    let i = habit.Criteria.findIndex(
                         (c) => c.id == criterion.id
                     );
+                    if (i == -1)
+                        throw new HttpError({
+                            ...errorCode.HABIT.CRITERION_NOT_FOUND,
+                            status: 400,
+                        });
+
+                    let toUpdateCriterion = habit.Criteria[i];
                     updatedCriterion = await CriteriaService.update(
                         toUpdateCriterion,
                         criterion
                     );
+
+                    habit.Criteria.splice(i, 1);
                 }
 
                 updatedCriteria.push(updatedCriterion);
             }
+
+            updatedCriteria = updatedCriteria.concat(habit.Criteria);
         }
 
         const payload = {
