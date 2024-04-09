@@ -25,7 +25,6 @@ const RegisterScreen = ({ navigation }) => {
       console.log(data.message);
       alert(data.message);
     }
-
   };
 
   const handleLoginPress = () => {

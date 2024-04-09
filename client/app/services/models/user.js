@@ -1,7 +1,7 @@
 import axios from "axios";
 import { HOST } from "../host";
 import UserSingleton from "../user-singleton";
-import { saveTokenToLocalStorage } from "../auth/token-services"
+import { saveTokenToLocalStorage, getTokenFromLocalStorage } from "../auth/token-services"
 
 export default class User {
     constructor(id, name) {
@@ -10,7 +10,7 @@ export default class User {
     }
 
     static async login(username, password) {
-      let url = `http://192.168.110.59:5050/api/auth/login`;
+      let url = `${HOST}/api/auth/login`;
       console.log(url)
       let body = { username: username, password: password};
       try {
@@ -53,6 +53,13 @@ export default class User {
       }
   }
 
+
+  static async getUserByToken() {
+    let token = getTokenFromLocalStorage();
+    if(token) {
+
+    }
+  }
 
 
 
