@@ -7,7 +7,6 @@ export default class User {
     constructor(id, name) {
       this.id = id;
       this.name = name;
-      console.log("abc")
     }
 
     static async login(username, password) {
@@ -28,7 +27,7 @@ export default class User {
           console.log(token)
           await saveTokenToLocalStorage(token);
           
-          await UserSingleton.getInstance().setUser(user);
+          UserSingleton.getInstance().setUser(user);
           console.log('Token saved successfully:', user);
           return true;
         } else {
@@ -40,6 +39,22 @@ export default class User {
       }
 
     }
+
+    static async register(username, password, email) {
+      let url = `${HOST}/api/user`;
+      let body = { username: username, password: password, email: email };
+
+      try {
+          const response = await axios.post(url, body);
+          return response.data;
+      } catch (error) {
+          console.error("Error while making request:", error);
+          return response.data;
+      }
+  }
+
+
+
 
 }  
 

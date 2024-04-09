@@ -7,6 +7,7 @@ export const saveTokenToLocalStorage = async (token) => {
   try {
     await AsyncStorage.setItem(TOKEN_KEY, token);
     console.log('Token saved to Local Storage');
+    
   } catch (error) {
     console.error('Error saving token to Local Storage:', error);
   }
