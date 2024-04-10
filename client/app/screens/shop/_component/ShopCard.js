@@ -1,13 +1,19 @@
 import { Button, Card } from '@rneui/themed';
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ImageBackground } from "react-native";
 
 export default function ShopCard() {
     return (
         <Card containerStyle={styles.cardContainer}>
-            <Card.Image source={{
-                uri:
-                    'https://awildgeographer.files.wordpress.com/2015/02/john_muir_glacier.jpg',
-            }} style={styles.image} />
+            <Card.Image source={require("../../../../assets/theme/background.png")} style={styles.image} >
+                <View style={styles.treeImgContainer}>
+                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
+                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
+                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
+                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
+                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
+                </View>
+            </Card.Image>
+
             <View style={styles.infoContainer}>
                 <View>
                     <Text style={styles.title}>Spring Picic Set</Text>
@@ -41,6 +47,17 @@ const styles = StyleSheet.create({
     },
     image: {
         borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    treeImgContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    treeImg: {
+        width: 60,
+        height: 60,
+        top: 10
     },
     infoContainer: {
         flexDirection: 'row',

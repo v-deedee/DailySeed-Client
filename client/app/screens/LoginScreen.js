@@ -14,17 +14,18 @@ const LoginScreen = ({ navigation, signIn }) => {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    try {
-      const loggedIn = await User.login(username, password);
-      if (loggedIn) {
-        console.log('Login successful!');
-        signIn();
-      } else {
-        console.error('Login failed!');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-    }
+    // try {
+    //   const loggedIn = await User.login(username, password);
+    //   if (loggedIn) {
+    //     console.log('Login successful!');
+    //     signIn();
+    //   } else {
+    //     console.error('Login failed!');
+    //   }
+    // } catch (error) {
+    //   console.error('Login error:', error);
+    // }
+    signIn()
   };
 
   const handleRegisterPress = () => {

@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { Grass, LeftCornerLand, LeftLand, MiddleLand, NormalTree, RightCornerLand, RightLand, Shovel, TreeAvatar, TreeBox } from './Tree';
+import { Grass, LeftCornerLand, LeftLand, MiddleLand, NormalTree, RightCornerLand, RightLand, Shovel, Loupe, TreeAvatar, TreeBox } from './Tree';
 import { StyleSheet, View, TouchableOpacity, ImageBackground } from 'react-native';
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 import { BottomSheet } from "@rneui/themed";
+import TreeDetail from './TreeDetail';
 
 export default function Garden() {
     const [map, setMap] = useState([
-        [1, 0, 0, 0, 0, 0, 10],
-        [1, 0, 0, 0, 0, 0, 6],
-        [1, 0, 0, 0, 0, 0, 6],
-        [1, 1, 1, 1, 0, 0, 6],
-        [1, 0, 0, 0, 1, 0, 6],
-        [0, 0, 0, 0, 1, 0, 6],
+        [0, 0, 0, 0, 0, 0, 10],
+        [0, 0, 0, 0, 0, 0, 6],
+        [0, 0, 0, 0, 0, 0, 6],
+        [0, 0, 0, 1, 0, 0, 6],
+        [0, 0, 0, 0, 0, 0, 6],
+        [0, 0, 0, 0, 0, 0, 6],
         [9, 7, 7, 7, 7, 7, 8],
     ]);
 
@@ -23,9 +24,13 @@ export default function Garden() {
 
     const [isPlantTree, setPlantTree] = useState(false);
 
-    const [isRemoveTree, setRemoveTree] = useState(false)
+    const [isRemoveTree, setRemoveTree] = useState(false);
 
-    const toggleBottomSheet = () => setIsVisible(!isVisible);
+    const [isOpenDetail, setOpenDetail] = useState(false);
+
+    const togglePlantBottomSheet = () => setIsVisible(!isVisible);
+
+    const toggleViewBottomSheet = () => setOpenDetail(!isOpenDetail)
 
     const handleAvatarPress = () => {
         setOpenBorder(true);
@@ -35,9 +40,9 @@ export default function Garden() {
     };
 
     const handleShovelPress = () => {
-        setOpenBorder(true);
-        setDisable(false);
-        setRemoveTree(true);
+        setOpenBorder(!openBorder);
+        setDisable(!isDisable);
+        setRemoveTree(!isRemoveTree);
     }
 
     const handlePlantTree = (cell, rowIndex, cellIndex) => {
@@ -71,6 +76,10 @@ export default function Garden() {
         setDisable(true);
         setOpenBorder(false);
         setRemoveTree(false);
+    };
+
+    const handleViewTree = (cell, rowIndex, cellIndex) => {
+        s
     }
 
     const handleTool = (cell, rowIndex, cellIndex) => {
@@ -80,33 +89,46 @@ export default function Garden() {
         if (isRemoveTree) {
             return handleRemoveTree(cell, rowIndex, cellIndex);
         }
+        if (isOpenDetail) {
+            return handleViewTree(cell, rowIndex, cellIndex)
+        }
     };
-
 
     const renderMap = () => {
         return map.map((row, rowIndex) => (
             <View key={rowIndex} style={styles.row}>
-                {row.map((cell, cellIndex) => (
-                    <TouchableOpacity key={cellIndex} style={styles.cell} disabled={isDisable} onPress={() => handleTool(cell, rowIndex, cellIndex)}>
-                        <View>
-                            {cell === 0 && <Grass openBorder={openBorder} />}
-                            {cell === 1 && <NormalTree openBorder={openBorder} />}
-                            {cell === 6 && <RightLand />}
-                            {cell === 7 && <LeftLand />}
-                            {cell === 8 && <MiddleLand />}
-                            {cell === 9 && <LeftCornerLand />}
-                            {cell === 10 && <RightCornerLand />}
-                        </View>
-                    </TouchableOpacity>
-                ))}
+                {row.map((cell, cellIndex) => {
+                    if (cell <= 5) {
+                        return (
+                            <TouchableOpacity key={cellIndex} style={styles.cell} disabled={isDisable} onPress={() => handleTool(cell, rowIndex, cellIndex)}>
+                                <View>
+                                    {cell === 0 && <Grass openBorder={openBorder} />}
+                                    {cell === 1 && <NormalTree openBorder={openBorder} />}
+                                </View>
+                            </TouchableOpacity>
+                        )
+                    } else {
+                        return (
+                            <View key={cellIndex} style={styles.cell}>
+                                {cell === 6 && <RightLand />}
+                                {cell === 7 && <LeftLand />}
+                                {cell === 8 && <MiddleLand />}
+                                {cell === 9 && <LeftCornerLand />}
+                                {cell === 10 && <RightCornerLand />}
+                            </View>
+                        )
+                    }
+                })}
             </View>
         ));
     };
+
     return (
         <View style={styles.gardern}>
             <View style={styles.gardenTool}>
-                <TreeBox toggleBottomSheet={toggleBottomSheet} />
+                <TreeBox toggleBottomSheet={togglePlantBottomSheet} />
                 <Shovel handleShovelPress={handleShovelPress} />
+                <Loupe handleLoupePress={toggleViewBottomSheet} />
             </View>
 
             <ReactNativeZoomableView
@@ -123,8 +145,8 @@ export default function Garden() {
                 </View>
             </ReactNativeZoomableView>
 
-            <BottomSheet isVisible={isVisible} onBackdropPress={toggleBottomSheet}>
-                <View style={styles.bottomSheet}>
+            <BottomSheet isVisible={isVisible} onBackdropPress={togglePlantBottomSheet}>
+                <View style={[styles.bottomSheet, { justifyContent: 'space-around' }]}>
                     <TreeAvatar treeStatus="normal" value={10} handleAvatarPress={handleAvatarPress} />
                     <TreeAvatar treeStatus="normal" value={10} />
                     <TreeAvatar treeStatus="normal" value={10} />
@@ -132,8 +154,13 @@ export default function Garden() {
                     <TreeAvatar treeStatus="normal" value={10} />
                 </View>
             </BottomSheet>
-        </View>
 
+            <BottomSheet isVisible={isOpenDetail} onBackdropPress={toggleViewBottomSheet} >
+                <View style={[styles.bottomSheet, { justifyContent: 'space-around' }]}>
+                    <TreeDetail />
+                </View>
+            </BottomSheet>
+        </View>
     );
 }
 
@@ -144,8 +171,7 @@ const styles = StyleSheet.create({
 
     gardern: {
         flex: 3,
-        // backgroundColor: '#fbf5e5',
-
+        backgroundColor: '#fbf5e5',
         width: '100%',
         height: '100%'
     },
@@ -174,7 +200,6 @@ const styles = StyleSheet.create({
     },
     bottomSheet: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
         paddingBottom: 40,
         paddingTop: 40,
         borderRadius: 30,

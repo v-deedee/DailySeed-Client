@@ -9,8 +9,6 @@ export default function TabAll() {
                 <ShopCard />
                 <ShopCard />
                 <ShopCard />
-                <ShopCard />
-                <ShopCard />
             </ScrollView>
         </View >
     );

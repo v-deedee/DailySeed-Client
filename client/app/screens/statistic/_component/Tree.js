@@ -94,6 +94,19 @@ const Shovel = ({ handleShovelPress }) => {
     );
 }
 
+const Loupe = ({ handleLoupePress }) => {
+    return (
+        <View>
+            <TouchableOpacity activeOpacity={0.5} onPress={handleLoupePress}>
+                <ImageBackground
+                    source={require('../../../../assets/garden/loupe.png')}
+                    style={styles.image}
+                />
+            </TouchableOpacity>
+        </View>
+    );
+}
+
 const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
     switch (treeStatus) {
         case 'normal':
@@ -114,6 +127,7 @@ const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
             );
     }
 }
+
 const styles = StyleSheet.create({
     image: {
         width: 36,
@@ -135,4 +149,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export { Grass, NormalTree, RightLand, MiddleLand, LeftLand, LeftCornerLand, RightCornerLand, TreeBox, Shovel, TreeAvatar };
+export { Grass, NormalTree, RightLand, MiddleLand, LeftLand, LeftCornerLand, RightCornerLand, TreeBox, Shovel, Loupe, TreeAvatar };
