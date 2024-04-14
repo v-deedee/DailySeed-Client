@@ -1,3 +1,15 @@
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+# Table of Contents
+
+-   [Commands](#commands)
+-   [Cloud URL](#cloud-url)
+-   [APIs](#apis)
+    -   [Auth](#auth)
+    -   [User](#user)
+    -   [Habit](#habit)
+
+<!-- TOC end -->
+
 # Commands
 
 Start server

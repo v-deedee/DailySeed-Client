@@ -43,6 +43,11 @@ export default {
             code: "HABIT_NOT_FOUND",
             message: "Your habit is not in the system",
         },
+        INVALID_AUTHORIZATION: {
+            code: "HABIT_INVALID_AUTHORIZATION",
+            message: "You do not have permission to access this habit"
+
+        },
         HABIT_UPDATE_INVALID: {
             code: "HABIT_UPDATE_INVALID",
             message: "Your habit is not ready to be updated",

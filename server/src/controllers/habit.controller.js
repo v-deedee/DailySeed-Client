@@ -29,11 +29,17 @@ export default class HabitController {
 
     viewHabit = async (req, res) => {
         const { params } = req;
+        const { user } = req;
 
         const habit = await HabitService.findOne({ id: params.id });
         if (!habit)
             throw new HttpError({
                 ...errorCode.HABIT.HABIT_NOT_FOUND,
+                status: 400,
+            });
+        if (habit.UserId != user.id)
+            throw new HttpError({
+                ...errorCode.HABIT.INVALID_AUTHORIZATION,
                 status: 400,
             });
 
@@ -57,6 +63,11 @@ export default class HabitController {
         if (!habit)
             throw new HttpError({
                 ...errorCode.HABIT.HABIT_NOT_FOUND,
+                status: 400,
+            });
+        if (habit.UserId != user.id)
+            throw new HttpError({
+                ...errorCode.HABIT.INVALID_AUTHORIZATION,
                 status: 400,
             });
 
