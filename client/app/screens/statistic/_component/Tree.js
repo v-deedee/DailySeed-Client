@@ -30,6 +30,21 @@ const CellComponent = ({ type, x, y }) => {
     top: -(y * cellSize) / 2 + (x * cellSize) / 2 - (x + y) * 0.22 * cellSize,
   };
 
+  const cellStyle = () => {
+    switch (type) {
+      case 1:
+        return { width: "50%", height: "40%", top: '0', left: '25%' };
+      case 2:
+        return { width: "60%", height: "70%", top: '-45%', left: '20%' };
+      case 3:
+        return { width: "70%", height: "90%", top: '-50%', left: '15%' };
+      case 4:
+        return { width: "80%", height: "110%", top: '-70%', left: '10%' };
+      default:
+        return { width: "100%", height: "100%" };
+    }
+  };
+
   const handlePress = () => {
     // Handle press event here
     console.log(`Cell clicked at (${x}, ${y})`);
@@ -46,7 +61,10 @@ const CellComponent = ({ type, x, y }) => {
       >
         <Image
           source={assets[type]}
-          style={{ width: "110%", height: "110%", zIndex: 100, top: -50 }}
+          style={[
+            { zIndex: 100 },
+            cellStyle(),
+          ]}
         />
       </ImageBackground>
     </TouchableOpacity>
@@ -304,6 +322,8 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "contain",
   },
+
+
 });
 
 export {
