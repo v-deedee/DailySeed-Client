@@ -45,8 +45,7 @@ export default {
         },
         INVALID_AUTHORIZATION: {
             code: "HABIT_INVALID_AUTHORIZATION",
-            message: "You do not have permission to access this habit"
-
+            message: "You do not have permission to access this habit",
         },
         HABIT_UPDATE_INVALID: {
             code: "HABIT_UPDATE_INVALID",
@@ -55,6 +54,13 @@ export default {
         CRITERION_NOT_FOUND: {
             code: "CRITERION_NOT_FOUND",
             message: "Your criterion is not in the system",
+        },
+    },
+
+    SEED: {
+        NOT_FOUND: {
+            code: "SEED_NOT_FOUNG",
+            message: "Your seed is not in the system",
         },
     },
 

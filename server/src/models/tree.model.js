@@ -11,11 +11,13 @@ export default function (sequelize, DataTypes) {
         },
         note: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
         picture: {
             type: DataTypes.STRING,
-            allowNull: false,
+        },
+        score: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
         },
         coordinate_x: {
             type: DataTypes.INTEGER,
@@ -24,6 +26,12 @@ export default function (sequelize, DataTypes) {
             type: DataTypes.INTEGER,
         },
     });
+
+    Tree.associate = (models) => {
+        Tree.Criteria = models.Tree.belongsToMany(models.Criteria, {
+            through: "TreeCriteria",
+        });
+    };
 
     return Tree;
 }
