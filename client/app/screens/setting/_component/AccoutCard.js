@@ -1,6 +1,7 @@
 import { Card, Button } from '@rneui/themed';
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
+import UserSingleton from '../../../services/user-singleton';
 
 export default function AccoutCard() {
     return (
@@ -14,7 +15,7 @@ export default function AccoutCard() {
                         </View>
 
                         <View style={{ marginLeft: 10 }}>
-                            <Text>"Accout name"</Text>
+                            <Text>{UserSingleton.getInstance().getUserName()}</Text>
                         </View>
                     </View>
 
