@@ -35,7 +35,7 @@ const habits = [
     name: "Housework",
     levels: [
       {
-        label: "Không làm",
+        label: "Poor",
         icon: "👎",
       },
       {
@@ -58,6 +58,7 @@ const EditScreen = ({ navigation }) => {
   const [openEditHabitModal, setOpenEditHabitModel] = useState(false);
   const [openAddHabitModal, setOpenAddHabitModal] = useState(false);
   const [openAddIconModal, setOpenAddIconModal] = useState(false);
+  const [openDelHabitModal, setOpenDelHabitModal] = useState(false);
 
   const [currentHabitId, setCurrentHabitId] = useState(0);
   const [currentHabitName, setCurrentHabitName] = useState("");
@@ -82,10 +83,23 @@ const EditScreen = ({ navigation }) => {
     setOpenAddIconModal(!openAddIconModal);
   };
 
+  const toggleDelHabitModal = () => {
+    setOpenDelHabitModal(!openDelHabitModal);
+  };
+
   const editHabit = () => {
-    habits[currentHabitId].name = currentHabitName;
-    setCurrentHabitName("");
+    if (currentHabitName.length > 0) {
+      habits[currentHabitId].name = currentHabitName;
+      setCurrentHabitName("");
+    }
+
     toggleEditHabitModal();
+  };
+
+  const deleteHabit = () => {
+    habits.splice(currentHabitId, 1);
+
+    toggleDelHabitModal();
   };
 
   const addNewHabit = () => {
@@ -157,7 +171,12 @@ const EditScreen = ({ navigation }) => {
                 >
                   <Feather name="edit" color="#fff" size={15} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionIcon}>
+                <TouchableOpacity
+                  style={styles.actionIcon}
+                  onPress={() => {
+                    setCurrentHabitId(index), toggleDelHabitModal();
+                  }}
+                >
                   <MaterialIcons name="delete" color="#fff" size={15} />
                 </TouchableOpacity>
               </View>
@@ -191,6 +210,8 @@ const EditScreen = ({ navigation }) => {
             </View>
           </View>
         ))}
+
+        {/* Add new habit button */}
         <View style={styles.addBox}>
           <TouchableOpacity
             style={styles.addButton}
@@ -220,7 +241,7 @@ const EditScreen = ({ navigation }) => {
         }}
       >
         <View style={{ alignItems: "center", paddingBottom: 20 }}>
-          <Dialog.Title title="Edit name" titleStyle={{}} />
+          <Dialog.Title title="Edit habit name" titleStyle={{}} />
         </View>
 
         <View style={styles.modalInputView}>
@@ -244,6 +265,48 @@ const EditScreen = ({ navigation }) => {
             onPress={editHabit}
           >
             <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
+          </TouchableOpacity>
+        </View>
+      </Dialog>
+
+      {/* Confirm delete habit modal */}
+      <Dialog
+        isVisible={openDelHabitModal}
+        onBackdropPress={toggleDelHabitModal}
+        overlayStyle={{
+          borderRadius: 30,
+        }}
+      >
+        <View style={{ alignItems: "center", paddingBottom: 20 }}>
+          <Dialog.Title title="Confirm delete" titleStyle={{}} />
+        </View>
+
+        <View
+          style={{
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "center",
+            gap: 5,
+          }}
+        >
+          <AntDesign name="warning" color={"red"} size={20} />
+          <Text style={{ color: "red", fontWeight: "700" }}>
+            Are you sure to delete this habit?
+          </Text>
+        </View>
+
+        <View style={styles.modalButtonGroup}>
+          <TouchableOpacity
+            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
+            onPress={deleteHabit}
+          >
+            <Text style={{ fontWeight: "bold", color: "#474838" }}>Yes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
+            onPress={toggleDelHabitModal}
+          >
+            <Text style={{ fontWeight: "bold", color: "#fff" }}>No</Text>
           </TouchableOpacity>
         </View>
       </Dialog>
