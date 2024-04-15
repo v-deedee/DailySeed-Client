@@ -1,1 +1,1 @@
-export const HOST = `http://dailyseed.onrender.com`;
+export const HOST = `https://dailyseed.onrender.com`;

@@ -55,11 +55,29 @@ export default class User {
 
 
   static async getUserByToken() {
-    let token = getTokenFromLocalStorage();
+    let token = await getTokenFromLocalStorage();
+    let url = `${HOST}/api/user`;
     if(token) {
-
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        data = response.data;
+        if(data.ok) {
+          const user = new User(data.data.user.id, data.data.user.username);
+          UserSingleton.getInstance().setUser(user);
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error("Error while fetching user data by token:", error);
+        return false;
+      }
     }
   }
+  
 
 
 
