@@ -1,28 +1,6 @@
 import { useState } from "react";
-import {
-  Grass,
-  LeftCornerLand,
-  LeftLand,
-  MiddleLand,
-  NormalTree,
-  RightCornerLand,
-  RightLand,
-  Shovel,
-  Loupe,
-  TreeAvatar,
-  TreeBox,
-  TreePhase1,
-  TreePhase2,
-  TreePhase3,
-  TreePhase4,
-  CellComponent,
-} from "./Tree";
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  ImageBackground,
-} from "react-native";
+import { Grass, LeftCornerLand, LeftLand, MiddleLand, NormalTree, RightCornerLand, RightLand, Shovel, Loupe, TreeAvatar, TreeBox, TreePhase1, TreePhase2, TreePhase3, TreePhase4, CellComponent, HitBox } from "./Tree";
+import { StyleSheet, View, TouchableOpacity, ImageBackground } from "react-native";
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
 import { BottomSheet } from "@rneui/themed";
 // import TreeDetail from "./TreeDetail";
@@ -33,12 +11,12 @@ const cellSize = 100; // Fixed size for each cell
 
 export default function Garden() {
   const [map, setMap] = useState([
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 4, 4],
-    [0, 1, 1, 0, 3, 1],
-    [0, 0, 1, 1, 0, 1],
-    [3, 0, 2, 0, 0, 3],
-    [0, 2, 2, 0, 3, 3],
+    [0, 0, 4, 0, 0, 0],
+    [0, 0, 4, 0, 0, 0],
+    [0, 0, 4, 0, 1, 0],
+    [0, 0, 3, 0, 1, 0],
+    [0, 1, 3, 1, 1, 2],
+    [0, 0, 0, 0, 2, 2],
   ]);
 
   const [isVisible, setIsVisible] = useState(false);
@@ -172,21 +150,25 @@ export default function Garden() {
         onZoomAfter={this.logOutZoomState}
         style={{}}
       >
-        <View style={styles.mapContainer}>
-          {map.map((row, y) => (
-            <View key={y} style={styles.row}>
-              {row.map((cellType, x) => (
+        <View styles={styles.mapContainer}>
+          <View style={styles.assetContainer}>
+            {map.map((row, y) =>
+              row.map((cellType, x) => (
                 <CellComponent
                   key={`${x}_${y}`}
                   type={cellType}
-                  x={x + 2}
-                  y={y - 1}
+                  x={x}
+                  y={y}
                 />
-              ))}
-            </View>
-          ))}
+              ))
+            )}
+          </View>
+          <View style={styles.hitboxContainer}>
+            {map.map((row, y) =>
+              row.map((cellType, x) => <HitBox x={x} y={y} />)
+            )}
+          </View>
         </View>
-        {/* {renderMap()} */}
       </ReactNativeZoomableView>
 
       <BottomSheet
@@ -234,12 +216,26 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   mapContainer: {
+    height: numRows * cellSize,
+    width: numColumns * cellSize,
+    position: "relative",
+  },
+  assetContainer: {
+    backgroundColor: "transparent",
     flexDirection: "row", // To create a grid, use flexDirection: "row"
     flexWrap: "wrap", // Allow wrapping to create a grid
     width: numColumns * cellSize, // Set width based on number of columns
-    // height: numRows * cellSize, // Set height based on number of rows
-    // backgroundColor: "red",
-    position: "relative",
+    height: numRows * cellSize, // Set height based on number of rows
+    position: "absolute",
+  },
+  hitboxContainer: {
+    backgroundColor: "transparent",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    width: numColumns * cellSize,
+    height: numRows * cellSize,
+    position: "absolute",
+    top: -cellSize * 0.2,
   },
   row: {
     flexDirection: "row",

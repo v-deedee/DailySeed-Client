@@ -4,6 +4,7 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
+  Pressable
 } from "react-native";
 import { Avatar, Badge } from "@rneui/themed";
 
@@ -27,7 +28,10 @@ const CellComponent = ({ type, x, y }) => {
       -(y * cellSize) / 2 -
       (x * cellSize) / 2 +
       Math.floor(numColumns / 2) * cellSize,
-    top: -(y * cellSize) / 2 + (x * cellSize) / 2 - (x + y) * 0.22 * cellSize,
+    top:
+      -(y * cellSize) / 2 +
+      (x * cellSize) / 2 -
+      (x + y) * 0.22 * cellSize,
   };
 
   const cellStyle = () => {
@@ -45,29 +49,33 @@ const CellComponent = ({ type, x, y }) => {
     }
   };
 
+  return (
+    <ImageBackground source={require("../../../../assets/garden/block.png")} style={[styles.img, positionStyle]}>
+      <Image source={assets[type]} style={cellStyle()} />
+    </ImageBackground>
+  );
+};
+
+const HitBox = ({ x, y }) => {
+  const positionStyle = {
+    position: "relative",
+    left:
+      -(y * cellSize) / 2 -
+      (x * cellSize) / 2 +
+      Math.floor(numColumns / 2) * cellSize,
+    top:
+      -(y * cellSize) / 2 +
+      (x * cellSize) / 2 -
+      (x + y) * 0.22 * cellSize,
+  };
+
   const handlePress = () => {
     // Handle press event here
     console.log(`Cell clicked at (${x}, ${y})`);
   };
 
   return (
-    <TouchableOpacity
-      onPress={handlePress}
-      style={[styles.cell, positionStyle]}
-    >
-      <ImageBackground
-        source={require("../../../../assets/garden/block.png")}
-        style={styles.img}
-      >
-        <Image
-          source={assets[type]}
-          style={[
-            { zIndex: 100 },
-            cellStyle(),
-          ]}
-        />
-      </ImageBackground>
-    </TouchableOpacity>
+    <Pressable onPress={handlePress} style={[styles.hitbox, positionStyle]}></Pressable>
   );
 };
 
@@ -314,15 +322,25 @@ const styles = StyleSheet.create({
     width: cellSize,
     height: cellSize,
     overflow: "visible",
-    // borderColor: "black", // Border color
-    // borderWidth: 0.5, // Border width,
-  },
-  img: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
   },
 
+  img: {
+    width: cellSize,
+    height: cellSize,
+  },
+  hitbox: {
+    backgroundColor: "transparent",
+    height: cellSize * 0.6,
+    width: cellSize * 0.6,
+    margin: cellSize * 0.2,
+    borderColor: "black", // Border color
+    borderWidth: 0.5, // Border width,
+    transform: [
+      { rotateX: "55deg" },
+      { rotateY: "0deg" },
+      { rotateZ: "45deg" },
+    ],
+  },
 
 });
 
@@ -343,4 +361,5 @@ export {
   TreePhase3,
   TreePhase4,
   CellComponent,
+  HitBox
 };
