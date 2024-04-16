@@ -41,7 +41,7 @@ export default function HomeScreen({ navigation }) {
         {() => (
           <View style={styles.treeBox}>
             <Image
-              source={require("../../../assets/seed/tree1-small.png")}
+              source={require("../../../assets/garden/tree3-phase4.png")}
               style={styles.tree}
             />
           </View>
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
   },
   tree: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
   },
   button: {
     padding: 20,
