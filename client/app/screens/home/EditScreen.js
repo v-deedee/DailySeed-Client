@@ -9,9 +9,10 @@ import {
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
-import { Dialog } from "@rneui/themed";
-import { useState } from "react";
+
+import { Dialog, Slider } from "@rneui/themed";
+import { useEffect, useState } from "react";
+import { useRoute } from "@react-navigation/native";
 
 const habits = [
   {
@@ -52,78 +53,128 @@ const habits = [
       },
     ],
   },
+  {
+    name: "Sample",
+    levels: [
+      {
+        label: "Sample 1",
+        icon: "😟",
+      },
+      {
+        label: "Sample 2",
+        icon: "😀",
+      },
+    ],
+  },
 ];
 
+const interpolate = (start, end, value, maxValue) => {
+  let k = (value - 0) / maxValue;
+  return Math.ceil((1 - k) * start + k * end) % 256;
+};
+
+const color = (value, maxValue) => {
+  let r = interpolate(255, 0, value, maxValue);
+  let g = interpolate(0, 205, value, maxValue);
+  let b = interpolate(0, 0, value, maxValue);
+  return `rgb(${r},${g},${b})`;
+};
+
 const EditScreen = ({ navigation }) => {
-  const [openEditHabitModal, setOpenEditHabitModel] = useState(false);
-  const [openAddHabitModal, setOpenAddHabitModal] = useState(false);
-  const [openAddIconModal, setOpenAddIconModal] = useState(false);
-  const [openDelHabitModal, setOpenDelHabitModal] = useState(false);
+  const [toggleReRender, setToggleReRender] = useState(false);
 
-  const [currentHabitId, setCurrentHabitId] = useState(0);
-  const [currentHabitName, setCurrentHabitName] = useState("");
+  const route = useRoute();
+  let currentId = route.params?.id;
 
-  const [newHabitName, setNewHabitName] = useState("");
-  const [newIcon, setNewIcon] = useState("");
-  const [newIconLabel, setNewIconLabel] = useState("");
+  const [habitName, setHabitName] = useState(() => {
+    if (currentId !== habits.length) {
+      return habits[currentId].name;
+    } else {
+      return "";
+    }
+  });
+
+  // slider value
+  const [value, setValue] = useState(0);
+
+  const [iconInput, setIconInput] = useState("");
+
+  const [labelInput, setLabelInput] = useState("");
+
+  const [openAddLevelModal, setOpenAddLevelModal] = useState(false);
+
+  const [openEditLevelModal, setOpenEditLevelModal] = useState(false);
+
+  const toggleAddLevelModal = () => {
+    setIconInput("");
+    setLabelInput("");
+    setOpenAddLevelModal(!openAddLevelModal);
+  };
+
+  const toggleEditLevelModal = () => {
+    setOpenEditLevelModal(!openEditLevelModal);
+  };
+
+  const addNewLevel = () => {
+    if (currentId !== habits.length) {
+      if (iconInput.length > 0 && labelInput.length > 0) {
+        habits[currentId].levels.push({
+          label: labelInput,
+          icon: iconInput,
+        });
+        setValue(habits[currentId].levels.length - 1);
+        setIconInput("");
+        setLabelInput("");
+      }
+    } else {
+      setValue(0);
+    }
+    toggleAddLevelModal();
+  };
+
+  const editLevel = () => {
+    if (currentId !== habits.length) {
+      habits[currentId].levels[value].icon = iconInput;
+      habits[currentId].levels[value].label = labelInput;
+
+      setIconInput("");
+      setLabelInput("");
+    }
+
+    toggleEditLevelModal();
+  };
+
+  const deleteLevel = () => {
+    if (currentId !== habits.length) {
+      if (value !== 0) {
+        let temp = [...habits[currentId].levels];
+        temp.splice(value, 1);
+        habits[currentId].levels = [...temp];
+        setValue(0);
+      } else {
+        let temp = [...habits[currentId].levels];
+        temp.shift();
+        habits[currentId].levels = [...temp];
+        setToggleReRender(!toggleReRender);
+      }
+    }
+  };
 
   const closeScreen = () => {
     navigation.navigate("Record");
   };
 
-  const toggleEditHabitModal = () => {
-    setOpenEditHabitModel(!openEditHabitModal);
+  const submit = () => {
+    navigation.navigate("Record");
   };
 
-  const toggleAddHabitModal = () => {
-    setOpenAddHabitModal(!openAddHabitModal);
-  };
+  // useEffect(() => {
+  //   habits.push({
 
-  const togleAddIconModal = () => {
-    setOpenAddIconModal(!openAddIconModal);
-  };
-
-  const toggleDelHabitModal = () => {
-    setOpenDelHabitModal(!openDelHabitModal);
-  };
-
-  const editHabit = () => {
-    if (currentHabitName.length > 0) {
-      habits[currentHabitId].name = currentHabitName;
-      setCurrentHabitName("");
-    }
-
-    toggleEditHabitModal();
-  };
-
-  const deleteHabit = () => {
-    habits.splice(currentHabitId, 1);
-
-    toggleDelHabitModal();
-  };
-
-  const addNewHabit = () => {
-    if (newHabitName.length > 0) {
-      habits.push({
-        name: newHabitName,
-        levels: [],
-      });
-      setNewHabitName("");
-    }
-    toggleAddHabitModal();
-  };
-
-  const addNewIcon = () => {
-    if (newIcon.length > 0) {
-      habits[currentHabitId].levels.push({
-        label: newIconLabel,
-        icon: newIcon,
-      });
-      setNewIcon("");
-      setNewIconLabel("");
-    }
-    togleAddIconModal();
-  };
+  //   });
+  //   console.log(habits);
+  //   setValue(0);
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -131,7 +182,7 @@ const EditScreen = ({ navigation }) => {
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Custom habits</Text>
+        <Text style={styles.headerText}>Custom habit</Text>
         <TouchableOpacity style={styles.headerButton} onPress={closeScreen}>
           <MaterialIcons name="close" color={"#ACAC9A"} size={30} />
         </TouchableOpacity>
@@ -143,220 +194,267 @@ const EditScreen = ({ navigation }) => {
           <View
             style={{
               alignItems: "center",
-              margin: 15,
+              margin: 10,
               flexDirection: "row",
               gap: 10,
             }}
-          >
-            {/* <Feather name="edit" color="#3B6C78" size={20} /> */}
-            <Text style={{ fontWeight: "bold", color: "#3B6C78" }}>
-              Edit icons in the block by tapping on it
-            </Text>
-          </View>
+          ></View>
         </View>
 
-        {habits.map((habit, index) => (
-          <View style={styles.recordContent} key={index}>
-            <View style={styles.titleBox}>
-              <View>
-                <Text style={styles.titleContent}>{habit.name}</Text>
-              </View>
-              <View style={styles.actionIconBox}>
-                <TouchableOpacity
-                  style={styles.actionIcon}
-                  onPress={() => {
-                    setCurrentHabitName(habit.name);
-                    toggleEditHabitModal();
-                  }}
-                >
-                  <Feather name="edit" color="#fff" size={15} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.actionIcon}
-                  onPress={() => {
-                    setCurrentHabitId(index), toggleDelHabitModal();
-                  }}
-                >
-                  <MaterialIcons name="delete" color="#fff" size={15} />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.editLevelBox}>
-              {habit.levels.map((level, index) => (
-                <TouchableOpacity
-                  style={styles.levelBlock}
-                  key={"icon" + index}
-                >
-                  <Text style={styles.levelIcon}>{level.icon}</Text>
-                  <Text style={styles.levelLabel}>{level.label}</Text>
-                </TouchableOpacity>
-              ))}
-              <TouchableOpacity
-                style={styles.levelBlock}
-                onPress={() => {
-                  setCurrentHabitId(index);
-                  togleAddIconModal();
-                }}
-              >
-                <AntDesign
-                  name="pluscircle"
-                  color={"#50AA75"}
-                  size={45}
-                  style={{ marginTop: 8 }}
+        <View style={styles.recordContent}>
+          <View style={styles.titleBox}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={{ fontWeight: 700 }}>Name: </Text>
+              <View style={[styles.inputView, { flex: 1 }]}>
+                <TextInput
+                  style={styles.inputText}
+                  placeholder="Enter habit name"
+                  selectionColor="#ccc"
+                  value={habitName}
+                  onChangeText={(text) => setHabitName(text)}
                 />
-                <Text style={{ color: "#50AA75" }}>New icon</Text>
+              </View>
+              <TouchableOpacity style={{ paddingHorizontal: 10 }}>
+                <MaterialIcons name="check" size={30} color="#008D6A" />
               </TouchableOpacity>
             </View>
           </View>
-        ))}
 
-        {/* Add new habit button */}
-        <View style={styles.addBox}>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={toggleAddHabitModal}
+          <View
+            style={{
+              paddingTop: 10,
+              borderTopWidth: 0.5,
+              borderColor: "#ccc",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
-            <MaterialIcons name="add-box" color={"#50AA75"} size={35} />
-            <Text style={{ color: "#50AA75", fontWeight: "bold" }}>
-              Add your own habits
-            </Text>
-          </TouchableOpacity>
+            <Text style={{ fontWeight: 700 }}>Levels: </Text>
+            <TouchableOpacity
+              style={
+                habits[currentId].levels.length >= 5
+                  ? {
+                      paddingVertical: 5,
+                      paddingHorizontal: 10,
+                      borderRadius: 10,
+                      backgroundColor: "#50AA75",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 5,
+                      opacity: 0.5,
+                    }
+                  : {
+                      paddingVertical: 5,
+                      paddingHorizontal: 10,
+                      borderRadius: 10,
+                      backgroundColor: "#50AA75",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 5,
+                    }
+              }
+              onPress={toggleAddLevelModal}
+              disabled={habits[currentId].levels.length >= 5}
+            >
+              <MaterialIcons name="playlist-add" color="#fff" size={15} />
+              <Text style={{ color: "#fff", fontWeight: 700 }}>New level</Text>
+            </TouchableOpacity>
+          </View>
+          {currentId !== habits.length ? (
+            <View
+              style={{
+                marginTop: 10,
+                alignItems: "center",
+                backgroundColor: "#E3F8F9",
+                borderRadius: 10,
+                padding: 20,
+              }}
+            >
+              <Slider
+                value={value}
+                onValueChange={setValue}
+                maximumValue={
+                  currentId !== habits.length
+                    ? habits[currentId].levels.length - 1
+                    : 0
+                }
+                minimumValue={0}
+                minimumTrackTintColor="#50AA75"
+                step={1}
+                allowTouchTrack
+                trackStyle={{
+                  height: 20,
+                  borderRadius: 999,
+                  backgroundColor: "transparent",
+                }}
+                thumbStyle={{
+                  height: 45,
+                  width: 55,
+                  backgroundColor: "transparent",
+                }}
+                thumbProps={{
+                  children: (
+                    <View style={{ alignItems: "center", marginTop: 5 }}>
+                      <Text
+                        style={{
+                          paddingHorizontal: 3,
+                          paddingBottom: 3,
+                          fontSize: 40,
+                          marginTop: -10,
+                          backgroundColor: "#F9FDB8",
+                          borderRadius: 999,
+                        }}
+                      >
+                        {currentId !== habits.length
+                          ? habits[currentId].levels[value].icon
+                          : ""}
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: 800,
+                          color: color(
+                            value,
+                            habits[currentId].levels.length - 1,
+                          ),
+                        }}
+                      >
+                        {Math.floor(
+                          (value * 100) / (habits[currentId].levels.length - 1),
+                        )}
+                        %
+                      </Text>
+                    </View>
+                  ),
+                }}
+                style={{ width: "100%", marginBottom: 30 }}
+              />
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  gap: 8,
+                  width: "100%",
+                  paddingHorizontal: 10,
+                }}
+              >
+                {currentId !== habits.length ? (
+                  <>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={{ fontWeight: 700 }}>Level: </Text>
+                      <Text>{value + 1}</Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={{ fontWeight: 700 }}>Icon: </Text>
+                      <Text style={{ fontSize: 25 }}>
+                        {habits[currentId].levels[value].icon}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={{ fontWeight: 700 }}>Label: </Text>
+                      <Text>{habits[currentId].levels[value].label}</Text>
+                    </View>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </View>
+
+              <View style={[styles.modalButtonGroup, { width: "100%" }]}>
+                <TouchableOpacity
+                  style={[
+                    styles.modalButton,
+                    {
+                      backgroundColor: "#529290",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      gap: 5,
+                    },
+                  ]}
+                  onPress={() => {
+                    if (currentId !== habits.length) {
+                      setIconInput(habits[currentId].levels[value].icon);
+                      setLabelInput(habits[currentId].levels[value].label);
+                    }
+                    toggleEditLevelModal();
+                  }}
+                >
+                  <AntDesign name="edit" color="#fff" size={15} />
+                  <Text style={{ fontWeight: "bold", color: "#fff" }}>
+                    Edit level
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={
+                    habits[currentId].levels.length <= 2
+                      ? [
+                          styles.modalButton,
+                          {
+                            backgroundColor: "#E94D61",
+                            flexDirection: "row",
+                            justifyContent: "center",
+                            gap: 5,
+                            opacity: 0.5,
+                          },
+                        ]
+                      : [
+                          styles.modalButton,
+                          {
+                            backgroundColor: "#E94D61",
+                            flexDirection: "row",
+                            justifyContent: "center",
+                            gap: 5,
+                          },
+                        ]
+                  }
+                  onPress={deleteLevel}
+                  disabled={habits[currentId].levels.length <= 2}
+                >
+                  <MaterialIcons name="delete" color="#fff" size={15} />
+                  <Text style={{ fontWeight: "bold", color: "#fff" }}>
+                    Delete level
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <></>
+          )}
         </View>
       </ScrollView>
 
       {/* Submit button */}
       <View style={styles.submitBox}>
-        <TouchableOpacity style={styles.submitButton}>
+        <TouchableOpacity style={styles.submitButton} onPress={submit}>
           <Text style={styles.submitText}>Done</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Edit habit name modal */}
+      {/* Add Level modal */}
       <Dialog
-        isVisible={openEditHabitModal}
-        onBackdropPress={toggleEditHabitModal}
+        isVisible={openAddLevelModal}
+        onBackdropPress={toggleAddLevelModal}
         overlayStyle={{
           borderRadius: 30,
         }}
       >
         <View style={{ alignItems: "center", paddingBottom: 20 }}>
-          <Dialog.Title title="Edit habit name" titleStyle={{}} />
-        </View>
-
-        <View style={styles.modalInputView}>
-          <TextInput
-            style={styles.modalInputText}
-            placeholder="Enter habit name"
-            selectionColor="#ccc"
-            value={currentHabitName}
-            onChangeText={(text) => setCurrentHabitName(text)}
-          />
-        </View>
-        <View style={styles.modalButtonGroup}>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-            onPress={toggleEditHabitModal}
-          >
-            <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            onPress={editHabit}
-          >
-            <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
-          </TouchableOpacity>
-        </View>
-      </Dialog>
-
-      {/* Confirm delete habit modal */}
-      <Dialog
-        isVisible={openDelHabitModal}
-        onBackdropPress={toggleDelHabitModal}
-        overlayStyle={{
-          borderRadius: 30,
-        }}
-      >
-        <View style={{ alignItems: "center", paddingBottom: 20 }}>
-          <Dialog.Title title="Confirm delete" titleStyle={{}} />
-        </View>
-
-        <View
-          style={{
-            alignItems: "center",
-            flexDirection: "row",
-            justifyContent: "center",
-            gap: 5,
-          }}
-        >
-          <AntDesign name="warning" color={"red"} size={20} />
-          <Text style={{ color: "red", fontWeight: "700" }}>
-            Are you sure to delete this habit?
-          </Text>
-        </View>
-
-        <View style={styles.modalButtonGroup}>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-            onPress={deleteHabit}
-          >
-            <Text style={{ fontWeight: "bold", color: "#474838" }}>Yes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            onPress={toggleDelHabitModal}
-          >
-            <Text style={{ fontWeight: "bold", color: "#fff" }}>No</Text>
-          </TouchableOpacity>
-        </View>
-      </Dialog>
-
-      {/* Add new habit modal */}
-      <Dialog
-        isVisible={openAddHabitModal}
-        onBackdropPress={toggleAddHabitModal}
-        overlayStyle={{
-          borderRadius: 30,
-        }}
-      >
-        <View style={{ alignItems: "center", paddingBottom: 20 }}>
-          <Dialog.Title title="Add new habit" titleStyle={{}} />
-        </View>
-        <View style={styles.modalInputView}>
-          <TextInput
-            style={styles.modalInputText}
-            placeholder="Enter habit name"
-            selectionColor="#ccc"
-            value={newHabitName}
-            onChangeText={(text) => setNewHabitName(text)}
-          />
-        </View>
-        <View style={styles.modalButtonGroup}>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-            onPress={toggleAddHabitModal}
-          >
-            <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            onPress={addNewHabit}
-          >
-            <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
-          </TouchableOpacity>
-        </View>
-      </Dialog>
-
-      {/* Add new icon modal */}
-      <Dialog
-        isVisible={openAddIconModal}
-        onBackdropPress={togleAddIconModal}
-        overlayStyle={{
-          borderRadius: 30,
-        }}
-      >
-        <View style={{ alignItems: "center", paddingBottom: 20 }}>
-          <Dialog.Title title="Add icon" titleStyle={{}} />
+          <Dialog.Title title="Add level" titleStyle={{}} />
         </View>
 
         <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Icon</Text>
@@ -365,8 +463,8 @@ const EditScreen = ({ navigation }) => {
             style={styles.modalInputText}
             placeholder="Choose an icon from keyboard"
             selectionColor="#ccc"
-            value={newIcon}
-            onChangeText={(text) => setNewIcon(text)}
+            value={iconInput}
+            onChangeText={(text) => setIconInput(text)}
           />
         </View>
 
@@ -378,20 +476,71 @@ const EditScreen = ({ navigation }) => {
             style={styles.modalInputText}
             placeholder="Enter icon label"
             selectionColor="#ccc"
-            value={newIconLabel}
-            onChangeText={(text) => setNewIconLabel(text)}
+            value={labelInput}
+            onChangeText={(text) => setLabelInput(text)}
           />
         </View>
         <View style={styles.modalButtonGroup}>
           <TouchableOpacity
             style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-            onPress={togleAddIconModal}
+            onPress={toggleAddLevelModal}
           >
             <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            onPress={addNewIcon}
+            onPress={addNewLevel}
+          >
+            <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
+          </TouchableOpacity>
+        </View>
+      </Dialog>
+
+      {/* Edit Level modal */}
+      <Dialog
+        isVisible={openEditLevelModal}
+        onBackdropPress={toggleEditLevelModal}
+        overlayStyle={{
+          borderRadius: 30,
+        }}
+      >
+        <View style={{ alignItems: "center", paddingBottom: 20 }}>
+          <Dialog.Title title="Edit level" titleStyle={{}} />
+        </View>
+
+        <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Icon</Text>
+        <View style={styles.modalInputView}>
+          <TextInput
+            style={styles.modalInputText}
+            placeholder="Choose an icon from keyboard"
+            selectionColor="#ccc"
+            value={iconInput}
+            onChangeText={(text) => setIconInput(text)}
+          />
+        </View>
+
+        <View style={{ height: 20 }}></View>
+
+        <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Label</Text>
+        <View style={styles.modalInputView}>
+          <TextInput
+            style={styles.modalInputText}
+            placeholder="Enter icon label"
+            selectionColor="#ccc"
+            value={labelInput}
+            onChangeText={(text) => setLabelInput(text)}
+          />
+        </View>
+        <View style={styles.modalButtonGroup}>
+          <TouchableOpacity
+            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
+            onPress={toggleEditLevelModal}
+          >
+            <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
+            onPress={editLevel}
           >
             <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
           </TouchableOpacity>
@@ -425,29 +574,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 10,
   },
-
   titleContent: {
     fontSize: 16,
     fontWeight: "600",
     marginRight: 5,
-  },
-  actionIconBox: {
-    marginTop: -50,
-    flexDirection: "row",
-    gap: 10,
-  },
-  actionIcon: {
-    backgroundColor: "#3B6C78",
-    borderRadius: 999,
-    padding: 10,
-  },
-  editLevelBox: {
-    padding: 10,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "center",
-    gap: 10,
   },
   levelBlock: {
     flexDirection: "col",
@@ -458,7 +590,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
   },
   inputView: {
-    width: "50%",
+    width: "70%",
     backgroundColor: "#ffffff",
     borderWidth: 1,
     borderColor: "#EAEAEA",
