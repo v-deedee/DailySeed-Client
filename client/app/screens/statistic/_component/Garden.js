@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Grass, LeftCornerLand, LeftLand, MiddleLand, NormalTree, RightCornerLand, RightLand, Shovel, Loupe, TreeAvatar, TreeBox, TreePhase1, TreePhase2, TreePhase3, TreePhase4, CellComponent, HitBox } from "./Tree";
+import { Shovel, Loupe, TreeAvatar, TreeBox, CellComponent, HitBox } from "./Tree";
 import { StyleSheet, View, TouchableOpacity, ImageBackground } from "react-native";
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
 import { BottomSheet } from "@rneui/themed";
@@ -7,23 +7,21 @@ import { BottomSheet } from "@rneui/themed";
 
 const numRows = 6; // Number of rows in the garden
 const numColumns = 6; // Number of columns in the garden
-const cellSize = 100; // Fixed size for each cell
+const cellSize = 50; // Fixed size for each cell
 
 export default function Garden() {
   const [map, setMap] = useState([
-    [0, 0, 4, 0, 0, 0],
-    [0, 0, 4, 0, 0, 0],
-    [0, 0, 4, 0, 1, 0],
+    [0, 3, 4, 0, 0, 0],
+    [0, 3, 4, 0, 0, 0],
+    [0, 3, 4, 0, 1, 0],
     [0, 0, 3, 0, 1, 0],
     [0, 1, 3, 1, 1, 2],
-    [0, 0, 0, 0, 2, 2],
+    [0, 0, 0, 0, 2, 4],
   ]);
 
   const [isVisible, setIsVisible] = useState(false);
 
-  const [isDisable, setDisable] = useState(true);
-
-  const [openBorder, setOpenBorder] = useState(false);
+  const [isOpenBorder, setOpenBorder] = useState(false);
 
   const [isPlantTree, setPlantTree] = useState(false);
 
@@ -37,100 +35,58 @@ export default function Garden() {
 
   const handleAvatarPress = () => {
     setOpenBorder(true);
-    setIsVisible(false);
-    setDisable(false);
     setPlantTree(true);
+    setIsVisible(false);
   };
 
   const handleShovelPress = () => {
-    setOpenBorder(!openBorder);
-    setDisable(!isDisable);
+    setOpenBorder(!isOpenBorder);
     setRemoveTree(!isRemoveTree);
   };
 
-  const handlePlantTree = (cell, rowIndex, cellIndex) => {
-    if (cell === 0) {
+  const handlePlantTree = (x, y) => {
+    if (map[y][x] === 0) {
       const newMap = map.map((row, i) => {
-        if (i === rowIndex) {
-          return row.map((cell, j) => (j === cellIndex ? 1 : cell));
+        if (i === y) {
+          return row.map((cell, j) => (j === x ? 3 : cell));
         } else {
           return row;
         }
       });
       setMap(newMap);
     }
-    setDisable(true);
     setOpenBorder(false);
     setPlantTree(false);
   };
 
-  const handleRemoveTree = (cell, rowIndex, cellIndex) => {
-    if (cell === 1 || cell === 2 || cell === 3 || cell === 4 || cell === 5) {
+  const handleRemoveTree = (x, y) => {
+    if (map[y][x] === 1 || map[y][x] === 2 || map[y][x] === 3 || map[y][x] === 4) {
       const newMap = map.map((row, i) => {
-        if (i === rowIndex) {
-          return row.map((cell, j) => (j === cellIndex ? 0 : cell));
+        if (i === y) {
+          return row.map((cell, j) => (j === x ? 0 : cell));
         } else {
           return row;
         }
       });
       setMap(newMap);
     }
-    setDisable(true);
     setOpenBorder(false);
     setRemoveTree(false);
   };
 
-  const handleViewTree = (cell, rowIndex, cellIndex) => {
-    s;
+  const handleViewTree = (x, y) => {
+
   };
 
-  const handleTool = (cell, rowIndex, cellIndex) => {
+  const handleTool = (x, y) => {
     if (isPlantTree) {
-      return handlePlantTree(cell, rowIndex, cellIndex);
+      handlePlantTree(x, y);
+      console.log("Plant")
     }
     if (isRemoveTree) {
-      return handleRemoveTree(cell, rowIndex, cellIndex);
+      handleRemoveTree(x, y);
+      console.log("Remove")
     }
-    if (isOpenDetail) {
-      return handleViewTree(cell, rowIndex, cellIndex);
-    }
-  };
-
-  const renderMap = () => {
-    return map.map((row, rowIndex) => (
-      <View key={rowIndex} style={styles.row}>
-        {row.map((cell, cellIndex) => {
-          if (cell <= 5) {
-            return (
-              <TouchableOpacity
-                key={cellIndex}
-                style={styles.cell}
-                disabled={isDisable}
-                onPress={() => handleTool(cell, rowIndex, cellIndex)}
-              >
-                <View>
-                  {cell === 0 && <Grass openBorder={openBorder} />}
-                  {cell === 1 && <TreePhase1 openBorder={openBorder} />}
-                  {cell === 2 && <TreePhase2 openBorder={openBorder} />}
-                  {cell === 3 && <TreePhase3 openBorder={openBorder} />}
-                  {cell === 4 && <TreePhase4 openBorder={openBorder} />}
-                </View>
-              </TouchableOpacity>
-            );
-          } else {
-            return (
-              <View key={cellIndex} style={styles.cell}>
-                {cell === 6 && <RightLand />}
-                {cell === 7 && <LeftLand />}
-                {cell === 8 && <MiddleLand />}
-                {cell === 9 && <LeftCornerLand />}
-                {cell === 10 && <RightCornerLand />}
-              </View>
-            );
-          }
-        })}
-      </View>
-    ));
   };
 
   return (
@@ -143,14 +99,15 @@ export default function Garden() {
 
       <ReactNativeZoomableView
         maxZoom={1.5}
-        minZoom={0.5}
+        minZoom={0.4}
         zoomStep={0.5}
-        initialZoom={0.5}
+        initialZoom={0.6}
         bindToBorders={true}
-        onZoomAfter={this.logOutZoomState}
-        style={{}}
+        style={{ backgroundColor: 'red' }}
+        contentWidth={600}
+        contentHeight={600}
       >
-        <View styles={styles.mapContainer}>
+        <View style={styles.mapContainer}>
           <View style={styles.assetContainer}>
             {map.map((row, y) =>
               row.map((cellType, x) => (
@@ -159,16 +116,26 @@ export default function Garden() {
                   type={cellType}
                   x={x}
                   y={y}
+                  openBorder={isOpenBorder}
                 />
               ))
             )}
           </View>
           <View style={styles.hitboxContainer}>
             {map.map((row, y) =>
-              row.map((cellType, x) => <HitBox x={x} y={y} />)
+              row.map((cellType, x) => (
+                <HitBox
+                  key={`hitbox_${x}_${y}`}
+                  x={x}
+                  y={y}
+                  openBorder={isOpenBorder}
+                  handleTool={handleTool}
+                />
+              ))
             )}
           </View>
         </View>
+
       </ReactNativeZoomableView>
 
       <BottomSheet
@@ -219,6 +186,8 @@ const styles = StyleSheet.create({
     height: numRows * cellSize,
     width: numColumns * cellSize,
     position: "relative",
+    left: "-15%",
+    top: "20%"
   },
   assetContainer: {
     backgroundColor: "transparent",

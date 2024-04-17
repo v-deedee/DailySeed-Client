@@ -10,9 +10,9 @@ import { Avatar, Badge } from "@rneui/themed";
 
 const numRows = 6; // Number of rows in the garden
 const numColumns = 6; // Number of columns in the garden
-const cellSize = 100; // Fixed size for each cell
+const cellSize = 50; // Fixed size for each cell
 
-const CellComponent = ({ type, x, y }) => {
+const CellComponent = ({ type, x, y, openBorder }) => {
   const assets = {
     // 0: require("../../../../assets/garden/block.png"),
     1: require("../../../../assets/garden/tree3-phase1.png"),
@@ -32,20 +32,18 @@ const CellComponent = ({ type, x, y }) => {
       -(y * cellSize) / 2 +
       (x * cellSize) / 2 -
       (x + y) * 0.22 * cellSize,
-  };
 
+  };
   const cellStyle = () => {
     switch (type) {
       case 1:
-        return { width: "50%", height: "40%", top: '0', left: '25%' };
+        return { width: "50%", height: "40%", top: '0', left: '25%', ...(openBorder ? { opacity: 0.6 } : {}) };
       case 2:
-        return { width: "60%", height: "70%", top: '-45%', left: '20%' };
+        return { width: "60%", height: "70%", top: '-40%', left: '20%', ...(openBorder ? { opacity: 0.4 } : {}) };
       case 3:
-        return { width: "70%", height: "90%", top: '-50%', left: '15%' };
+        return { width: "70%", height: "90%", top: '-55%', left: '15%', ...(openBorder ? { opacity: 0.3 } : {}) };
       case 4:
-        return { width: "80%", height: "110%", top: '-70%', left: '10%' };
-      default:
-        return { width: "100%", height: "100%" };
+        return { width: "80%", height: "110%", top: '-75%', left: '10%', ...(openBorder ? { opacity: 0.2 } : {}) };
     }
   };
 
@@ -56,7 +54,7 @@ const CellComponent = ({ type, x, y }) => {
   );
 };
 
-const HitBox = ({ x, y }) => {
+const HitBox = ({ x, y, openBorder, handleTool }) => {
   const positionStyle = {
     position: "relative",
     left:
@@ -72,162 +70,11 @@ const HitBox = ({ x, y }) => {
   const handlePress = () => {
     // Handle press event here
     console.log(`Cell clicked at (${x}, ${y})`);
+    handleTool(x, y);
   };
 
   return (
-    <Pressable onPress={handlePress} style={[styles.hitbox, positionStyle]}></Pressable>
-  );
-};
-
-const Grass = ({ openBorder }) => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/grass.png")}
-      style={[
-        styles.image,
-        openBorder && { borderWidth: 1, borderColor: "#fff" },
-      ]}
-    />
-  );
-};
-
-const TreePhase1 = ({ openBorder }) => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/grass.png")}
-      style={[
-        styles.image,
-        openBorder && { borderWidth: 1, borderColor: "#fff" },
-      ]}
-    >
-      <View style={styles.treeContainer}>
-        <Image
-          source={require("../../../../assets/garden/tree3-phase1.png")}
-          style={styles.tree}
-        />
-      </View>
-    </ImageBackground>
-  );
-};
-
-const TreePhase2 = ({ openBorder }) => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/grass.png")}
-      style={[
-        styles.image,
-        openBorder && { borderWidth: 1, borderColor: "#fff" },
-      ]}
-    >
-      <View style={styles.treeContainer}>
-        <Image
-          source={require("../../../../assets/garden/tree3-phase2.png")}
-          style={styles.tree}
-        />
-      </View>
-    </ImageBackground>
-  );
-};
-
-const TreePhase3 = ({ openBorder }) => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/grass.png")}
-      style={[
-        styles.image,
-        openBorder && { borderWidth: 1, borderColor: "#fff" },
-      ]}
-    >
-      <View style={styles.treeContainer}>
-        <Image
-          source={require("../../../../assets/garden/tree3-phase3.png")}
-          style={styles.tree}
-        />
-      </View>
-    </ImageBackground>
-  );
-};
-
-const TreePhase4 = ({ openBorder }) => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/grass.png")}
-      style={[
-        styles.image,
-        openBorder && { borderWidth: 1, borderColor: "#fff" },
-      ]}
-    >
-      <View style={styles.treeContainer}>
-        <Image
-          source={require("../../../../assets/garden/tree3-phase4.png")}
-          style={styles.tree}
-        />
-      </View>
-    </ImageBackground>
-  );
-};
-
-const NormalTree = ({ openBorder }) => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/grass.png")}
-      style={[
-        styles.image,
-        openBorder && { borderWidth: 1, borderColor: "#fff" },
-      ]}
-    >
-      <View style={styles.treeContainer}>
-        <Image
-          source={require("../../../../assets/garden/tree.png")}
-          style={styles.tree}
-        />
-      </View>
-    </ImageBackground>
-  );
-};
-
-const LeftLand = () => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/left.png")}
-      style={styles.image}
-    />
-  );
-};
-
-const RightLand = () => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/right.png")}
-      style={styles.image}
-    />
-  );
-};
-
-const MiddleLand = () => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/middle.png")}
-      style={styles.image}
-    />
-  );
-};
-
-const LeftCornerLand = () => {
-  return (
-    <ImageBackground
-      source={require(".../../../../assets/garden/left-corner.png")}
-      style={styles.image}
-    />
-  );
-};
-
-const RightCornerLand = () => {
-  return (
-    <ImageBackground
-      source={require("../../../../assets/garden/right-corner.png")}
-      style={styles.image}
-    />
+    <Pressable onPress={handlePress} style={[styles.hitbox, positionStyle, openBorder && { borderWidth: 2, borderColor: "#fff" }]} />
   );
 };
 
@@ -236,7 +83,7 @@ const TreeBox = ({ toggleBottomSheet }) => {
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={toggleBottomSheet}>
         <Image
-          source={require("../../../../assets/garden/box.png")}
+          source={require("../../../../assets/garden/seeds.png")}
           style={styles.image}
         />
       </TouchableOpacity>
@@ -333,8 +180,8 @@ const styles = StyleSheet.create({
     height: cellSize * 0.6,
     width: cellSize * 0.6,
     margin: cellSize * 0.2,
-    borderColor: "black", // Border color
-    borderWidth: 0.5, // Border width,
+    // borderColor: "black", // Border color
+    // borderWidth: 0.5, // Border width,
     transform: [
       { rotateX: "55deg" },
       { rotateY: "0deg" },
@@ -345,21 +192,10 @@ const styles = StyleSheet.create({
 });
 
 export {
-  Grass,
-  NormalTree,
-  RightLand,
-  MiddleLand,
-  LeftLand,
-  LeftCornerLand,
-  RightCornerLand,
   TreeBox,
   Shovel,
   Loupe,
   TreeAvatar,
-  TreePhase1,
-  TreePhase2,
-  TreePhase3,
-  TreePhase4,
   CellComponent,
   HitBox
 };
