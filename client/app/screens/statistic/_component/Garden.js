@@ -25,6 +25,8 @@ export default function Garden() {
 
   const [isPlantTree, setPlantTree] = useState(false);
 
+  const [selectedTreePhase, setSelectedTreePhase] = useState(null);
+
   const [isRemoveTree, setRemoveTree] = useState(false);
 
   const [isOpenDetail, setOpenDetail] = useState(false);
@@ -33,10 +35,11 @@ export default function Garden() {
 
   const toggleViewBottomSheet = () => setOpenDetail(!isOpenDetail);
 
-  const handleAvatarPress = () => {
+  const handleAvatarPress = (phase) => {
     setOpenBorder(true);
     setPlantTree(true);
     setIsVisible(false);
+    setSelectedTreePhase(phase);
   };
 
   const handleShovelPress = () => {
@@ -48,15 +51,13 @@ export default function Garden() {
     if (map[y][x] === 0) {
       const newMap = map.map((row, i) => {
         if (i === y) {
-          return row.map((cell, j) => (j === x ? 3 : cell));
+          return row.map((cell, j) => (j === x ? selectedTreePhase : cell));
         } else {
           return row;
         }
       });
       setMap(newMap);
     }
-    setOpenBorder(false);
-    setPlantTree(false);
   };
 
   const handleRemoveTree = (x, y) => {
@@ -80,12 +81,21 @@ export default function Garden() {
 
   const handleTool = (x, y) => {
     if (isPlantTree) {
-      handlePlantTree(x, y);
-      console.log("Plant")
+      if (map[y][x] === 0) {
+        handlePlantTree(x, y);
+        console.log("Plant");
+      } else {
+        console.log("Đã có cây được đặt ở đây!!!")
+      }
+      setOpenBorder(false);
+      setPlantTree(false);
+      setSelectedTreePhase(null);
     }
     if (isRemoveTree) {
       handleRemoveTree(x, y);
       console.log("Remove")
+    } else {
+      console.log("Kh có cây nào ở đây đm!!!")
     }
   };
 
@@ -128,7 +138,7 @@ export default function Garden() {
                   key={`hitbox_${x}_${y}`}
                   x={x}
                   y={y}
-                  openBorder={isOpenBorder}
+                  openBorder={(isPlantTree && map[y][x] === 0) || (isRemoveTree && map[y][x] !== 0)}
                   handleTool={handleTool}
                 />
               ))
@@ -138,32 +148,17 @@ export default function Garden() {
 
       </ReactNativeZoomableView>
 
-      <BottomSheet
-        isVisible={isVisible}
-        onBackdropPress={togglePlantBottomSheet}
-      >
-        <View
-          style={[styles.bottomSheetPlant, { justifyContent: "space-around" }]}
-        >
-          <TreeAvatar
-            treeStatus="normal"
-            value={10}
-            handleAvatarPress={handleAvatarPress}
-          />
-          <TreeAvatar treeStatus="normal" value={10} />
-          <TreeAvatar treeStatus="normal" value={10} />
-          <TreeAvatar treeStatus="normal" value={12} />
-          <TreeAvatar treeStatus="normal" value={10} />
+      <BottomSheet isVisible={isVisible} onBackdropPress={togglePlantBottomSheet}>
+        <View style={[styles.bottomSheetPlant, { justifyContent: "space-around" }]}>
+          <TreeAvatar treeStatus="phase1" value={10} handleAvatarPress={() => handleAvatarPress(1)} />
+          <TreeAvatar treeStatus="phase2" value={10} handleAvatarPress={() => handleAvatarPress(2)} />
+          <TreeAvatar treeStatus="phase3" value={12} handleAvatarPress={() => handleAvatarPress(3)} />
+          <TreeAvatar treeStatus="phase4" value={10} handleAvatarPress={() => handleAvatarPress(4)} />
         </View>
       </BottomSheet>
 
-      <BottomSheet
-        isVisible={isOpenDetail}
-        onBackdropPress={toggleViewBottomSheet}
-      >
-        <View
-          style={[styles.bottomSheetDetail, { justifyContent: "space-around" }]}
-        >
+      <BottomSheet isVisible={isOpenDetail} onBackdropPress={toggleViewBottomSheet}>
+        <View style={[styles.bottomSheetDetail, { justifyContent: "space-around" }]}>
           {/* <TreeDetail /> */}
         </View>
       </BottomSheet>

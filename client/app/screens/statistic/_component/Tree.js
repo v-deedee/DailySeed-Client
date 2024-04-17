@@ -119,26 +119,73 @@ const Loupe = ({ handleLoupePress }) => {
 
 const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
   switch (treeStatus) {
-    case "normal":
+    case "phase1":
       return (
-        <Avatar
-          size={60}
-          rounded
-          source={require("../../../../assets/garden/tree.png")}
-          containerStyle={{ backgroundColor: "grey" }}
-          onPress={handleAvatarPress}
-        >
+        <View>
+          <Avatar
+            size={60}
+            rounded
+            source={require("../../../../assets/garden/tree3-phase1.png")}
+            containerStyle={{ backgroundColor: "#fcf0be" }}
+            onPress={handleAvatarPress}
+          >
+          </Avatar>
           <Badge
             status="success"
             value={value}
-            containerStyle={{
-              position: "absolute",
-              top: 65,
-              left: 16,
-              zIndex: 100,
-            }}
           />
-        </Avatar>
+        </View>
+      );
+    case "phase2":
+      return (
+        <View>
+          <Avatar
+            size={60}
+            rounded
+            source={require("../../../../assets/garden/tree3-phase2.png")}
+            containerStyle={{ backgroundColor: "#fcf0be" }}
+            onPress={handleAvatarPress}
+          >
+          </Avatar>
+          <Badge
+            status="success"
+            value={value}
+          />
+        </View>
+      );
+    case "phase3":
+      return (
+        <View>
+          <Avatar
+            size={60}
+            rounded
+            source={require("../../../../assets/garden/tree3-phase3.png")}
+            containerStyle={{ backgroundColor: "#fcf0be" }}
+            onPress={handleAvatarPress}
+          >
+          </Avatar>
+          <Badge
+            status="success"
+            value={value}
+          />
+        </View>
+      );
+    case "phase4":
+      return (
+        <View>
+          <Avatar
+            size={60}
+            rounded
+            source={require("../../../../assets/garden/tree3-phase4.png")}
+            containerStyle={{ backgroundColor: "#fcf0be" }}
+            onPress={handleAvatarPress}
+          >
+          </Avatar>
+          <Badge
+            status="success"
+            value={value}
+          />
+        </View>
       );
   }
 };
