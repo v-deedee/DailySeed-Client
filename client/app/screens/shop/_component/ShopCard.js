@@ -1,16 +1,24 @@
 import { Button, Card } from '@rneui/themed';
-import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, StyleSheet, Image, ImageBackground } from "react-native";
 
 export default function ShopCard() {
     return (
         <Card containerStyle={styles.cardContainer}>
             <Card.Image source={require("../../../../assets/theme/background.png")} style={styles.image} >
                 <View style={styles.treeImgContainer}>
-                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
-                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
-                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
-                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
-                    <ImageBackground source={require('../../../../assets/garden/tree.png')} style={styles.treeImg} />
+                    <View style={{ justifyContent: 'flex-end' }}>
+                        <Image source={require('../../../../assets/garden/tree1-phase1.png')} style={{ width: 50, height: 40 }} />
+                    </View>
+
+                    <View style={{ justifyContent: 'flex-end' }}>
+                        <Image source={require('../../../../assets/garden/tree1-phase2.png')} style={{ width: 60, height: 70 }} />
+                    </View>
+                    <View style={{ justifyContent: 'flex-end' }}>
+                        <Image source={require('../../../../assets/garden/tree1-phase3.png')} style={{ width: 100, height: 90 }} />
+                    </View>
+                    <View style={{ justifyContent: 'flex-end' }}>
+                        <Image source={require('../../../../assets/garden/tree1-phase4.png')} style={{ width: 120, height: 100 }} />
+                    </View>
                 </View>
             </Card.Image>
 
@@ -20,13 +28,15 @@ export default function ShopCard() {
                     <Text style={styles.description}>A Picnic in th spring breeze</Text>
                 </View>
                 <Button
-                    title="380"
-                    type='outline'
+                    color="#ffecb3"
                     buttonStyle={styles.button}
-                    containerStyle={styles.buttonContainer}
-                    titleStyle={styles.buttonTitle}
                     onPress={() => console.log('aye')}
-                />
+                >
+                    <View style={styles.coinContainer}>
+                        <ImageBackground source={require('../../../../assets/shop/coin.png')} style={{ width: 30, height: 30 }} />
+                        <Text style={styles}>100</Text>
+                    </View>
+                </Button>
             </View>
         </Card>
     );
@@ -52,7 +62,8 @@ const styles = StyleSheet.create({
     },
     treeImgContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        width: '100%',
+        justifyContent: 'space-evenly',
     },
     treeImg: {
         width: 60,
@@ -62,7 +73,8 @@ const styles = StyleSheet.create({
     infoContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingTop: 10
+        paddingTop: 10,
+        alignItems: 'center'
     },
     title: {
         fontSize: 15,
@@ -70,18 +82,20 @@ const styles = StyleSheet.create({
         color: "#474838",
     },
     description: {
-        marginTop: 5,
-    },
-    buttonContainer: {
-        height: 50,
-        width: 80,
-    },
-    buttonTitle: {
-        color: 'black'
+        marginTop: 3,
     },
     button: {
         borderRadius: 100,
-        borderColor: '#E8E8E8',
-        borderWidth: 2
-    }
+        borderWidth: 2,
+        borderWidth: 0,
+        shadowColor: 'rgba(0,0,0, 0.0)',
+        shadowOffset: { height: 0, width: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        elevation: 0,
+    },
+    coinContainer: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
 })

@@ -43,7 +43,7 @@ const CellComponent = ({ type, x, y, openBorder }) => {
       case 3:
         return { width: "70%", height: "90%", top: '-55%', left: '15%', ...(openBorder ? { opacity: 0.3 } : {}) };
       case 4:
-        return { width: "80%", height: "110%", top: '-75%', left: '10%', ...(openBorder ? { opacity: 0.2 } : {}) };
+        return { width: "80%", height: "120%", top: '-75%', left: '10%', ...(openBorder ? { opacity: 0.2 } : {}) };
     }
   };
 
