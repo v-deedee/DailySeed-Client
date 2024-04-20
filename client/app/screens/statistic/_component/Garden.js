@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Shovel, Loupe, TreeAvatar, TreeBox, CellComponent, HitBox } from "./Tree";
-import { StyleSheet, View, TouchableOpacity, ImageBackground } from "react-native";
+import { useRef, useState } from "react";
+import { Shovel, Loupe, TreeAvatar, TreeBox, CellComponent, HitBox, CrossHair } from "./Tree";
+import { StyleSheet, View, TouchableOpacity, Text, ImageBackground } from "react-native";
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
 import { BottomSheet } from "@rneui/themed";
 // import TreeDetail from "./TreeDetail";
@@ -11,12 +11,12 @@ const cellSize = 50; // Fixed size for each cell
 
 export default function Garden() {
   const [map, setMap] = useState([
-    [0, 3, 4, 0, 0, 0],
-    [0, 3, 4, 0, 0, 0],
-    [0, 3, 4, 0, 1, 0],
-    [0, 0, 3, 0, 1, 0],
-    [0, 1, 3, 1, 1, 2],
-    [0, 0, 0, 0, 2, 4],
+    [3, 1, 0, 4, 0, 2],
+    [0, 0, 0, 3, 0, 0],
+    [0, 0, 0, 0, 2, 0],
+    [0, 0, 0, 0, 3, 0],
+    [0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0],
   ]);
 
   const [isVisible, setIsVisible] = useState(false);
@@ -34,6 +34,8 @@ export default function Garden() {
   const togglePlantBottomSheet = () => setIsVisible(!isVisible);
 
   const toggleViewBottomSheet = () => setOpenDetail(!isOpenDetail);
+
+  const zoomableViewRef = useRef(null);
 
   const handleAvatarPress = (phase) => {
     setOpenBorder(true);
@@ -79,6 +81,10 @@ export default function Garden() {
 
   };
 
+  const resetZoom = () => {
+    zoomableViewRef.current?.zoomTo(0.9)
+  }
+
   const handleTool = (x, y) => {
     if (isPlantTree) {
       if (map[y][x] === 0) {
@@ -95,7 +101,7 @@ export default function Garden() {
       handleRemoveTree(x, y);
       console.log("Remove")
     } else {
-      console.log("Kh có cây nào ở đây đm!!!")
+      console.log()
     }
   };
 
@@ -104,18 +110,19 @@ export default function Garden() {
       <View style={styles.gardenTool}>
         <TreeBox toggleBottomSheet={togglePlantBottomSheet} />
         <Shovel handleShovelPress={handleShovelPress} />
-        <Loupe handleLoupePress={toggleViewBottomSheet} />
+        <CrossHair resetZoom={resetZoom} />
       </View>
 
       <ReactNativeZoomableView
         maxZoom={1.5}
-        minZoom={0.4}
+        minZoom={0.5}
         zoomStep={0.5}
-        initialZoom={0.6}
+        initialZoom={0.9}
         bindToBorders={true}
-        style={{ backgroundColor: 'red' }}
-        contentWidth={600}
-        contentHeight={600}
+        contentWidth={400}
+        contentHeight={400}
+        doubleTapZoomToCenter={true}
+        ref={zoomableViewRef}
       >
         <View style={styles.mapContainer}>
           <View style={styles.assetContainer}>
@@ -181,8 +188,8 @@ const styles = StyleSheet.create({
     height: numRows * cellSize,
     width: numColumns * cellSize,
     position: "relative",
-    left: "-15%",
-    top: "20%"
+    left: -((numColumns + 1) * cellSize) / 2 + Math.floor(numColumns / 2) * cellSize,
+    top: ((numColumns - 2) * cellSize) / 2 - (numColumns - 2) * 0.22 * cellSize,
   },
   assetContainer: {
     backgroundColor: "transparent",

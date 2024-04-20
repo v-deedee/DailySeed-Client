@@ -32,7 +32,6 @@ const CellComponent = ({ type, x, y, openBorder }) => {
       -(y * cellSize) / 2 +
       (x * cellSize) / 2 -
       (x + y) * 0.22 * cellSize,
-
   };
   const cellStyle = () => {
     switch (type) {
@@ -48,9 +47,11 @@ const CellComponent = ({ type, x, y, openBorder }) => {
   };
 
   return (
-    <ImageBackground source={require("../../../../assets/garden/block.png")} style={[styles.img, positionStyle]}>
-      <Image source={assets[type]} style={cellStyle()} />
-    </ImageBackground>
+    <View>
+      <ImageBackground source={require("../../../../assets/garden/block.png")} style={[styles.img, positionStyle]}>
+        <Image source={assets[type]} style={cellStyle()} />
+      </ImageBackground>
+    </View>
   );
 };
 
@@ -74,7 +75,9 @@ const HitBox = ({ x, y, openBorder, handleTool }) => {
   };
 
   return (
-    <Pressable onPress={handlePress} style={[styles.hitbox, positionStyle, openBorder && { borderWidth: 2, borderColor: "#fff" }]} />
+    <View>
+      <Pressable onPress={handlePress} style={[styles.hitbox, positionStyle, openBorder && { borderWidth: 2, borderColor: "#fff" }]} />
+    </View>
   );
 };
 
@@ -112,6 +115,19 @@ const Loupe = ({ handleLoupePress }) => {
           source={require("../../../../assets/garden/loupe.png")}
           style={styles.image}
         /> */}
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const CrossHair = ({ resetZoom }) => {
+  return (
+    <View>
+      <TouchableOpacity activeOpacity={0.5} onPress={resetZoom}>
+        <ImageBackground
+          source={require("../../../../assets/garden/crosshair.png")}
+          style={styles.image}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -242,6 +258,7 @@ export {
   TreeBox,
   Shovel,
   Loupe,
+  CrossHair,
   TreeAvatar,
   CellComponent,
   HitBox
