@@ -1,5 +1,5 @@
 import { Card, Switch } from '@rneui/themed';
-import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
 
 export default function CustomCard() {
@@ -10,7 +10,7 @@ export default function CustomCard() {
                 <View style={styles.row}>
                     <View style={styles.row}>
                         <View>
-                            <FontAwesome6 name="bell" size={30} />
+                            <MaterialIcons name="notifications-on" size={25} color='#b2b2b2' />
                         </View>
 
                         <View style={{ marginLeft: 10 }}>
@@ -19,16 +19,16 @@ export default function CustomCard() {
                     </View>
 
                     <View style={styles.row}>
-                        <Switch />
+                        <Switch color='#50AA75' />
                     </View>
                 </View>
 
-                <Card.Divider style={styles.divider} />
+                {/* <Card.Divider style={styles.divider} />
 
                 <View style={styles.row}>
                     <View style={styles.row}>
                         <View>
-                            <FontAwesome6 name="moon" size={30} />
+                  
                         </View>
 
                         <View style={{ marginLeft: 10 }}>
@@ -39,7 +39,7 @@ export default function CustomCard() {
                     <View style={styles.row}>
                         <Switch />
                     </View>
-                </View>
+                </View> */}
             </Card>
         </View>
     );
@@ -57,7 +57,13 @@ const styles = StyleSheet.create({
         padding: 15,
         margin: 0,
         backgroundColor: 'white',
-        borderRadius: 10
+        borderRadius: 20,
+        borderWidth: 0,
+        shadowColor: 'rgba(0,0,0, 0.0)',
+        shadowOffset: { height: 0, width: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        elevation: 0,
     },
     innerCard: {
         flexDirection: 'row',

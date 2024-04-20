@@ -1,5 +1,5 @@
 import { Card, Button } from '@rneui/themed';
-import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
 import UserSingleton from '../../../services/user-singleton';
 
@@ -11,7 +11,7 @@ export default function AccoutCard() {
                 <View style={styles.row}>
                     <View style={styles.row}>
                         <View>
-                            <FontAwesome6 name="user" size={30} />
+                            <FontAwesome name="user-circle" size={25} color='#b2b2b2' />
                         </View>
 
                         <View style={{ marginLeft: 10 }}>
@@ -44,7 +44,13 @@ const styles = StyleSheet.create({
         padding: 15,
         margin: 0,
         backgroundColor: 'white',
-        borderRadius: 10
+        borderRadius: 20,
+        borderWidth: 0,
+        shadowColor: 'rgba(0,0,0, 0.0)',
+        shadowOffset: { height: 0, width: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        elevation: 0,
     },
     innerCard: {
         flexDirection: 'row',

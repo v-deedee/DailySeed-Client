@@ -5,13 +5,14 @@ import Login from "./app/navigation/LoginStack";
 import UserClass from "./app/services/models/user";
 import UserSingleton from "./app/services/user-singleton";
 import LoadingScreen from "./app/screens/LoadingScreen"; // Import màn hình loading
+import { StatusBar } from "react-native";
 
 function getLoginStatus() {
   return false;
 }
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
   const [isSignedIn, setIsSignedIn] = useState(getLoginStatus());
 
   useEffect(() => {
@@ -22,9 +23,9 @@ export default function App() {
         const userName = UserSingleton.getInstance().getUserName();
         console.log(userName);
       }
-      setIsLoading(false); 
+      setIsLoading(false);
     }
-    
+
     checkLoginStatus();
   }, []);
 
@@ -35,6 +36,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
+      <StatusBar backgroundColor={"#fbf5e5"} />
       {isSignedIn ? (
         <User signOut={() => setIsSignedIn(false)} />
       ) : (
