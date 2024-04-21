@@ -133,6 +133,19 @@ const CrossHair = ({ resetZoom }) => {
   );
 };
 
+const ShareSocial = ({ handleShare }) => {
+  return (
+    <View>
+      <TouchableOpacity activeOpacity={0.5} onPress={handleShare}>
+        <ImageBackground
+          source={require("../../../../assets/garden/share.png")}
+          style={styles.image}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
   switch (treeStatus) {
     case "phase1":
@@ -259,6 +272,7 @@ export {
   Shovel,
   Loupe,
   CrossHair,
+  ShareSocial,
   TreeAvatar,
   CellComponent,
   HitBox

@@ -34,7 +34,7 @@ export default function ShopCard() {
                 >
                     <View style={styles.coinContainer}>
                         <ImageBackground source={require('../../../../assets/shop/coin.png')} style={{ width: 30, height: 30 }} />
-                        <Text style={styles}>100</Text>
+                        <Text>100</Text>
                     </View>
                 </Button>
             </View>

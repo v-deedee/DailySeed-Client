@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
-import { Shovel, Loupe, TreeAvatar, TreeBox, CellComponent, HitBox, CrossHair } from "./Tree";
+import { Shovel, Loupe, TreeAvatar, TreeBox, CellComponent, HitBox, CrossHair, ShareSocial } from "./Tree";
 import { StyleSheet, View, TouchableOpacity, Text, ImageBackground } from "react-native";
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
 import { BottomSheet } from "@rneui/themed";
-// import TreeDetail from "./TreeDetail";
+import { captureRef } from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
 
 const numRows = 6; // Number of rows in the garden
 const numColumns = 6; // Number of columns in the garden
@@ -12,11 +13,11 @@ const cellSize = 50; // Fixed size for each cell
 export default function Garden() {
   const [map, setMap] = useState([
     [3, 1, 0, 4, 0, 2],
-    [0, 0, 0, 3, 0, 0],
-    [0, 0, 0, 0, 2, 0],
-    [0, 0, 0, 0, 3, 0],
-    [0, 0, 0, 0, 0, 0],
-    [3, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 1, 2, 0],
+    [0, 0, 3, 2, 3, 0],
+    [1, 4, 0, 0, 0, 2],
+    [3, 0, 0, 1, 1, 0],
   ]);
 
   const [isVisible, setIsVisible] = useState(false);
@@ -36,6 +37,8 @@ export default function Garden() {
   const toggleViewBottomSheet = () => setOpenDetail(!isOpenDetail);
 
   const zoomableViewRef = useRef(null);
+
+  const gardenShareRef = useRef();
 
   const handleAvatarPress = (phase) => {
     setOpenBorder(true);
@@ -85,6 +88,19 @@ export default function Garden() {
     zoomableViewRef.current?.zoomTo(0.9)
   }
 
+  const shareGarden = async () => {
+    try {
+      const sharedImageUri = await captureRef(gardenShareRef, {
+        format: 'png',
+        quality: 1,
+      });
+
+      await Sharing.shareAsync(sharedImageUri);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleTool = (x, y) => {
     if (isPlantTree) {
       if (map[y][x] === 0) {
@@ -110,6 +126,10 @@ export default function Garden() {
       <View style={styles.gardenTool}>
         <TreeBox toggleBottomSheet={togglePlantBottomSheet} />
         <Shovel handleShovelPress={handleShovelPress} />
+      </View>
+
+      <View style={styles.socialTool}>
+        <ShareSocial handleShare={shareGarden} />
         <CrossHair resetZoom={resetZoom} />
       </View>
 
@@ -124,35 +144,36 @@ export default function Garden() {
         doubleTapZoomToCenter={true}
         ref={zoomableViewRef}
       >
-        <View style={styles.mapContainer}>
-          <View style={styles.assetContainer}>
-            {map.map((row, y) =>
-              row.map((cellType, x) => (
-                <CellComponent
-                  key={`${x}_${y}`}
-                  type={cellType}
-                  x={x}
-                  y={y}
-                  openBorder={isOpenBorder}
-                />
-              ))
-            )}
-          </View>
-          <View style={styles.hitboxContainer}>
-            {map.map((row, y) =>
-              row.map((cellType, x) => (
-                <HitBox
-                  key={`hitbox_${x}_${y}`}
-                  x={x}
-                  y={y}
-                  openBorder={(isPlantTree && map[y][x] === 0) || (isRemoveTree && map[y][x] !== 0)}
-                  handleTool={handleTool}
-                />
-              ))
-            )}
+        <View ref={gardenShareRef} collapsable={false} style={{ backgroundColor: '#fbf5e5' }}>
+          <View style={styles.mapContainer} >
+            <View style={styles.assetContainer} >
+              {map.map((row, y) =>
+                row.map((cellType, x) => (
+                  <CellComponent
+                    key={`${x}_${y}`}
+                    type={cellType}
+                    x={x}
+                    y={y}
+                    openBorder={isOpenBorder}
+                  />
+                ))
+              )}
+            </View>
+            <View style={styles.hitboxContainer}>
+              {map.map((row, y) =>
+                row.map((cellType, x) => (
+                  <HitBox
+                    key={`hitbox_${x}_${y}`}
+                    x={x}
+                    y={y}
+                    openBorder={(isPlantTree && map[y][x] === 0) || (isRemoveTree && map[y][x] !== 0)}
+                    handleTool={handleTool}
+                  />
+                ))
+              )}
+            </View>
           </View>
         </View>
-
       </ReactNativeZoomableView>
 
       <BottomSheet isVisible={isVisible} onBackdropPress={togglePlantBottomSheet}>
@@ -221,9 +242,24 @@ const styles = StyleSheet.create({
   gardenTool: {
     backgroundColor: "transparent",
     height: 0,
+    position: 'relative',
+    top: 10,
+    gap: 5,
+    right: 10,
     flexDirection: "row",
     justifyContent: "flex-end",
     paddingTop: 0,
+    zIndex: 1,
+  },
+  socialTool: {
+    backgroundColor: "transparent",
+    height: 0,
+    position: 'relative',
+    top: 10,
+    gap: 5,
+    left: 10,
+    flexDirection: "row",
+    justifyContent: "flex-start",
     zIndex: 1,
   },
   bottomSheetPlant: {
