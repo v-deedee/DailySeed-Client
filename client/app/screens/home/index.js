@@ -41,7 +41,7 @@ export default function HomeScreen({ navigation }) {
         {() => (
           <View style={styles.treeBox}>
             <Image
-              source={require("../../../assets/garden/tree3-phase4.png")}
+              source={require("../../../assets/garden/Tree3/tree3-phase3.png")}
               style={styles.tree}
             />
           </View>
