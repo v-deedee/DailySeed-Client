@@ -169,13 +169,22 @@ const RecordScreen = ({ navigation }) => {
                 backgroundColor: "transparent",
               }}
               thumbStyle={{
-                height: 40,
-                width: 40,
-                backgroundColor: "transparent",
+                height: 60,
+                width: 60,
+                backgroundColor: "#F9FDB8",
+                borderRadius: 999,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
               }}
               thumbProps={{
                 children: (
-                  <Text style={{ fontSize: 35, marginTop: -5 }}>
+                  <Text
+                    style={{
+                      fontSize: 40,
+                      marginTop: -3,
+                    }}
+                  >
                     {habit.levels[values[index]].icon}
                   </Text>
                 ),
@@ -199,15 +208,6 @@ const RecordScreen = ({ navigation }) => {
             </View>
           </View>
         ))}
-
-        {/* <View style={styles.addBox}>
-          <TouchableOpacity style={styles.addButton}>
-            <MaterialIcons name="add-box" color={"#50AA75"} size={35} />
-            <Text style={{ color: "#50AA75", fontWeight: "bold" }}>
-              Add your own habit
-            </Text>
-          </TouchableOpacity>
-        </View> */}
       </ScrollView>
 
       <View style={styles.submitBox}>
