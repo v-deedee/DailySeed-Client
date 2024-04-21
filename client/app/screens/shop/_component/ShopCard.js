@@ -7,17 +7,16 @@ export default function ShopCard() {
             <Card.Image source={require("../../../../assets/theme/background.png")} style={styles.image} >
                 <View style={styles.treeImgContainer}>
                     <View style={{ justifyContent: 'flex-end' }}>
-                        <Image source={require('../../../../assets/garden/tree1-phase1.png')} style={{ width: 50, height: 40 }} />
-                    </View>
-
-                    <View style={{ justifyContent: 'flex-end' }}>
-                        <Image source={require('../../../../assets/garden/tree1-phase2.png')} style={{ width: 60, height: 70 }} />
+                        <Image source={require("../../../../assets/garden/Tree2/tree2-phase1.png")} style={{ width: 40, height: 40 }} />
                     </View>
                     <View style={{ justifyContent: 'flex-end' }}>
-                        <Image source={require('../../../../assets/garden/tree1-phase3.png')} style={{ width: 100, height: 90 }} />
+                        <Image source={require("../../../../assets/garden/Tree2/tree2-phase2.png")} style={{ width: 60, height: 70 }} />
                     </View>
                     <View style={{ justifyContent: 'flex-end' }}>
-                        <Image source={require('../../../../assets/garden/tree1-phase4.png')} style={{ width: 120, height: 100 }} />
+                        <Image source={require("../../../../assets/garden/Tree2/tree2-phase3.png")} style={{ width: 80, height: 80 }} />
+                    </View>
+                    <View style={{ justifyContent: 'flex-end' }}>
+                        <Image source={require("../../../../assets/garden/Tree2/tree2-phase4.png")} style={{ width: 100, height: 100 }} />
                     </View>
                 </View>
             </Card.Image>
@@ -34,7 +33,7 @@ export default function ShopCard() {
                 >
                     <View style={styles.coinContainer}>
                         <ImageBackground source={require('../../../../assets/shop/coin.png')} style={{ width: 30, height: 30 }} />
-                        <Text style={styles}>100</Text>
+                        <Text>100</Text>
                     </View>
                 </Button>
             </View>

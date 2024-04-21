@@ -21,7 +21,7 @@ export default function Chart() {
         labels: ["1/3", "6/3", "11/3", "16/3", "21/3", "26/3", "31/3"],
         datasets: [
             {
-                data: [20, 45, 28, 80, 99, 43, 20 ],
+                data: [20, 45, 28, 80, 99, 43, 20],
                 strokeWidth: 2 // optional
             }
         ],
@@ -30,7 +30,9 @@ export default function Chart() {
         <View style={{ marginTop: -100, flex: 2 }}>
             <Card containerStyle={{ paddingLeft: 0, paddingRight: 0, borderRadius: 20 }}>
                 <Card.Title>Status Flow</Card.Title>
-                <Card.Divider />
+                <View style={{ width: "100%", alignItems: 'center' }}>
+                    <Card.Divider style={{ width: "85%" }} />
+                </View>
                 <LineChart
                     data={data}
                     width={screenWidth - 35}
