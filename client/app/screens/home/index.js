@@ -1,63 +1,135 @@
-import { StyleSheet, Image, View, Text } from "react-native";
-import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { StyleSheet, Image, View, Text, StatusBar } from "react-native";
 import { useEffect, useState } from "react";
 import { Button } from "@rneui/themed";
-import { getCurrentDate } from "../../components/Calendar";
 import { useRoute } from "@react-navigation/native";
+import { getCurrentDate } from "../../components/Calendar";
+import UserSingleton from "../../services/user-singleton";
+import ProgressCircle from "./_component/ProgressCircle";
+import SelectTreeModal from "./_component/modals/SelectTreeModal";
 
 export default function HomeScreen({ navigation }) {
   const route = useRoute();
   const value = route.params?.progress;
-  console.log(value);
 
-  const [progress, setProgress] = useState(10);
+  const [openSelectTreeModal, setOpenSelectTreeModal] = useState(true);
 
-  useEffect(() => {
-    if (value != undefined) {
-      setProgress(progress + value);
-    } else {
-      console.log("false");
-    }
-  }, [value]);
+  const [treeType, setTreeType] = useState(1);
+
+  const [progress, setProgress] = useState(75);
+
+  const currentDate = getCurrentDate();
+
+  const toggleSelectTreeModal = () => {
+    setOpenSelectTreeModal(!openSelectTreeModal);
+  };
 
   const openRecord = () => {
     navigation.navigate("Record");
   };
 
-  const currentDate = getCurrentDate();
+  useEffect(() => {
+    if (value != undefined && progress < 100) {
+      setProgress(progress + value);
+    } else {
+      console.log("Value is undefined");
+    }
+  }, [value]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.date}>{currentDate}</Text>
-      <AnimatedCircularProgress
-        size={200}
-        width={15}
-        fill={progress}
-        lineCap="round"
-        rotation={0}
-        tintColor="#184C45"
-        backgroundColor="#D8E1D0"
-      >
-        {() => (
-          <View style={styles.treeBox}>
-            <Image
-              source={require("../../../assets/garden/tree3-phase4.png")}
-              style={styles.tree}
-            />
-          </View>
-        )}
-      </AnimatedCircularProgress>
+      <StatusBar backgroundColor="black" />
 
-      <Button
-        title={"Record your day"}
-        containerStyle={{
-          width: 200,
-          margin: 20,
+      {/* Head: name + coin */}
+      <View
+        style={{
+          padding: 20,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
-        buttonStyle={[styles.button, styles.shadowProp]}
-        radius={50}
-        color={"#184D47"}
-        onPress={openRecord}
+      >
+        <View
+          style={{
+            backgroundColor: "#deffff",
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+            borderRadius: 10,
+            flexDirection: "row",
+            gap: 5,
+          }}
+        >
+          <Image
+            source={require("../../../assets/home/diary.png")}
+            style={{ width: 25, height: 25 }}
+          />
+          <Text style={{ fontSize: 16, fontWeight: 700 }}>
+            {`${UserSingleton.getInstance().getUserName()}'s diary`}
+          </Text>
+        </View>
+        <View style={styles.coinContainer}>
+          <Image
+            source={require("../../../assets/shop/coin.png")}
+            style={{ width: 25, height: 25 }}
+          />
+          <Text style={{ fontWeight: 700 }}>15</Text>
+        </View>
+      </View>
+
+      {/* Date */}
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <Text style={{ color: "#787878", fontWeight: 700 }}>{currentDate}</Text>
+      </View>
+
+      {/* Main */}
+      <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+        {/* Instruction */}
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.instruction}>
+            Record your day and build up garden !!!
+          </Text>
+        </View>
+
+        {/* Progress */}
+        <View
+          style={{
+            marginVertical: 10,
+            marginRight: 15,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 5,
+          }}
+        >
+          <Image
+            source={require("../../../assets/home/water.png")}
+            style={{ width: 25, height: 25 }}
+          />
+          <Text style={{ fontWeight: 700 }}>{progress}%</Text>
+        </View>
+
+        <ProgressCircle progress={progress} treeType={treeType} />
+
+        <Button
+          title={"Start"}
+          titleStyle={{ fontWeight: 700 }}
+          containerStyle={{
+            width: 200,
+            margin: 20,
+            marginBottom: 100,
+          }}
+          buttonStyle={{ padding: 20 }}
+          style={{}}
+          radius={50}
+          color={"#184D47"}
+          onPress={openRecord}
+        />
+      </View>
+
+      {/* Select tree modal */}
+      <SelectTreeModal
+        isOpen={openSelectTreeModal}
+        toggle={toggleSelectTreeModal}
+        treeType={treeType}
+        setTreeType={setTreeType}
       />
     </View>
   );
@@ -67,14 +139,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FBF5E5",
-    alignItems: "center",
-    justifyContent: "center",
   },
-  date: {
+  coinContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 100,
+    flexDirection: "row",
+    gap: 5,
+    backgroundColor: "#ffecb3",
+    alignItems: "center",
+  },
+  instruction: {
+    width: 200,
     marginVertical: 20,
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#474838",
+    // color: "#474838",
+    textAlign: "center",
+    lineHeight: 30,
   },
   treeBox: {
     display: "flex",
@@ -84,18 +165,5 @@ const styles = StyleSheet.create({
     height: 200,
     backgroundColor: "#EDEBE4",
     borderRadius: 9999,
-  },
-  tree: {
-    width: 150,
-    height: 150,
-  },
-  button: {
-    padding: 20,
-  },
-  shadowProp: {
-    shadowColor: "#171717",
-    shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 3,
   },
 });

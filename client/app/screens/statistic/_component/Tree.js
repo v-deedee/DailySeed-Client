@@ -15,10 +15,10 @@ const cellSize = 50; // Fixed size for each cell
 const CellComponent = ({ type, x, y, openBorder }) => {
   const assets = {
     // 0: require("../../../../assets/garden/block.png"),
-    1: require("../../../../assets/garden/tree3-phase1.png"),
-    2: require("../../../../assets/garden/tree3-phase2.png"),
-    3: require("../../../../assets/garden/tree3-phase3.png"),
-    4: require("../../../../assets/garden/tree3-phase4.png"),
+    1: require("../../../../assets/garden/Tree3/tree3-phase1.png"),
+    2: require("../../../../assets/garden/Tree3/tree3-phase2.png"),
+    3: require("../../../../assets/garden/Tree3/tree3-phase3.png"),
+    4: require("../../../../assets/garden/Tree3/tree3-phase4.png"),
   };
 
   // Calculate position based on cell position
@@ -32,25 +32,26 @@ const CellComponent = ({ type, x, y, openBorder }) => {
       -(y * cellSize) / 2 +
       (x * cellSize) / 2 -
       (x + y) * 0.22 * cellSize,
-
   };
   const cellStyle = () => {
     switch (type) {
       case 1:
-        return { width: "50%", height: "40%", top: '0', left: '25%', ...(openBorder ? { opacity: 0.6 } : {}) };
+        return { width: "40%", height: "40%", top: '0', left: '35%', ...(openBorder ? { opacity: 0.6 } : {}) };
       case 2:
-        return { width: "60%", height: "70%", top: '-40%', left: '20%', ...(openBorder ? { opacity: 0.4 } : {}) };
+        return { width: "60%", height: "70%", top: '-35%', left: '20%', ...(openBorder ? { opacity: 0.4 } : {}) };
       case 3:
-        return { width: "70%", height: "90%", top: '-55%', left: '15%', ...(openBorder ? { opacity: 0.3 } : {}) };
+        return { width: "80%", height: "80%", top: '-40%', left: '10%', ...(openBorder ? { opacity: 0.3 } : {}) };
       case 4:
-        return { width: "80%", height: "120%", top: '-75%', left: '10%', ...(openBorder ? { opacity: 0.2 } : {}) };
+        return { width: "100%", height: "100%", top: '-60%', left: '0%', ...(openBorder ? { opacity: 0.2 } : {}) };
     }
   };
 
   return (
-    <ImageBackground source={require("../../../../assets/garden/block.png")} style={[styles.img, positionStyle]}>
-      <Image source={assets[type]} style={cellStyle()} />
-    </ImageBackground>
+    <View>
+      <ImageBackground source={require("../../../../assets/garden/block.png")} style={[styles.img, positionStyle]}>
+        <Image source={assets[type]} style={cellStyle()} />
+      </ImageBackground>
+    </View>
   );
 };
 
@@ -74,7 +75,9 @@ const HitBox = ({ x, y, openBorder, handleTool }) => {
   };
 
   return (
-    <Pressable onPress={handlePress} style={[styles.hitbox, positionStyle, openBorder && { borderWidth: 2, borderColor: "#fff" }]} />
+    <View>
+      <Pressable onPress={handlePress} style={[styles.hitbox, positionStyle, openBorder && { borderWidth: 2, borderColor: "#fff" }]} />
+    </View>
   );
 };
 
@@ -108,10 +111,36 @@ const Loupe = ({ handleLoupePress }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={handleLoupePress}>
-        {/* <ImageBackground
-          source={require("../../../../assets/garden/loupe.png")}
+        <ImageBackground
+          source={require("../../../../assets/garden/tree.png")}
           style={styles.image}
-        /> */}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const CrossHair = ({ resetZoom }) => {
+  return (
+    <View>
+      <TouchableOpacity activeOpacity={0.5} onPress={resetZoom}>
+        <ImageBackground
+          source={require("../../../../assets/garden/crosshair.png")}
+          style={styles.image}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const ShareSocial = ({ handleShare }) => {
+  return (
+    <View>
+      <TouchableOpacity activeOpacity={0.5} onPress={handleShare}>
+        <ImageBackground
+          source={require("../../../../assets/garden/share.png")}
+          style={styles.image}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -125,7 +154,7 @@ const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
           <Avatar
             size={60}
             rounded
-            source={require("../../../../assets/garden/tree3-phase1.png")}
+            source={require("../../../../assets/garden/Tree3/tree3-phase1.png")}
             containerStyle={{ backgroundColor: "#fcf0be" }}
             onPress={handleAvatarPress}
           >
@@ -142,7 +171,7 @@ const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
           <Avatar
             size={60}
             rounded
-            source={require("../../../../assets/garden/tree3-phase2.png")}
+            source={require("../../../../assets/garden/Tree3/tree3-phase2.png")}
             containerStyle={{ backgroundColor: "#fcf0be" }}
             onPress={handleAvatarPress}
           >
@@ -159,7 +188,7 @@ const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
           <Avatar
             size={60}
             rounded
-            source={require("../../../../assets/garden/tree3-phase3.png")}
+            source={require("../../../../assets/garden/Tree3/tree3-phase3.png")}
             containerStyle={{ backgroundColor: "#fcf0be" }}
             onPress={handleAvatarPress}
           >
@@ -176,7 +205,7 @@ const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
           <Avatar
             size={60}
             rounded
-            source={require("../../../../assets/garden/tree3-phase4.png")}
+            source={require("../../../../assets/garden/Tree3/tree3-phase4.png")}
             containerStyle={{ backgroundColor: "#fcf0be" }}
             onPress={handleAvatarPress}
           >
@@ -242,6 +271,8 @@ export {
   TreeBox,
   Shovel,
   Loupe,
+  CrossHair,
+  ShareSocial,
   TreeAvatar,
   CellComponent,
   HitBox

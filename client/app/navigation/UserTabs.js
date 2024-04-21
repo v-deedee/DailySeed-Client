@@ -5,8 +5,18 @@ import SettingScreen from "../screens/setting/SettingScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import HomeStack from "./HomeStack";
+import { TouchableOpacity, View, Image } from "react-native";
+import RecordScreen from "../screens/home/RecordScreen";
 
 const Tab = createBottomTabNavigator();
+
+// const FAB = ({ children, onPress }) => (
+//   <TouchableOpacity onPress={onPress} style={{ top: -30, alignItems: 'center', justifyContent: 'center' }}>
+//     <View style={{ width: 70, height: 70, borderRadius: 50, backgroundColor: '#b3edff' }}>
+//       {children}
+//     </View>
+//   </TouchableOpacity>
+// );
 
 export default function UserTabs({ signOut }) {
   return (
@@ -15,6 +25,7 @@ export default function UserTabs({ signOut }) {
         tabBarActiveTintColor: "#61AF72",
         headerShown: false,
         tabBarShowLabel: false,
+        tabBarStyle: { height: 55 },
       }}
     >
       <Tab.Screen
@@ -35,6 +46,18 @@ export default function UserTabs({ signOut }) {
           ),
         }}
       />
+      {/* <Tab.Screen
+        name="RecordScreen"
+        component={RecordScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Image source={require('../../assets/seed/drop.png')} style={{ width: 40, height: 40 }} />
+          ),
+          tabBarButton: (props) => (
+            <FAB {...props} />
+          )
+        }}
+      /> */}
       <Tab.Screen
         name="Shop"
         component={ShopScreen}
