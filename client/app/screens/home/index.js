@@ -1,31 +1,39 @@
 import { StyleSheet, Image, View, Text, StatusBar } from "react-native";
-import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { useEffect, useState } from "react";
 import { Button } from "@rneui/themed";
-import { getCurrentDate } from "../../components/Calendar";
 import { useRoute } from "@react-navigation/native";
+import { getCurrentDate } from "../../components/Calendar";
 import UserSingleton from "../../services/user-singleton";
+import ProgressCircle from "./_component/ProgressCircle";
+import SelectTreeModal from "./_component/modals/SelectTreeModal";
 
 export default function HomeScreen({ navigation }) {
   const route = useRoute();
   const value = route.params?.progress;
-  console.log(value);
 
-  const [progress, setProgress] = useState(10);
+  const [openSelectTreeModal, setOpenSelectTreeModal] = useState(true);
 
-  useEffect(() => {
-    if (value != undefined) {
-      setProgress(progress + value);
-    } else {
-      console.log("false");
-    }
-  }, [value]);
+  const [treeType, setTreeType] = useState(1);
+
+  const [progress, setProgress] = useState(75);
+
+  const currentDate = getCurrentDate();
+
+  const toggleSelectTreeModal = () => {
+    setOpenSelectTreeModal(!openSelectTreeModal);
+  };
 
   const openRecord = () => {
     navigation.navigate("Record");
   };
 
-  const currentDate = getCurrentDate();
+  useEffect(() => {
+    if (value != undefined && progress < 100) {
+      setProgress(progress + value);
+    } else {
+      console.log("Value is undefined");
+    }
+  }, [value]);
 
   return (
     <View style={styles.container}>
@@ -51,7 +59,7 @@ export default function HomeScreen({ navigation }) {
           }}
         >
           <Image
-            source={require("../../../assets/diary.png")}
+            source={require("../../../assets/home/diary.png")}
             style={{ width: 25, height: 25 }}
           />
           <Text style={{ fontSize: 16, fontWeight: 700 }}>
@@ -81,6 +89,7 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
 
+        {/* Progress */}
         <View
           style={{
             marginVertical: 10,
@@ -91,59 +100,13 @@ export default function HomeScreen({ navigation }) {
           }}
         >
           <Image
-            source={require("../../../assets/water.png")}
+            source={require("../../../assets/home/water.png")}
             style={{ width: 25, height: 25 }}
           />
           <Text style={{ fontWeight: 700 }}>{progress}%</Text>
         </View>
-        <AnimatedCircularProgress
-          size={200}
-          width={15}
-          fill={progress}
-          lineCap="round"
-          rotation={0}
-          tintColor="#184C45"
-          backgroundColor="#D8E1D0"
-        >
-          {() => {
-            if (progress <= 25)
-              return (
-                <View style={styles.treeBox}>
-                  <Image
-                    source={require("../../../assets/garden/tree3-phase1.png")}
-                    style={{ width: 100, height: 70 }}
-                  />
-                </View>
-              );
-            else if (progress <= 50)
-              return (
-                <View style={styles.treeBox}>
-                  <Image
-                    source={require("../../../assets/garden/tree3-phase2.png")}
-                    style={{ width: 80, height: 110 }}
-                  />
-                </View>
-              );
-            else if (progress <= 75)
-              return (
-                <View style={styles.treeBox}>
-                  <Image
-                    source={require("../../../assets/garden/tree3-phase3.png")}
-                    style={{ width: 80, height: 110 }}
-                  />
-                </View>
-              );
-            else
-              return (
-                <View style={styles.treeBox}>
-                  <Image
-                    source={require("../../../assets/garden/tree3-phase4.png")}
-                    style={{ width: 80, height: 125 }}
-                  />
-                </View>
-              );
-          }}
-        </AnimatedCircularProgress>
+
+        <ProgressCircle progress={progress} treeType={treeType} />
 
         <Button
           title={"Start"}
@@ -153,13 +116,21 @@ export default function HomeScreen({ navigation }) {
             margin: 20,
             marginBottom: 100,
           }}
-          buttonStyle={[styles.button, styles.shadowProp]}
-          style={styles.shadowProp}
+          buttonStyle={{ padding: 20 }}
+          style={{}}
           radius={50}
           color={"#184D47"}
           onPress={openRecord}
         />
       </View>
+
+      {/* Select tree modal */}
+      <SelectTreeModal
+        isOpen={openSelectTreeModal}
+        toggle={toggleSelectTreeModal}
+        treeType={treeType}
+        setTreeType={setTreeType}
+      />
     </View>
   );
 }
@@ -192,16 +163,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 200,
     height: 200,
-    backgroundColor: "#C8D5B9",
+    backgroundColor: "#EDEBE4",
     borderRadius: 9999,
-  },
-  button: {
-    padding: 20,
-  },
-  shadowProp: {
-    shadowColor: "#171717",
-    shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 3,
   },
 });

@@ -1,0 +1,20 @@
+export const trees = [
+  [
+    require("../../assets/garden/Tree1/tree1-phase1.png"),
+    require("../../assets/garden/Tree1/tree1-phase2.png"),
+    require("../../assets/garden/Tree1/tree1-phase3.png"),
+    require("../../assets/garden/Tree1/tree1-phase4.png"),
+  ],
+  [
+    require("../../assets/garden/Tree2/tree2-phase1.png"),
+    require("../../assets/garden/Tree2/tree2-phase2.png"),
+    require("../../assets/garden/Tree2/tree2-phase3.png"),
+    require("../../assets/garden/Tree2/tree2-phase4.png"),
+  ],
+  [
+    require("../../assets/garden/Tree3/tree3-phase1.png"),
+    require("../../assets/garden/Tree3/tree3-phase2.png"),
+    require("../../assets/garden/Tree3/tree3-phase3.png"),
+    require("../../assets/garden/Tree3/tree3-phase4.png"),
+  ],
+];
