@@ -110,7 +110,7 @@ export default function HomeScreen({ navigation }) {
               return (
                 <View style={styles.treeBox}>
                   <Image
-                    source={require("../../../assets/garden/tree3-phase1.png")}
+                    source={require("../../../assets/garden/Tree3/tree3-phase1.png")}
                     style={{ width: 100, height: 70 }}
                   />
                 </View>
@@ -119,7 +119,7 @@ export default function HomeScreen({ navigation }) {
               return (
                 <View style={styles.treeBox}>
                   <Image
-                    source={require("../../../assets/garden/tree3-phase2.png")}
+                    source={require("../../../assets/garden/Tree3/tree3-phase2.png")}
                     style={{ width: 80, height: 110 }}
                   />
                 </View>
@@ -128,7 +128,7 @@ export default function HomeScreen({ navigation }) {
               return (
                 <View style={styles.treeBox}>
                   <Image
-                    source={require("../../../assets/garden/tree3-phase3.png")}
+                    source={require("../../../assets/garden/Tree3/tree3-phase3.png")}
                     style={{ width: 80, height: 110 }}
                   />
                 </View>
@@ -137,7 +137,7 @@ export default function HomeScreen({ navigation }) {
               return (
                 <View style={styles.treeBox}>
                   <Image
-                    source={require("../../../assets/garden/tree3-phase4.png")}
+                    source={require("../../../assets/garden/Tree3/tree3-phase4.png")}
                     style={{ width: 80, height: 125 }}
                   />
                 </View>

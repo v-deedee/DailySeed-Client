@@ -111,10 +111,10 @@ const Loupe = ({ handleLoupePress }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={handleLoupePress}>
-        {/* <ImageBackground
-          source={require("../../../../assets/garden/loupe.png")}
+        <ImageBackground
+          source={require("../../../../assets/garden/tree.png")}
           style={styles.image}
-        /> */}
+        />
       </TouchableOpacity>
     </View>
   );

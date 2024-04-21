@@ -5,6 +5,7 @@ import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-vi
 import { BottomSheet } from "@rneui/themed";
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
+import TreeDetail from "./TreeDetail";
 
 const numRows = 6; // Number of rows in the garden
 const numColumns = 6; // Number of columns in the garden
@@ -81,7 +82,7 @@ export default function Garden() {
   };
 
   const handleViewTree = (x, y) => {
-
+    setOpenDetail(true)
   };
 
   const resetZoom = () => {
@@ -126,6 +127,7 @@ export default function Garden() {
       <View style={styles.gardenTool}>
         <TreeBox toggleBottomSheet={togglePlantBottomSheet} />
         <Shovel handleShovelPress={handleShovelPress} />
+        <Loupe handleLoupePress={handleViewTree} />
       </View>
 
       <View style={styles.socialTool}>
@@ -186,8 +188,8 @@ export default function Garden() {
       </BottomSheet>
 
       <BottomSheet isVisible={isOpenDetail} onBackdropPress={toggleViewBottomSheet}>
-        <View style={[styles.bottomSheetDetail, { justifyContent: "space-around" }]}>
-          {/* <TreeDetail /> */}
+        <View style={styles.bottomSheetDetail}>
+          <TreeDetail />
         </View>
       </BottomSheet>
     </View>
@@ -269,7 +271,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: "white",
   },
-  bottomSheetDetaiL: {
+  bottomSheetDetail: {
     borderRadius: 30,
     backgroundColor: "white",
   },
