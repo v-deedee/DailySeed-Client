@@ -9,6 +9,7 @@ class TreeService {
         Tree.findOne({
             attributes: attributes,
             where: conditions,
+            include: [{ association: Tree.Seed }],
         });
 
     findAll = async (conditions, attributes) =>

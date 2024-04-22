@@ -59,8 +59,15 @@ export default {
 
     SEED: {
         NOT_FOUND: {
-            code: "SEED_NOT_FOUNG",
+            code: "SEED_NOT_FOUND",
             message: "Your seed is not in the system",
+        },
+    },
+
+    TREE: {
+        NOT_FOUND: {
+            code: "TREE_NOT_FOUND",
+            message: "Your tree is not in the system",
         },
     },
 

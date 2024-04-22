@@ -34,4 +34,28 @@ export default class TreeController {
             data: payload,
         });
     };
+
+    viewTree = async (req, res) => {
+        const { user } = req;
+        const { params } = req;
+
+        const tree = await TreeService.findOne({ id: params.id });
+        if (!tree)
+            throw new HttpError({ ...errorCode.TREE.NOT_FOUND, status: 403 });
+        if (tree.UserId != user.id)
+            throw new HttpError({
+                ...errorCode.AUTH.ROLE_INVALID,
+                status: 403,
+            });
+
+        const payload = {
+            tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
+            seed: _.pick(tree.Seed, ["id", "name", "asset"]),
+        };
+
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
 }

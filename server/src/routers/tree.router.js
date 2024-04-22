@@ -13,6 +13,12 @@ export default [
                 roles: [userRole.USER],
                 schema: treeSchema.create,
             },
+            {
+                httpMethod: "get",
+                path: "/tree/:id",
+                method: "viewTree",
+                roles: [userRole.USER],
+            },
         ],
     },
 ];

@@ -28,6 +28,7 @@ export default function (sequelize, DataTypes) {
     });
 
     Tree.associate = (models) => {
+        Tree.Seed = models.Tree.belongsTo(models.Seed);
         Tree.Criteria = models.Tree.belongsToMany(models.Criteria, {
             through: "TreeCriteria",
         });
