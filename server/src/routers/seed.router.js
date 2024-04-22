@@ -12,6 +12,7 @@ export default [
                 method: "createSeed",
                 roles: [userRole.ADMIN],
                 schema: seedSchema.create,
+                file: "asset",
             },
         ],
     },
