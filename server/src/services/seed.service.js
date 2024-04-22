@@ -5,7 +5,7 @@ const { Seed } = db;
 class SeedService {
     constructor() {}
 
-    find = async (conditions) =>
+    findOne = async (conditions) =>
         Seed.findOne({
             attributes: { exclude: ["createdAt", "updatedAt"] },
             where: conditions,

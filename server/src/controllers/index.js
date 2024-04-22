@@ -14,6 +14,7 @@ export default function (router, apis) {
             const roles = e.roles;
             const schema = e.schema;
             const file = e.file;
+            const files = e.files;
 
             const middlewares = [];
             if (!_.isEmpty(roles)) {
@@ -22,6 +23,10 @@ export default function (router, apis) {
 
             if (!_.isEmpty(file)) {
                 middlewares.push(upload.single(file));
+            }
+
+            if (!_.isEmpty(files)) {
+                middlewares.push(upload.array(files));
             }
 
             if (!_.isEmpty(schema)) {

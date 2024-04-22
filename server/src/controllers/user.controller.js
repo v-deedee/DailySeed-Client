@@ -13,7 +13,7 @@ export default class UserController {
     viewUser = async (req, res) => {
         const { user } = req;
 
-        const profile = await ProfileService.find({ UserId: user.id });
+        const profile = await ProfileService.findOne({ UserId: user.id });
 
         const payload = {
             user: _.pick(user, ["id", "username"]),
@@ -52,8 +52,25 @@ export default class UserController {
     updateProfile = async (req, res) => {
         const { user } = req;
         const { body } = req;
+        const { file } = req;
 
-        const profile = await ProfileService.find({ UserId: user.id });
+        const profile = await ProfileService.findOne({ UserId: user.id });
+
+        if (file) {
+            // Remove old picture
+            await CloudHanlder.remove(profile.picture);
+
+            // Encoding picture
+            const b64 = Buffer.from(file.buffer).toString("base64");
+            let dataURI = "data:" + file.mimetype + ";base64," + b64;
+            const picture = await CloudHanlder.upload(
+                dataURI,
+                "profile-picture"
+            );
+
+            body.picture = picture.public_id;
+        }
+
         const updatedProfile = await ProfileService.update(profile, body);
 
         const payload = {
@@ -65,45 +82,6 @@ export default class UserController {
             ]),
         };
 
-        res.status(200).json({
-            ok: true,
-            data: payload,
-        });
-    };
-
-    updatePicture = async (req, res) => {
-        const { user } = req;
-        const { file } = req;
-        if (!file)
-            throw new HttpError({
-                ...errorCode.BODY_INVALID,
-                message: "Missing file to upload",
-                status: 400,
-            });
-
-        const profile = await ProfileService.find({ UserId: user.id });
-
-        // Remove old picture
-        await CloudHanlder.remove(profile.picture);
-
-        // Encoding picture
-        const b64 = Buffer.from(file.buffer).toString("base64");
-        let dataURI = "data:" + file.mimetype + ";base64," + b64;
-        const picture = await CloudHanlder.upload(dataURI, "profile-picture");
-
-        // Upload new picture
-        const updatedProfile = await ProfileService.update(profile, {
-            picture: picture.public_id,
-        });
-
-        const payload = {
-            profile: _.pick(updatedProfile, [
-                "id",
-                "email",
-                "picture",
-                "money",
-            ]),
-        };
         res.status(200).json({
             ok: true,
             data: payload,
@@ -130,15 +108,11 @@ export default class UserController {
         const updatedUser = await UserService.update(user, data);
 
         const payload = {
-            id: updatedUser.id,
-            username: updatedUser.id,
-            updatedAt: updatedUser.updatedAt,
+            user: _.pick(updatedUser, ["id", "username", "updatedAt"]),
         };
         res.status(200).json({
             ok: true,
-            data: {
-                user: payload,
-            },
+            data: payload,
         });
     };
 }

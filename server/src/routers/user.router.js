@@ -27,14 +27,7 @@ export default [
                 method: "updateProfile",
                 roles: [userRole.USER],
                 schema: userValidation.updateProfile,
-            },
-            // Update profile picture
-            {
-                httpMethod: "put",
-                path: "/user/profile/picture",
-                method: "updatePicture",
-                roles: [userRole.USER],
-                file: "profile_picture",
+                file: "picture",
             },
             // Update password
             {

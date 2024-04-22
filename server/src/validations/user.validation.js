@@ -7,7 +7,7 @@ export default {
         password: Joi.string().required(),
     }),
     updateProfile: Joi.object({
-        email: Joi.string().required(),
+        email: Joi.string(),
     }),
     udpatePassword: Joi.object({
         password: Joi.string().required(),
