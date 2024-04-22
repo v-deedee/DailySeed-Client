@@ -2,6 +2,7 @@ import errorCode from "../constants/error.code.js";
 import { HttpError } from "../utils/http.error.js";
 import UserService from "../services/user.service.js";
 import ProfileService from "../services/profile.service.js";
+import SeedService from "../services/seed.service.js";
 import userRole from "../constants/user.role.js";
 import bcrypt from "bcrypt";
 import CloudHanlder from "../utils/cloud.handler.js";
@@ -38,6 +39,9 @@ export default class UserController {
         };
 
         const user = await UserService.create(body);
+
+        const seed = await SeedService.findOne({ name: "default" });
+        await user.addSeed(seed);
 
         const payload = {
             user: _.pick(user, ["id", "username"]),
