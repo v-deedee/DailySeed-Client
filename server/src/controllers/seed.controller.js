@@ -61,12 +61,12 @@ export default class SeedController {
     listSeed = async (req, res) => {
         const { user } = req;
 
-        let filter = {};
+        let seeds;
         if (user.role == userRole.USER) {
-            filter.id = user.id;
+            seeds = await user.getSeeds();
+        } else {
+            seeds = await SeedService.findAll();
         }
-
-        const seeds = await SeedService.findAll(filter);
 
         const payload = _.map(seeds, (seed) =>
             _.pick(seed, ["id", "name", "asset", "price"])

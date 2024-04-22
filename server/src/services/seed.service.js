@@ -15,9 +15,10 @@ class SeedService {
 
     update = async (instance, data) => instance.update(data);
 
-    findAll = async (conditions) =>
+    findAll = async (conditions, attributes) =>
         Seed.findAll({
-            include: [{ association: Seed.User, where: conditions }],
+            where: conditions,
+            attributes: attributes,
         });
 }
 
