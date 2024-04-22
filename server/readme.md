@@ -196,6 +196,34 @@ npm run start
 
 ## Tree
 
+1.  Create Tree
+
+    `POST /api/tree`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+    -   Body
+
+        ```js
+        {
+            "seedId": 2
+        }
+        ```
+
+2.  View Tree
+
+    `GET /api/tree/:id`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
 ## Seed
 
 1.  Create Seed

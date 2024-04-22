@@ -26,7 +26,7 @@ export default class TreeController {
         const tree = await TreeService.create(body);
 
         const payload = {
-            tree: _.pick(tree, ["id", "date", "score"]),
+            tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
             seed: _.pick(seed, ["id", "name", "asset"]),
         };
         res.status(200).json({

@@ -8,6 +8,7 @@ export default function (sequelize, DataTypes) {
         date: {
             type: DataTypes.DATEONLY,
             allowNull: false,
+            unique: true,
         },
         note: {
             type: DataTypes.STRING,
