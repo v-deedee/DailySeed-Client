@@ -69,6 +69,10 @@ export default {
             code: "TREE_NOT_FOUND",
             message: "Your tree is not in the system",
         },
+        INVALID_AUTHORIZATION: {
+            code: "TREE_INVALID_AUTHORIZATION",
+            message: "You do not have permission to access this tree",
+        },
     },
 
     BODY_INVALID: {

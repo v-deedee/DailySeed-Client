@@ -19,6 +19,8 @@ class TreeService {
         });
 
     create = async (data) => Tree.create(data);
+
+    update = async (instance, data) => instance.update(data);
 }
 
 export default new TreeService();

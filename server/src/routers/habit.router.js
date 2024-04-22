@@ -32,9 +32,16 @@ export default [
             // list habit
             {
                 httpMethod: "get",
-                path: "/habit",
-                method: "listHabit",
+                path: "/habit/tracking/:treeId",
+                method: "listTrackingHabit",
                 roles: [userRole.USER],
+            },
+            {
+                httpMethod: "post",
+                path: "/habit/tracking/:treeId",
+                method: "trackHabit",
+                roles: [userRole.USER],
+                schema: habitSchema.track,
             },
         ],
     },

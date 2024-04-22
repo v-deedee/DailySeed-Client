@@ -56,4 +56,16 @@ export default {
             .min(1)
             .max(10),
     }).or("habit", "criteria"),
+
+    track: Joi.object({
+        criteria: Joi.array()
+            .items(
+                Joi.object({
+                    id: Joi.number().integer().required(),
+                    score: Joi.number().integer().required(),
+                }).required()
+            )
+            .min(1)
+            .required(),
+    }).required(),
 };

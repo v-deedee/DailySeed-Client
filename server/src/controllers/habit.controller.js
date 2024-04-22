@@ -148,35 +148,79 @@ export default class HabitController {
         });
     };
 
-    listHabit = async (req, res) => {
+    listTrackingHabit = async (req, res) => {
         const { user } = req;
+        const { params } = req;
 
-        const tree = await TreeService.findAll({
-            UserId: user.id,
-            date: new Date(),
-        });
-        console.log(tree);
+        const tree = await TreeService.findOne({ id: params.treeId });
+        if (!tree)
+            throw new HttpError({ ...errorCode.TREE.NOT_FOUND, status: 403 });
+        if (tree.UserId != user.id)
+            throw new HttpError({
+                ...errorCode.TREE.INVALID_AUTHORIZATION,
+                status: 403,
+            });
+
+        const selectedCriteria = _.keyBy(await tree.getCriteria(), "HabitId");
+
         const habits = await HabitService.findAll({
             UserId: user.id,
             active: true,
         });
         habits.forEach(async (habit, index) => {
             habits[index] = _.pick(habit, ["id", "name", "icon", "duration"]);
-
-            // Default value if haven't track habit yet
-            const criterion = habit.Criteria.reduce((min, curr) =>
-                curr.score < min.score ? curr : min
+            habits[index].criteria = _.map(habit.Criteria, (criterion) =>
+                _.pick(criterion, ["id", "name", "score", "icon"])
             );
-
-            habits[index].criterion = _.pick(criterion, [
-                "id",
-                "name",
-                "score",
-                "icon",
-            ]);
+            if (selectedCriteria[habit.id]) {
+                habits[index].selected = selectedCriteria[habit.id].id;
+            }
         });
 
         const payload = habits;
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
+
+    trackHabit = async (req, res) => {
+        const { user } = req;
+        const { params } = req;
+        const { body } = req;
+
+        const tree = await TreeService.findOne({ id: params.treeId });
+        if (!tree)
+            throw new HttpError({ ...errorCode.TREE.NOT_FOUND, status: 403 });
+        if (tree.UserId != user.id)
+            throw new HttpError({
+                ...errorCode.TREE.INVALID_AUTHORIZATION,
+                status: 403,
+            });
+
+        tree.setCriteria(_.map(body.criteria, "id"));
+
+        const numOfCriteria = body.criteria.length;
+        let score = 0;
+
+        body.criteria.forEach((criterion) => {
+            score += criterion.score / (100 * numOfCriteria);
+        });
+
+        score *= 100;
+        const updatedTree = await TreeService.update(tree, { score: score });
+
+        const payload = {
+            tree: _.pick(updatedTree, [
+                "id",
+                "date",
+                "score",
+                "note",
+                "picture",
+            ]),
+            seed: _.pick(updatedTree.Seed, ["id", "name", "asset"]),
+        };
+
         res.status(200).json({
             ok: true,
             data: payload,

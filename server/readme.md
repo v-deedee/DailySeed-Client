@@ -194,6 +194,43 @@ npm run start
         }
         ```
 
+4.  List Tracking Habit
+
+    `GET /api/habit/tracking/:treeId`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+5.  Track Habit
+
+    `POST /api/habit/tracking/:treeId`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+    -   Body
+
+        ```js
+        {
+            "criteria": [ // All today habit tracked
+                {
+                    "id": 26,
+                    "score": 50
+                },
+                {
+                    "id": 29,
+                    "score": 100
+                }
+            ]
+        }
+        ```
+
 ## Tree
 
 1.  Create Tree
