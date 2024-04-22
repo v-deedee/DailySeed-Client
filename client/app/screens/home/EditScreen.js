@@ -7,15 +7,19 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
+import { useState } from "react";
+import { useRoute } from "@react-navigation/native";
+import { Slider } from "@rneui/themed";
+
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
-import { Dialog, Slider } from "@rneui/themed";
-import { useEffect, useState } from "react";
-import { useRoute } from "@react-navigation/native";
+import { color } from "../../utils/utils";
+import LevelModal from "./_component/modals/LevelModal";
 
 const habits = [
   {
+    icon: "😈",
     name: "Emotion",
     levels: [
       {
@@ -33,6 +37,7 @@ const habits = [
     ],
   },
   {
+    icon: "🧹",
     name: "Housework",
     levels: [
       {
@@ -54,6 +59,33 @@ const habits = [
     ],
   },
   {
+    icon: "💻",
+    name: "OOP",
+    levels: [
+      {
+        label: "Basic",
+        icon: "🤌",
+      },
+      {
+        label: "Intermediate",
+        icon: "💪",
+      },
+      {
+        label: "Hard",
+        icon: "🙏",
+      },
+      {
+        label: "Expert",
+        icon: "🏆",
+      },
+      {
+        label: "God",
+        icon: "👑",
+      },
+    ],
+  },
+  {
+    icon: "☺️",
     name: "Sample",
     levels: [
       {
@@ -68,72 +100,45 @@ const habits = [
   },
 ];
 
-const interpolate = (start, end, value, maxValue) => {
-  let k = (value - 0) / maxValue;
-  return Math.ceil((1 - k) * start + k * end) % 256;
-};
-
-const color = (value, maxValue) => {
-  let r = interpolate(255, 0, value, maxValue);
-  let g = interpolate(0, 205, value, maxValue);
-  let b = interpolate(0, 0, value, maxValue);
-  return `rgb(${r},${g},${b})`;
-};
-
-const EditScreen = ({ navigation }) => {
-  const [toggleReRender, setToggleReRender] = useState(false);
-
+export default function EditScreen({ navigation }) {
   const route = useRoute();
   let currentId = route.params?.id;
 
-  const [habitName, setHabitName] = useState(() => {
-    if (currentId !== habits.length) {
-      return habits[currentId].name;
-    } else {
-      return "";
-    }
-  });
+  const [habitIcon, setHabitIcon] = useState(habits[currentId].icon);
+  const [habitName, setHabitName] = useState(habits[currentId].name);
+
+  const [openLevelModal, setOpenLevelModal] = useState(false);
 
   // slider value
   const [value, setValue] = useState(0);
 
-  const [iconInput, setIconInput] = useState("");
+  const [modalType, setModalType] = useState("");
 
+  const [iconInput, setIconInput] = useState("");
   const [labelInput, setLabelInput] = useState("");
 
-  const [openAddLevelModal, setOpenAddLevelModal] = useState(false);
+  const [toggleReRender, setToggleReRender] = useState(false);
 
-  const [openEditLevelModal, setOpenEditLevelModal] = useState(false);
-
-  const toggleAddLevelModal = () => {
-    setIconInput("");
-    setLabelInput("");
-    setOpenAddLevelModal(!openAddLevelModal);
-  };
-
-  const toggleEditLevelModal = () => {
-    setOpenEditLevelModal(!openEditLevelModal);
+  const toggleLevelModal = () => {
+    setOpenLevelModal(!openLevelModal);
   };
 
   const addNewLevel = () => {
-    if (currentId !== habits.length) {
-      if (iconInput.length > 0 && labelInput.length > 0) {
-        habits[currentId].levels.push({
-          label: labelInput,
-          icon: iconInput,
-        });
-        setValue(habits[currentId].levels.length - 1);
-        setIconInput("");
-        setLabelInput("");
-      }
-    } else {
-      setValue(0);
+    if (iconInput.length > 0 && labelInput.length > 0) {
+      habits[currentId].levels.push({
+        label: labelInput,
+        icon: iconInput,
+      });
+      setValue(habits[currentId].levels.length - 1);
+      setIconInput("");
+      setLabelInput("");
     }
-    toggleAddLevelModal();
+
+    toggleLevelModal();
   };
 
   const editLevel = () => {
-    if (currentId !== habits.length) {
+    if (iconInput.length > 0 && labelInput.length > 0) {
       habits[currentId].levels[value].icon = iconInput;
       habits[currentId].levels[value].label = labelInput;
 
@@ -141,23 +146,14 @@ const EditScreen = ({ navigation }) => {
       setLabelInput("");
     }
 
-    toggleEditLevelModal();
+    toggleLevelModal();
   };
 
   const deleteLevel = () => {
-    if (currentId !== habits.length) {
-      if (value !== 0) {
-        let temp = [...habits[currentId].levels];
-        temp.splice(value, 1);
-        habits[currentId].levels = [...temp];
-        setValue(0);
-      } else {
-        let temp = [...habits[currentId].levels];
-        temp.shift();
-        habits[currentId].levels = [...temp];
-        setToggleReRender(!toggleReRender);
-      }
-    }
+    let temp = [...habits[currentId].levels];
+    temp.splice(value, 1);
+    habits[currentId].levels = [...temp];
+    setToggleReRender(!toggleReRender);
   };
 
   const closeScreen = () => {
@@ -168,14 +164,6 @@ const EditScreen = ({ navigation }) => {
     navigation.navigate("Record");
   };
 
-  // useEffect(() => {
-  //   habits.push({
-
-  //   });
-  //   console.log(habits);
-  //   setValue(0);
-  // }, []);
-
   return (
     <View style={styles.container}>
       <StatusBar />
@@ -183,31 +171,38 @@ const EditScreen = ({ navigation }) => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Custom habit</Text>
-        <TouchableOpacity style={styles.headerButton} onPress={closeScreen}>
+        <TouchableOpacity style={{ padding: 20 }} onPress={closeScreen}>
           <MaterialIcons name="close" color={"#ACAC9A"} size={30} />
         </TouchableOpacity>
       </View>
 
       <ScrollView>
-        {/* Note */}
-        <View style={{ alignItems: "center" }}>
-          <View
-            style={{
-              alignItems: "center",
-              margin: 10,
-              flexDirection: "row",
-              gap: 10,
-            }}
-          ></View>
-        </View>
-
         <View style={styles.recordContent}>
-          <View style={styles.titleBox}>
+          {/* Habit icon + habit name */}
+          <View style={{ gap: 10, marginBottom: 10 }}>
+            {/* Habit icon */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ fontWeight: 700 }}>Name: </Text>
+              <Text style={{ width: "20%", fontWeight: 700 }}>Icon: </Text>
               <View style={[styles.inputView, { flex: 1 }]}>
                 <TextInput
-                  style={styles.inputText}
+                  style={{ height: 50 }}
+                  placeholder="Enter habit name"
+                  selectionColor="#ccc"
+                  value={habitIcon}
+                  onChangeText={(text) => setHabitIcon(text)}
+                />
+              </View>
+              <TouchableOpacity style={{ paddingHorizontal: 10 }}>
+                <MaterialIcons name="check" size={30} color="#008D6A" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Habit name */}
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={{ width: "20%", fontWeight: 700 }}>Name: </Text>
+              <View style={[styles.inputView, { flex: 1 }]}>
+                <TextInput
+                  style={{ height: 50 }}
                   placeholder="Enter habit name"
                   selectionColor="#ccc"
                   value={habitName}
@@ -220,95 +215,54 @@ const EditScreen = ({ navigation }) => {
             </View>
           </View>
 
+          {/* Habit levels */}
           <View
-            style={{
-              paddingTop: 10,
-              borderTopWidth: 0.5,
-              borderColor: "#ccc",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
+            style={{ paddingTop: 10, borderTopWidth: 0.5, borderColor: "#ccc" }}
           >
-            <Text style={{ fontWeight: 700 }}>Levels: </Text>
-            <TouchableOpacity
-              style={
-                habits[currentId].levels.length >= 5
-                  ? {
-                      paddingVertical: 5,
-                      paddingHorizontal: 10,
-                      borderRadius: 10,
-                      backgroundColor: "#50AA75",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 5,
-                      opacity: 0.5,
-                    }
-                  : {
-                      paddingVertical: 5,
-                      paddingHorizontal: 10,
-                      borderRadius: 10,
-                      backgroundColor: "#50AA75",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 5,
-                    }
-              }
-              onPress={toggleAddLevelModal}
-              disabled={habits[currentId].levels.length >= 5}
-            >
-              <MaterialIcons name="playlist-add" color="#fff" size={15} />
-              <Text style={{ color: "#fff", fontWeight: 700 }}>New level</Text>
-            </TouchableOpacity>
-          </View>
-          {currentId !== habits.length ? (
-            <View
-              style={{
-                marginTop: 10,
-                alignItems: "center",
-                backgroundColor: "#E3F8F9",
-                borderRadius: 10,
-                padding: 20,
-              }}
-            >
+            {/* Levels header: Title + Add level button */}
+            <View style={styles.levelHeader}>
+              {/* Title */}
+              <Text style={{ fontWeight: 700 }}>Levels: </Text>
+
+              {/* Add level button */}
+              <TouchableOpacity
+                style={
+                  habits[currentId].levels.length >= 5
+                    ? [styles.addLevelButton, { opacity: 0.5 }]
+                    : styles.addLevelButton
+                }
+                onPress={() => {
+                  setModalType("add");
+                  setIconInput("");
+                  setLabelInput("");
+                  toggleLevelModal();
+                }}
+                disabled={habits[currentId].levels.length >= 5}
+              >
+                <MaterialIcons name="playlist-add" color="#fff" size={15} />
+                <Text style={{ color: "#fff", fontWeight: 700 }}>
+                  New level
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.levelContent}>
               <Slider
                 value={value}
                 onValueChange={setValue}
-                maximumValue={
-                  currentId !== habits.length
-                    ? habits[currentId].levels.length - 1
-                    : 0
-                }
+                maximumValue={habits[currentId].levels.length - 1}
                 minimumValue={0}
                 minimumTrackTintColor="#50AA75"
                 step={1}
                 allowTouchTrack
-                trackStyle={{
-                  height: 20,
-                  borderRadius: 999,
-                  backgroundColor: "transparent",
-                }}
-                thumbStyle={{
-                  height: 45,
-                  width: 55,
-                  backgroundColor: "transparent",
-                }}
+                style={{ width: "100%", marginBottom: 30 }}
+                trackStyle={{ height: 20, borderRadius: 999 }}
+                thumbStyle={styles.sliderThumbStyle}
                 thumbProps={{
                   children: (
-                    <View style={{ alignItems: "center", marginTop: 5 }}>
-                      <Text
-                        style={{
-                          paddingHorizontal: 3,
-                          paddingBottom: 3,
-                          fontSize: 40,
-                          marginTop: -10,
-                          backgroundColor: "#F9FDB8",
-                          borderRadius: 999,
-                        }}
-                      >
-                        {currentId !== habits.length
-                          ? habits[currentId].levels[value].icon
-                          : ""}
+                    <View style={{ alignItems: "center", gap: 10 }}>
+                      <Text style={{ fontSize: 35 }}>
+                        {habits[currentId].levels[value].icon}
                       </Text>
                       <Text
                         style={{
@@ -327,71 +281,34 @@ const EditScreen = ({ navigation }) => {
                     </View>
                   ),
                 }}
-                style={{ width: "100%", marginBottom: 30 }}
               />
-              <View
-                style={{
-                  flexDirection: "column",
-                  justifyContent: "flex-start",
-                  gap: 8,
-                  width: "100%",
-                  paddingHorizontal: 10,
-                }}
-              >
-                {currentId !== habits.length ? (
-                  <>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={{ fontWeight: 700 }}>Level: </Text>
-                      <Text>{value + 1}</Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={{ fontWeight: 700 }}>Icon: </Text>
-                      <Text style={{ fontSize: 25 }}>
-                        {habits[currentId].levels[value].icon}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={{ fontWeight: 700 }}>Label: </Text>
-                      <Text>{habits[currentId].levels[value].label}</Text>
-                    </View>
-                  </>
-                ) : (
-                  <></>
-                )}
+
+              {/* Level info */}
+              <View style={styles.levelInfo}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ fontWeight: 700 }}>Level: </Text>
+                  <Text>{value + 1}</Text>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ fontWeight: 700 }}>Icon: </Text>
+                  <Text style={{ fontSize: 25 }}>
+                    {habits[currentId].levels[value].icon}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ fontWeight: 700 }}>Label: </Text>
+                  <Text>{habits[currentId].levels[value].label}</Text>
+                </View>
               </View>
 
-              <View style={[styles.modalButtonGroup, { width: "100%" }]}>
+              <View style={styles.actionButtonGroup}>
                 <TouchableOpacity
-                  style={[
-                    styles.modalButton,
-                    {
-                      backgroundColor: "#529290",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      gap: 5,
-                    },
-                  ]}
+                  style={[styles.actionButton, { backgroundColor: "#529290" }]}
                   onPress={() => {
-                    if (currentId !== habits.length) {
-                      setIconInput(habits[currentId].levels[value].icon);
-                      setLabelInput(habits[currentId].levels[value].label);
-                    }
-                    toggleEditLevelModal();
+                    setModalType("edit");
+                    setIconInput(habits[currentId].levels[value].icon);
+                    setLabelInput(habits[currentId].levels[value].label);
+                    toggleLevelModal();
                   }}
                 >
                   <AntDesign name="edit" color="#fff" size={15} />
@@ -403,24 +320,10 @@ const EditScreen = ({ navigation }) => {
                   style={
                     habits[currentId].levels.length <= 2
                       ? [
-                          styles.modalButton,
-                          {
-                            backgroundColor: "#E94D61",
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            gap: 5,
-                            opacity: 0.5,
-                          },
+                          styles.actionButton,
+                          { backgroundColor: "#E94D61", opacity: 0.5 },
                         ]
-                      : [
-                          styles.modalButton,
-                          {
-                            backgroundColor: "#E94D61",
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            gap: 5,
-                          },
-                        ]
+                      : [styles.actionButton, { backgroundColor: "#E94D61" }]
                   }
                   onPress={deleteLevel}
                   disabled={habits[currentId].levels.length <= 2}
@@ -432,9 +335,7 @@ const EditScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             </View>
-          ) : (
-            <></>
-          )}
+          </View>
         </View>
       </ScrollView>
 
@@ -445,110 +346,21 @@ const EditScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Add Level modal */}
-      <Dialog
-        isVisible={openAddLevelModal}
-        onBackdropPress={toggleAddLevelModal}
-        overlayStyle={{
-          borderRadius: 30,
-        }}
-      >
-        <View style={{ alignItems: "center", paddingBottom: 20 }}>
-          <Dialog.Title title="Add level" titleStyle={{}} />
-        </View>
-
-        <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Icon</Text>
-        <View style={styles.modalInputView}>
-          <TextInput
-            style={styles.modalInputText}
-            placeholder="Choose an icon from keyboard"
-            selectionColor="#ccc"
-            value={iconInput}
-            onChangeText={(text) => setIconInput(text)}
-          />
-        </View>
-
-        <View style={{ height: 20 }}></View>
-
-        <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Label</Text>
-        <View style={styles.modalInputView}>
-          <TextInput
-            style={styles.modalInputText}
-            placeholder="Enter icon label"
-            selectionColor="#ccc"
-            value={labelInput}
-            onChangeText={(text) => setLabelInput(text)}
-          />
-        </View>
-        <View style={styles.modalButtonGroup}>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-            onPress={toggleAddLevelModal}
-          >
-            <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            onPress={addNewLevel}
-          >
-            <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
-          </TouchableOpacity>
-        </View>
-      </Dialog>
-
-      {/* Edit Level modal */}
-      <Dialog
-        isVisible={openEditLevelModal}
-        onBackdropPress={toggleEditLevelModal}
-        overlayStyle={{
-          borderRadius: 30,
-        }}
-      >
-        <View style={{ alignItems: "center", paddingBottom: 20 }}>
-          <Dialog.Title title="Edit level" titleStyle={{}} />
-        </View>
-
-        <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Icon</Text>
-        <View style={styles.modalInputView}>
-          <TextInput
-            style={styles.modalInputText}
-            placeholder="Choose an icon from keyboard"
-            selectionColor="#ccc"
-            value={iconInput}
-            onChangeText={(text) => setIconInput(text)}
-          />
-        </View>
-
-        <View style={{ height: 20 }}></View>
-
-        <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Label</Text>
-        <View style={styles.modalInputView}>
-          <TextInput
-            style={styles.modalInputText}
-            placeholder="Enter icon label"
-            selectionColor="#ccc"
-            value={labelInput}
-            onChangeText={(text) => setLabelInput(text)}
-          />
-        </View>
-        <View style={styles.modalButtonGroup}>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-            onPress={toggleEditLevelModal}
-          >
-            <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            onPress={editLevel}
-          >
-            <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
-          </TouchableOpacity>
-        </View>
-      </Dialog>
+      {/* Level modal */}
+      <LevelModal
+        isOpen={openLevelModal}
+        toggle={toggleLevelModal}
+        type={modalType}
+        iconInput={iconInput}
+        setIconInput={setIconInput}
+        labelInput={labelInput}
+        setLabelInput={setLabelInput}
+        addNewLevel={addNewLevel}
+        editLevel={editLevel}
+      />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -560,9 +372,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#fff",
-  },
-  headerButton: {
-    padding: 20,
+    marginBottom: 10,
   },
   headerText: {
     margin: 20,
@@ -570,24 +380,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#474838",
   },
-  titleBox: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  titleContent: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginRight: 5,
-  },
-  levelBlock: {
-    flexDirection: "col",
-    alignItems: "center",
-    width: 60,
-  },
-  levelIcon: {
-    fontSize: 40,
+  recordContent: {
+    padding: 20,
+    height: "auto",
+    backgroundColor: "#FFFFFF",
+    marginHorizontal: 20,
+    marginVertical: 10,
+    borderRadius: 20,
   },
   inputView: {
     width: "70%",
@@ -599,56 +398,56 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
   },
-  inputText: {
-    height: 50,
-  },
-  modalInputView: {
-    width: "100%",
-    backgroundColor: "#E5E5E5",
-    color: "#000",
-    fontWeight: "bold",
-    borderRadius: 10,
-    height: 50,
-    justifyContent: "center",
-    padding: 20,
-  },
-  modalInputText: {
-    height: 50,
-    fontWeight: "bold",
-  },
-  recordContent: {
-    padding: 20,
-    height: "auto",
-    backgroundColor: "#FFFFFF",
-    marginHorizontal: 20,
-    marginVertical: 10,
-    borderRadius: 20,
-  },
-
-  addBox: {
-    padding: 20,
-    height: "auto",
-    backgroundColor: "#b4dcaa45",
-    margin: 20,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#50AA75",
-  },
-  addButton: {
+  levelHeader: {
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
   },
-  modalButtonGroup: {
+  addLevelButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: "#50AA75",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  levelContent: {
+    marginTop: 10,
+    alignItems: "center",
+    backgroundColor: "#E3F8F9",
+    borderRadius: 10,
+    padding: 20,
+  },
+  sliderThumbStyle: {
+    height: 55,
+    width: 55,
+    borderRadius: 999,
+    backgroundColor: "#F9FDB8",
+    paddingTop: 2,
+  },
+  levelInfo: {
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    gap: 8,
+    width: "100%",
+    paddingHorizontal: 10,
+  },
+  actionButtonGroup: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "center",
     gap: 10,
     paddingTop: 20,
   },
-  modalButton: {
+  actionButton: {
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
     flex: 1,
     paddingVertical: 15,
-    height: "auto",
     borderRadius: 10,
+    gap: 5,
   },
   submitButton: {
     backgroundColor: "#50AA75",
@@ -661,5 +460,3 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 });
-
-export default EditScreen;

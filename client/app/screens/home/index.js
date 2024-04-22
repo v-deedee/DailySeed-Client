@@ -15,7 +15,7 @@ export default function HomeScreen({ navigation }) {
 
   const [treeType, setTreeType] = useState(1);
 
-  const [progress, setProgress] = useState(75);
+  const [progress, setProgress] = useState(0);
 
   const currentDate = getCurrentDate();
 
@@ -28,8 +28,8 @@ export default function HomeScreen({ navigation }) {
   };
 
   useEffect(() => {
-    if (value != undefined && progress < 100) {
-      setProgress(progress + value);
+    if (value != undefined) {
+      setProgress(value);
     } else {
       console.log("Value is undefined");
     }
@@ -40,24 +40,8 @@ export default function HomeScreen({ navigation }) {
       <StatusBar backgroundColor="black" />
 
       {/* Head: name + coin */}
-      <View
-        style={{
-          padding: 20,
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <View
-          style={{
-            backgroundColor: "#deffff",
-            paddingHorizontal: 10,
-            paddingVertical: 5,
-            borderRadius: 10,
-            flexDirection: "row",
-            gap: 5,
-          }}
-        >
+      <View style={styles.header}>
+        <View style={styles.userNameContainer}>
           <Image
             source={require("../../../assets/home/diary.png")}
             style={{ width: 25, height: 25 }}
@@ -89,16 +73,8 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
 
-        {/* Progress */}
-        <View
-          style={{
-            marginVertical: 10,
-            marginRight: 15,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 5,
-          }}
-        >
+        {/* Progress: % */}
+        <View style={styles.percentProgressContainer}>
           <Image
             source={require("../../../assets/home/water.png")}
             style={{ width: 25, height: 25 }}
@@ -106,8 +82,10 @@ export default function HomeScreen({ navigation }) {
           <Text style={{ fontWeight: 700 }}>{progress}%</Text>
         </View>
 
+        {/* Progress: Circle */}
         <ProgressCircle progress={progress} treeType={treeType} />
 
+        {/* Record button */}
         <Button
           title={"Start"}
           titleStyle={{ fontWeight: 700 }}
@@ -140,6 +118,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FBF5E5",
   },
+  header: {
+    padding: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  userNameContainer: {
+    backgroundColor: "#deffff",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    flexDirection: "row",
+    gap: 5,
+  },
   coinContainer: {
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -156,6 +148,13 @@ const styles = StyleSheet.create({
     // color: "#474838",
     textAlign: "center",
     lineHeight: 30,
+  },
+  percentProgressContainer: {
+    marginVertical: 10,
+    marginRight: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
   },
   treeBox: {
     display: "flex",

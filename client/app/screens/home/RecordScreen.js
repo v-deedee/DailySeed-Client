@@ -6,15 +6,19 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Slider, Dialog } from "@rneui/themed";
-import { getCurrentDate } from "../../components/Calendar";
+import { useState } from "react";
+import { Slider } from "@rneui/themed";
+
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import { useState } from "react";
+
+import ConfirmDeleteHabitModal from "./_component/modals/ConfirmDeleteHabitModal";
+import { getCurrentDate } from "../../components/Calendar";
+import { color } from "../../utils/utils";
 
 const habits = [
   {
+    icon: "😈",
     name: "Emotion",
     levels: [
       {
@@ -32,6 +36,7 @@ const habits = [
     ],
   },
   {
+    icon: "🧹",
     name: "Housework",
     levels: [
       {
@@ -52,6 +57,32 @@ const habits = [
       },
     ],
   },
+  {
+    icon: "💻",
+    name: "OOP",
+    levels: [
+      {
+        label: "Basic",
+        icon: "🤌",
+      },
+      {
+        label: "Intermediate",
+        icon: "💪",
+      },
+      {
+        label: "Hard",
+        icon: "🙏",
+      },
+      {
+        label: "Expert",
+        icon: "🏆",
+      },
+      {
+        label: "God",
+        icon: "👑",
+      },
+    ],
+  },
 ];
 
 const RecordScreen = ({ navigation }) => {
@@ -61,19 +92,7 @@ const RecordScreen = ({ navigation }) => {
 
   const currentDate = getCurrentDate();
 
-  const [values, setValues] = useState([0, 0]);
-
-  const interpolate = (start, end, value, maxValue) => {
-    let k = (value - 0) / maxValue;
-    return Math.ceil((1 - k) * start + k * end) % 256;
-  };
-
-  const color = (value, maxValue) => {
-    let r = interpolate(255, 0, value, maxValue);
-    let g = interpolate(0, 205, value, maxValue);
-    let b = interpolate(0, 0, value, maxValue);
-    return `rgb(${r},${g},${b})`;
-  };
+  const [values, setValues] = useState([0, 0, 0]);
 
   const closeRecord = () => {
     navigation.navigate("Home");
@@ -84,7 +103,13 @@ const RecordScreen = ({ navigation }) => {
   };
 
   const submitRecord = () => {
-    navigation.navigate("Home", { progress: 5 });
+    let progress = 0;
+    values.forEach((value, index) => {
+      progress +=
+        (value * 100) / ((habits[index].levels.length - 1) * habits.length);
+    });
+
+    navigation.navigate("Home", { progress: parseInt(progress) });
   };
 
   const toggleDelHabitModal = () => {
@@ -98,14 +123,6 @@ const RecordScreen = ({ navigation }) => {
   };
 
   const addNewHabit = () => {
-    // if (newHabitName.length > 0) {
-    //   habits.push({
-    //     name: newHabitName,
-    //     levels: [],
-    //   });
-    //   setNewHabitName("");
-    // }
-    // toggleAddHabitModal();
     navigation.navigate("Edit", { id: habits.length });
   };
 
@@ -113,42 +130,56 @@ const RecordScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar />
 
+      {/* Head: Add button + Date + Close button */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerButton} onPress={addNewHabit}>
+        <TouchableOpacity onPress={addNewHabit}>
           <MaterialIcons name="playlist-add" color={"#50AA75"} size={32} />
         </TouchableOpacity>
 
         <Text style={styles.date}>{currentDate}</Text>
 
-        <TouchableOpacity style={styles.headerButton} onPress={closeRecord}>
+        <TouchableOpacity onPress={closeRecord}>
           <MaterialIcons name="close" color={"#ACAC9A"} size={30} />
         </TouchableOpacity>
       </View>
 
+      {/* Record field */}
       <ScrollView>
         {habits.map((habit, index) => (
           <View style={styles.recordContent} key={index}>
-            <View style={styles.titleBox}>
-              <Text style={styles.titleContent}>{habit.name}</Text>
-              <View style={styles.actionIconBox}>
-                <TouchableOpacity
-                  style={styles.actionIcon}
-                  onPress={() => {
-                    editHabit(index);
-                  }}
-                >
-                  <Feather name="edit" color="#fff" size={15} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.actionIcon}
-                  onPress={() => {
-                    setCurrentHabitId(index);
-                    toggleDelHabitModal();
-                  }}
-                >
-                  <MaterialIcons name="delete" color="#fff" size={15} />
-                </TouchableOpacity>
+            {/* Icon + title */}
+            <View
+              style={{ alignItems: "center", marginTop: -55, marginBottom: 15 }}
+            >
+              <View style={styles.habitIconBox}>
+                <View style={styles.habitIcon}>
+                  <Text style={{ fontSize: 35 }}>{habit.icon}</Text>
+                </View>
               </View>
+              <Text style={{ fontSize: 16, fontWeight: "700" }}>
+                {habit.name}
+              </Text>
+            </View>
+
+            {/* Action */}
+            <View style={styles.actionIconBox}>
+              <TouchableOpacity
+                style={styles.actionIcon}
+                onPress={() => {
+                  editHabit(index);
+                }}
+              >
+                <Feather name="edit" color="#fff" size={15} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionIcon}
+                onPress={() => {
+                  setCurrentHabitId(index);
+                  toggleDelHabitModal();
+                }}
+              >
+                <MaterialIcons name="delete" color="#fff" size={15} />
+              </TouchableOpacity>
             </View>
 
             <Slider
@@ -163,33 +194,18 @@ const RecordScreen = ({ navigation }) => {
               minimumTrackTintColor="#50AA75"
               step={1}
               allowTouchTrack
-              trackStyle={{
-                height: 20,
-                borderRadius: 999,
-                backgroundColor: "transparent",
-              }}
-              thumbStyle={{
-                height: 60,
-                width: 60,
-                backgroundColor: "#F9FDB8",
-                borderRadius: 999,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              trackStyle={{ height: 25, borderRadius: 999 }}
+              thumbStyle={styles.sliderThumpStyle}
               thumbProps={{
                 children: (
-                  <Text
-                    style={{
-                      fontSize: 40,
-                      marginTop: -3,
-                    }}
-                  >
+                  <Text style={{ fontSize: 40, marginTop: -3 }}>
                     {habit.levels[values[index]].icon}
                   </Text>
                 ),
               }}
             />
+
+            {/* Status */}
             <View style={styles.statusBox}>
               <Text>Status: </Text>
               <Text
@@ -210,6 +226,7 @@ const RecordScreen = ({ navigation }) => {
         ))}
       </ScrollView>
 
+      {/* Submit button */}
       <View style={styles.submitBox}>
         <TouchableOpacity style={styles.submitButton} onPress={submitRecord}>
           <Text style={styles.submitText}>Done</Text>
@@ -217,46 +234,11 @@ const RecordScreen = ({ navigation }) => {
       </View>
 
       {/* Confirm delete habit modal */}
-      <Dialog
-        isVisible={openDelHabitModal}
-        onBackdropPress={toggleDelHabitModal}
-        overlayStyle={{
-          borderRadius: 30,
-        }}
-      >
-        <View style={{ alignItems: "center", paddingBottom: 20 }}>
-          <Dialog.Title title="Confirm delete" titleStyle={{}} />
-        </View>
-
-        <View
-          style={{
-            alignItems: "center",
-            flexDirection: "row",
-            justifyContent: "center",
-            gap: 5,
-          }}
-        >
-          <AntDesign name="warning" color={"red"} size={20} />
-          <Text style={{ color: "red", fontWeight: "700" }}>
-            Are you sure to delete this habit?
-          </Text>
-        </View>
-
-        <View style={styles.modalButtonGroup}>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-            onPress={() => deleteHabit()}
-          >
-            <Text style={{ fontWeight: "bold", color: "#474838" }}>Yes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            onPress={toggleDelHabitModal}
-          >
-            <Text style={{ fontWeight: "bold", color: "#fff" }}>No</Text>
-          </TouchableOpacity>
-        </View>
-      </Dialog>
+      <ConfirmDeleteHabitModal
+        isOpen={openDelHabitModal}
+        toggle={toggleDelHabitModal}
+        deleteHabit={deleteHabit}
+      />
     </View>
   );
 };
@@ -270,44 +252,61 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  headerButton: {
     padding: 20,
   },
   date: {
-    marginVertical: 20,
     fontSize: 20,
     fontWeight: "bold",
     color: "#474838",
   },
   recordContent: {
-    marginTop: 20,
+    marginTop: 40,
     padding: 20,
     height: "auto",
     backgroundColor: "#FFFFFF",
     marginHorizontal: 20,
     marginVertical: 10,
     borderRadius: 20,
+    position: "relative",
   },
-  titleBox: {
-    marginBottom: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
+  habitIconBox: {
+    // padding: 5,
+    backgroundColor: "#FBF5E5",
+    borderRadius: 999,
+  },
+  habitIcon: {
+    width: 60,
+    height: 60,
     alignItems: "center",
-  },
-  titleContent: {
-    fontSize: 16,
-    fontWeight: "600",
+    borderRadius: 999,
+    // backgroundColor: "#33B5B9",
+    // padding: 8,
+    borderWidth: 2,
+    // borderStyle: "dashed",
+    borderColor: "#33B5B9",
+    paddingTop: 6,
   },
   actionIconBox: {
-    marginTop: -50,
+    right: 10,
+    top: -15,
+    // top: 10,
     flexDirection: "row",
     gap: 10,
+    position: "absolute",
   },
   actionIcon: {
     backgroundColor: "#3B6C78",
     borderRadius: 999,
     padding: 10,
+  },
+  sliderThumpStyle: {
+    height: 60,
+    width: 60,
+    backgroundColor: "#F9FDB8",
+    borderRadius: 999,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   statusBox: {
     paddingTop: 20,
@@ -322,18 +321,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 10,
   },
-  addBox: {
-    padding: 20,
-    height: "auto",
-    backgroundColor: "#b4dcaa45",
-    margin: 20,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#50AA75",
-  },
-  addButton: {
-    alignItems: "center",
-  },
   submitButton: {
     backgroundColor: "#50AA75",
     alignItems: "center",
@@ -343,19 +330,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#fff",
-  },
-  modalButtonGroup: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 10,
-    paddingTop: 20,
-  },
-  modalButton: {
-    alignItems: "center",
-    flex: 1,
-    paddingVertical: 15,
-    height: "auto",
-    borderRadius: 10,
   },
 });
 
