@@ -22,6 +22,12 @@ export default [
                 schema: seedSchema.update,
                 file: "asset",
             },
+            {
+                httpMethod: "get",
+                path: "/seed",
+                method: "listSeed",
+                roles: [userRole.USER, userRole.ADMIN],
+            },
         ],
     },
 ];
