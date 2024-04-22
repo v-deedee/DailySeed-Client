@@ -12,6 +12,8 @@ class SeedService {
         });
 
     create = async (data) => Seed.create(data);
+
+    update = async (instance, data) => instance.update(data);
 }
 
 export default new SeedService();

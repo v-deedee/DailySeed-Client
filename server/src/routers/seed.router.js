@@ -14,6 +14,14 @@ export default [
                 schema: seedSchema.create,
                 file: "asset",
             },
+            {
+                httpMethod: "put",
+                path: "/seed/:id",
+                method: "updateSeed",
+                roles: [userRole.ADMIN],
+                schema: seedSchema.update,
+                file: "asset",
+            },
         ],
     },
 ];

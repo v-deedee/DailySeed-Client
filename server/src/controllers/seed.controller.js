@@ -31,4 +31,29 @@ export default class SeedController {
             data: payload,
         });
     };
+
+    updateSeed = async (req, res) => {
+        const { params } = req;
+        const { file } = req;
+        const { body } = req;
+
+        const seed = await SeedService.findOne({ id: params.id });
+
+        if (file) {
+            await CloudHanlder.remove(seed.asset);
+
+            const b64 = Buffer.from(file.buffer).toString("base64");
+            let dataURI = "data:" + file.mimetype + ";base64," + b64;
+            const picture = await CloudHanlder.upload(dataURI, "tree-asset");
+            body.asset = picture.public_id;
+        }
+
+        const updatedSeed = await SeedService.update(seed, body);
+
+        const payload = _.pick(updatedSeed, ["id", "name", "asset", "price"]);
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
 }
