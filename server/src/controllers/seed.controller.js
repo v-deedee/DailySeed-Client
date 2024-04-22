@@ -3,6 +3,7 @@ import _ from "lodash";
 import { HttpError } from "../utils/http.error.js";
 import errorCode from "../constants/error.code.js";
 import CloudHanlder from "../utils/cloud.handler.js";
+import userRole from "../constants/user.role.js";
 
 export default class SeedController {
     constructor() {}
@@ -51,6 +52,25 @@ export default class SeedController {
         const updatedSeed = await SeedService.update(seed, body);
 
         const payload = _.pick(updatedSeed, ["id", "name", "asset", "price"]);
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
+
+    listSeed = async (req, res) => {
+        const { user } = req;
+
+        let filter = {};
+        if (user.role == userRole.USER) {
+            filter.id = user.id;
+        }
+
+        const seeds = await SeedService.findAll(filter);
+
+        const payload = _.map(seeds, (seed) =>
+            _.pick(seed, ["id", "name", "asset", "price"])
+        );
         res.status(200).json({
             ok: true,
             data: payload,
