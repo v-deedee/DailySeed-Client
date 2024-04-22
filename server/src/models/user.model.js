@@ -34,6 +34,9 @@ export default function (sequelize, DataTypes) {
         User.Habit = models.User.hasMany(models.Habit, {
             onDelete: "CASCADE",
         });
+        User.Seed = models.User.belongsToMany(models.Seed, {
+            through: "UserSeed",
+        });
     };
 
     return User;

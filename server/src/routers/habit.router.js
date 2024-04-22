@@ -29,6 +29,13 @@ export default [
                 roles: [userRole.USER],
                 schema: habitSchema.update,
             },
+            // list habit
+            {
+                httpMethod: "get",
+                path: "/habit",
+                method: "listHabit",
+                roles: [userRole.USER],
+            },
         ],
     },
 ];

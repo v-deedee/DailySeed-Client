@@ -5,7 +5,7 @@ const { Profile } = db;
 class ProfileService {
     constructor() {}
 
-    find = async (conditions) =>
+    findOne = async (conditions) =>
         Profile.findOne({
             attributes: { exclude: ["createdAt", "updatedAt"] },
             where: conditions,

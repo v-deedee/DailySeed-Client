@@ -1,4 +1,5 @@
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
 # Table of Contents
 
 -   [Commands](#commands)
@@ -7,6 +8,8 @@
     -   [Auth](#auth)
     -   [User](#user)
     -   [Habit](#habit)
+    -   [Tree](#tree)
+    -   [Seed](#seed)
 
 <!-- TOC end -->
 
@@ -30,7 +33,7 @@ npm run start
 
     `POST /api/auth/login`
 
-    Request:
+    Request
 
     - Body
         ```js
@@ -79,30 +82,12 @@ npm run start
 
     -   Body
 
-        ```js
-        {
-            "email": "example@mail.com",
-        }
-        ```
+        Form-data:
 
-4.  Update user's profile picture
+            picture
+            email
 
-    `PUT /api/user/profile/picture`
-
-    Request
-
-    -   Header
-
-        `Authorization: Bearer <user's token>`
-
-    -   Body
-
-        `form-data`
-
-              Key: profile_picture
-              Value: pic.png
-
-5.  Update password
+4.  Update password
 
     `PUT /api/user/password`
 
@@ -190,7 +175,7 @@ npm run start
                 "duration": 7 // Day
                 "active": false // Set false if want to delete this habit
             },
-            criteria: [
+            "criteria": [
                 {
                     "id": 4 // If update criterion, specify id
                     "name": "test",
@@ -208,3 +193,53 @@ npm run start
             ]
         }
         ```
+
+## Tree
+
+## Seed
+
+1.  Create Seed
+
+    `POST /api/seed`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <admin's token>`
+
+    -   Body
+
+        Form-data:
+
+            name
+            price
+            asset
+
+2.  Update Seed
+
+    `PUT /api/seed/:id`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <admin's token>`
+
+    -   Body
+
+        Form-data:
+
+              name
+              price
+              asset
+
+3.  List Seed
+
+    `GET /api/seed`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <token>`

@@ -9,7 +9,7 @@ export default class AuthController {
     login = async (req, res) => {
         const { body } = req;
 
-        const user = await UserService.find({ username: body.username });
+        const user = await UserService.findOne({ username: body.username });
         if (!user || !user.active)
             throw new HttpError({ ...error.AUTH.USER_NOT_FOUND, status: 400 });
         if (!bcrypt.compareSync(body.password, user.password))

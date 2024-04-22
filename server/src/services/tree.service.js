@@ -5,9 +5,15 @@ const { Tree } = db;
 class TreeService {
     constructor() {}
 
-    find = async (conditions) =>
+    findOne = async (conditions, attributes) =>
         Tree.findOne({
-            attributes: { exclude: ["createdAt", "updatedAt"] },
+            attributes: attributes,
+            where: conditions,
+        });
+
+    findAll = async (conditions, attributes) =>
+        Tree.findAll({
+            attributes: attributes,
             where: conditions,
         });
 

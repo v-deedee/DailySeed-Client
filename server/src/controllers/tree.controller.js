@@ -11,7 +11,7 @@ export default class TreeController {
         const { user } = req;
         const { body } = req;
 
-        const seed = await SeedService.find({ id: body.seedId });
+        const seed = await SeedService.findOne({ id: body.seedId });
         if (!seed)
             throw new HttpError({
                 ...errorCode.SEED.NOT_FOUND,

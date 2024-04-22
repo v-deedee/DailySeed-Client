@@ -2,6 +2,7 @@ import errorCode from "../constants/error.code.js";
 import { HttpError } from "../utils/http.error.js";
 import HabitService from "../services/habit.service.js";
 import CriteriaService from "../services/criteria.service.js";
+import TreeService from "../services/tree.service.js";
 import _ from "lodash";
 
 export default class HabitController {
@@ -10,7 +11,7 @@ export default class HabitController {
     createHabit = async (req, res) => {
         const { body } = req;
         const { user } = req;
-        body.UserId = user.id;
+        body.habit.UserId = user.id;
         // Handle association create
         body.habit.Criteria = body.criteria;
         const habit = await HabitService.create(body.habit);
@@ -56,6 +57,7 @@ export default class HabitController {
     };
 
     updateHabit = async (req, res) => {
+        const { user } = req;
         const { params } = req;
         const { body } = req;
 
@@ -84,6 +86,14 @@ export default class HabitController {
         let updatedHabit = habit;
         if (body.habit) {
             updatedHabit = await HabitService.update(habit, body.habit);
+
+            if (!updatedHabit.active) {
+                for (const criterion of updatedHabit.Criteria) {
+                    await CriteriaService.update(criterion, { active: false });
+                }
+
+                delete body.criteria;
+            }
         }
 
         let updatedCriteria = [];
@@ -122,12 +132,51 @@ export default class HabitController {
         }
 
         const payload = {
-            habit: _.pick(updatedHabit, ["id", "name", "icon", "duration"]),
-            criteria: updatedCriteria.map((criterion) =>
-                _.pick(criterion, ["id", "name", "icon", "score"])
-            ),
+            habit: updatedHabit.active
+                ? _.pick(updatedHabit, ["id", "name", "icon", "duration"])
+                : null,
+            criteria: updatedCriteria
+                .filter((criterion) => criterion.active)
+                .map((criterion) =>
+                    _.pick(criterion, ["id", "name", "icon", "score"])
+                ),
         };
 
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
+
+    listHabit = async (req, res) => {
+        const { user } = req;
+
+        const tree = await TreeService.findAll({
+            UserId: user.id,
+            date: new Date(),
+        });
+        console.log(tree);
+        const habits = await HabitService.findAll({
+            UserId: user.id,
+            active: true,
+        });
+        habits.forEach(async (habit, index) => {
+            habits[index] = _.pick(habit, ["id", "name", "icon", "duration"]);
+
+            // Default value if haven't track habit yet
+            const criterion = habit.Criteria.reduce((min, curr) =>
+                curr.score < min.score ? curr : min
+            );
+
+            habits[index].criterion = _.pick(criterion, [
+                "id",
+                "name",
+                "score",
+                "icon",
+            ]);
+        });
+
+        const payload = habits;
         res.status(200).json({
             ok: true,
             data: payload,

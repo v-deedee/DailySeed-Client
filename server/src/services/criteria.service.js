@@ -5,7 +5,7 @@ const { Criteria } = db;
 class CriteriaService {
     constructor() {}
 
-    find = async (conditions) =>
+    findOne = async (conditions) =>
         Criteria.findOne({
             attributes: { exclude: ["createdAt", "updatedAt"] },
             where: conditions,
