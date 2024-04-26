@@ -12,7 +12,7 @@ const numRows = 6; // Number of rows in the garden
 const numColumns = 6; // Number of columns in the garden
 const cellSize = 50; // Fixed size for each cell
 
-const CellComponent = ({ type, x, y, openBorder }) => {
+export const CellComponent = ({ type, x, y, openBorder }) => {
   const assets = {
     // 0: require("../../../../assets/garden/block.png"),
     1: require("../../../../assets/garden/Tree3/tree3-phase1.png"),
@@ -55,7 +55,7 @@ const CellComponent = ({ type, x, y, openBorder }) => {
   );
 };
 
-const HitBox = ({ x, y, openBorder, handleTool }) => {
+export const HitBox = ({ x, y, openBorder, handleTool }) => {
   const positionStyle = {
     position: "relative",
     left:
@@ -81,7 +81,7 @@ const HitBox = ({ x, y, openBorder, handleTool }) => {
   );
 };
 
-const TreeBox = ({ toggleBottomSheet }) => {
+export const TreeBox = ({ toggleBottomSheet }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={toggleBottomSheet}>
@@ -94,7 +94,7 @@ const TreeBox = ({ toggleBottomSheet }) => {
   );
 };
 
-const Shovel = ({ handleShovelPress }) => {
+export const Shovel = ({ handleShovelPress }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={handleShovelPress}>
@@ -107,7 +107,7 @@ const Shovel = ({ handleShovelPress }) => {
   );
 };
 
-const Loupe = ({ handleLoupePress }) => {
+export const ViewTree = ({ handleLoupePress }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={handleLoupePress}>
@@ -120,7 +120,7 @@ const Loupe = ({ handleLoupePress }) => {
   );
 };
 
-const CrossHair = ({ resetZoom }) => {
+export const CrossHair = ({ resetZoom }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={resetZoom}>
@@ -133,7 +133,7 @@ const CrossHair = ({ resetZoom }) => {
   );
 };
 
-const ShareSocial = ({ handleShare }) => {
+export const ShareSocial = ({ handleShare }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={handleShare}>
@@ -146,7 +146,20 @@ const ShareSocial = ({ handleShare }) => {
   );
 };
 
-const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
+export const ViewGarden = ({ handleCalendarPress }) => {
+  return (
+    <View>
+      <TouchableOpacity activeOpacity={0.5} onPress={handleCalendarPress}>
+        <ImageBackground
+          source={require("../../../../assets/garden/calendar.png")}
+          style={styles.image}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+export const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
   switch (treeStatus) {
     case "phase1":
       return (
@@ -266,14 +279,3 @@ const styles = StyleSheet.create({
   },
 
 });
-
-export {
-  TreeBox,
-  Shovel,
-  Loupe,
-  CrossHair,
-  ShareSocial,
-  TreeAvatar,
-  CellComponent,
-  HitBox
-};

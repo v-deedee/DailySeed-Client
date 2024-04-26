@@ -15,7 +15,7 @@ export default function ShopScreen() {
           </View>
           <View style={styles.coinContainer}>
             <ImageBackground source={require('../../../assets/shop/coin.png')} style={{ width: 30, height: 30 }} />
-            <Text>15</Text>
+            <Text style={{ fontWeight: 700 }}>15</Text>
           </View>
         </View>
 
@@ -60,6 +60,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     top: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     flexDirection: 'row',
     backgroundColor: '#ffecb3',
     alignItems: 'center'

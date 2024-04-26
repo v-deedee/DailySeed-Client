@@ -1,17 +1,23 @@
 import { useRef, useState } from "react";
-import { Shovel, Loupe, TreeAvatar, TreeBox, CellComponent, HitBox, CrossHair, ShareSocial } from "./Tree";
-import { StyleSheet, View, TouchableOpacity, Text, ImageBackground } from "react-native";
+import { Shovel, TreeAvatar, TreeBox, CellComponent, HitBox, CrossHair, ShareSocial, ViewTree, ViewGarden } from "./Tree";
+import { StyleSheet, View, TouchableOpacity, Text, ImageBackground, ScrollView, SafeAreaView } from "react-native";
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
 import { BottomSheet } from "@rneui/themed";
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import TreeDetail from "./TreeDetail";
 
+import WheelPicker from 'react-native-wheely';
+
 const numRows = 6; // Number of rows in the garden
 const numColumns = 6; // Number of columns in the garden
 const cellSize = 50; // Fixed size for each cell
 
+var month = new Date().getMonth();
+
 export default function Garden() {
+  const [selectedMonth, setSelectedMonth] = useState(month);
+
   const [map, setMap] = useState([
     [4, 1, 0, 4, 0, 2],
     [0, 2, 0, 1, 0, 0],
@@ -33,9 +39,13 @@ export default function Garden() {
 
   const [isOpenDetail, setOpenDetail] = useState(false);
 
+  const [isOpenMonthPicker, setOpenMonthPicker] = useState(false);
+
   const togglePlantBottomSheet = () => setIsVisible(!isVisible);
 
   const toggleViewBottomSheet = () => setOpenDetail(!isOpenDetail);
+
+  const toggleCalendarBottomSheet = () => setOpenMonthPicker(!isOpenMonthPicker);
 
   const zoomableViewRef = useRef(null);
 
@@ -124,16 +134,21 @@ export default function Garden() {
 
   return (
     <View style={styles.gardern}>
-      <View style={styles.gardenTool}>
-        <TreeBox toggleBottomSheet={togglePlantBottomSheet} />
-        <Shovel handleShovelPress={handleShovelPress} />
-        <Loupe handleLoupePress={handleViewTree} />
+
+      <View style={styles.tool}>
+        <View style={styles.row}>
+          <ShareSocial handleShare={shareGarden} />
+          <CrossHair resetZoom={resetZoom} />
+          <ViewGarden handleCalendarPress={toggleCalendarBottomSheet} />
+        </View>
+
+        <View style={styles.row}>
+          <TreeBox toggleBottomSheet={togglePlantBottomSheet} />
+          <Shovel handleShovelPress={handleShovelPress} />
+          <ViewTree handleLoupePress={handleViewTree} />
+        </View>
       </View>
 
-      <View style={styles.socialTool}>
-        <ShareSocial handleShare={shareGarden} />
-        <CrossHair resetZoom={resetZoom} />
-      </View>
 
       <ReactNativeZoomableView
         maxZoom={1.5}
@@ -192,6 +207,23 @@ export default function Garden() {
           <TreeDetail />
         </View>
       </BottomSheet>
+
+      <BottomSheet isVisible={isOpenMonthPicker} onBackdropPress={toggleCalendarBottomSheet}>
+        <View style={styles.bottomSheetDetail}>
+          <ScrollView horizontal={false} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+            <ScrollView horizontal={true}
+              contentContainerStyle={{ width: '100%', height: '100%', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
+              <WheelPicker
+                containerStyle={{ width: '100%' }}
+                selectedIndex={selectedMonth}
+                itemTextStyle={{}}
+                options={['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']}
+                onChange={(index) => setSelectedMonth(index)}
+              />
+            </ScrollView>
+          </ScrollView>
+        </View>
+      </BottomSheet>
     </View>
   );
 }
@@ -200,7 +232,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   gardern: {
     flex: 3,
     backgroundColor: "#fbf5e5",
@@ -241,27 +272,17 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderColor: "#fff",
   },
-  gardenTool: {
+  tool: {
     backgroundColor: "transparent",
     height: 0,
     position: 'relative',
     top: 10,
     gap: 5,
-    right: 10,
+    marginLeft: 10,
+    marginRight: 10,
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: 'space-between',
     paddingTop: 0,
-    zIndex: 1,
-  },
-  socialTool: {
-    backgroundColor: "transparent",
-    height: 0,
-    position: 'relative',
-    top: 10,
-    gap: 5,
-    left: 10,
-    flexDirection: "row",
-    justifyContent: "flex-start",
     zIndex: 1,
   },
   bottomSheetPlant: {
