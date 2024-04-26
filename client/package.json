@@ -35,7 +35,8 @@
     "react-native-view-shot": "3.8.0",
     "react-native-web": "~0.19.6",
     "react-native-wheel-picker-expo": "^0.5.4",
-    "react-native-wheely": "^0.6.0"
+    "react-native-wheely": "^0.6.0",
+    "expo-image-manipulator": "~11.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
