@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Alert,
   View,
@@ -7,24 +7,33 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  ActivityIndicator,
 } from "react-native";
-import User from "../services/models/user";
+import { register } from "../services/user.service"
+import { UserContext } from "../contexts/user.context";
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const {setUser} = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(false); // State để kiểm soát hiển thị biểu tượng load
+
 
   const handleRegister = async () => {
+    setIsLoading(true); // Bắt đầu hiển thị biểu tượng load
+
     console.log("Register with username:", username, "and password:", password);
-    const data = await User.register(username, password, email);
-    if(data.ok) {
+    const data = await register(username, password, email);
+    if(data) {
       navigation.navigate("Login");
       alert('Successful account registration');
     } else {
       console.log(data.message);
       alert(data.message);
     }
+    setIsLoading(false); // Dừng hiển thị biểu tượng load khi nhận được kết quả
+
   };
 
   const handleLoginPress = () => {
@@ -72,7 +81,11 @@ const RegisterScreen = ({ navigation }) => {
         />
       </View>
       <TouchableOpacity style={styles.registerBtn} onPress={handleRegister}>
-        <Text style={styles.registerText}>REGISTER</Text>
+        {isLoading ? ( // Hiển thị biểu tượng load nếu isLoading là true
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
+          <Text style={styles.registerText}>REGISTER</Text>
+        )}
       </TouchableOpacity>
       <View style={styles.loginField}>
         <Text>Already have an account?</Text>

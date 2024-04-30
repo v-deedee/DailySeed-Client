@@ -1,16 +1,18 @@
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
-import UserSingleton from "../../services/user-singleton";
-import { deleteTokenFromLocalStorage } from "../../services/auth/token-services";
 import { Card, Button } from '@rneui/themed';
 import AccoutCard from "./_component/AccoutCard";
 import CustomCard from "./_component/CustomCard";
+import { logout } from "../../services/user.service";
+import { useContext } from "react";
+import { UserContext } from "../../contexts/user.context";
 
 
 export default function SettingScreen({ signOut }) {
+  const {setUser} = useContext(UserContext)
 
   const handleLogout = () => {
-    UserSingleton.getInstance().setUser(null);
-    deleteTokenFromLocalStorage();
+    logout();
+    setUser(null);
     signOut();
   }
 

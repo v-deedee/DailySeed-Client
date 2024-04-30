@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -7,18 +7,22 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import User from "../services/models/user"
+import {login} from "../services/user.service"
+import { UserContext } from "../contexts/user.context";
 
 const LoginScreen = ({ navigation, signIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const {setUser} = useContext(UserContext)
+
   const handleLogin = async () => {
     try {
-      const loggedIn = await User.login(username, password);
-      if (loggedIn) {
+      const { user } = await login(username, password);
+      if (user) {
         console.log('Login successful!');
         signIn();
+        setUser(user);
       } else {
         console.error('Login failed!');
       }
