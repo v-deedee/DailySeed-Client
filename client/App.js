@@ -2,18 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import User from "./app/navigation/UserTabs";
 import Login from "./app/navigation/LoginStack";
-<<<<<<< HEAD
-import UserClass from "./app/services/models/user";
-import UserSingleton from "./app/services/user-singleton";
-import LoadingScreen from "./app/screens/LoadingScreen"; // Import màn hình loading
-import { StatusBar } from "react-native";
-
-=======
 import LoadingScreen from "./app/screens/LoadingScreen"; 
 import { UserProvider } from "./app/contexts/user.context";
 import { getUserByToken } from "./app/services/user.service"
 import { UserContext } from "./app/contexts/user.context";
->>>>>>> khang2
 function getLoginStatus() {
   return false;
 }
@@ -41,29 +33,13 @@ export default function App() {
       }
       setIsLoading(false);
     }
-<<<<<<< HEAD
-
-    checkLoginStatus();
-  }, []);
-=======
     
     fetchUserData();
   }, [])
->>>>>>> khang2
 
 
 
   return (
-<<<<<<< HEAD
-    <NavigationContainer>
-      <StatusBar backgroundColor={"#fbf5e5"} />
-      {isSignedIn ? (
-        <User signOut={() => setIsSignedIn(false)} />
-      ) : (
-        <Login signIn={() => setIsSignedIn(true)} />
-      )}
-    </NavigationContainer>
-=======
     isLoading ? (
       <LoadingScreen />
     ) : (
@@ -77,6 +53,5 @@ export default function App() {
         </NavigationContainer>
       </UserProvider>
     )
->>>>>>> khang2
   );
 }
