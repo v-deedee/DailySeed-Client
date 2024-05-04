@@ -6,28 +6,33 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  ActivityIndicator,
 } from "react-native";
-import {login} from "../services/user.service"
+import { login } from "../services/user.service";
 import { UserContext } from "../contexts/user.context";
 
 const LoginScreen = ({ navigation, signIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); // Thêm state cho hiệu ứng loading
 
-  const {setUser} = useContext(UserContext)
+  const { setUser } = useContext(UserContext);
 
   const handleLogin = async () => {
+    setLoading(true); // Bắt đầu hiển thị hiệu ứng loading
     try {
       const { user } = await login(username, password);
       if (user) {
-        console.log('Login successful!');
+        console.log("Login successful!");
         signIn();
         setUser(user);
       } else {
-        console.error('Login failed!');
+        console.error("Login failed!");
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
+    } finally {
+      setLoading(false); // Ẩn hiệu ứng loading sau khi nhận được phản hồi từ API
     }
   };
 
@@ -59,7 +64,11 @@ const LoginScreen = ({ navigation, signIn }) => {
         />
       </View>
       <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
-        <Text style={styles.loginText}>LOGIN</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
+          <Text style={styles.loginText}>LOGIN</Text>
+        )}
       </TouchableOpacity>
       <View style={styles.registerField}>
         <Text>Don't have an account?</Text>

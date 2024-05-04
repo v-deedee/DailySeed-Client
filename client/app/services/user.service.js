@@ -1,6 +1,6 @@
 import authApi from './authApi';
 import publicApi from './publicApi';
-import { getTokenFromLocalStorage, deleteTokenFromLocalStorage } from '../services/auth/token.services';
+import { saveTokenToLocalStorage, deleteTokenFromLocalStorage } from '../services/auth/token.services';
 import User from '../models/User';
 import Profile from '../models/Profile';
 import { setUser } from '../contexts/user.context';
@@ -12,7 +12,7 @@ export const login = async (username, password) => {
     const { ok, data } = response.data;
     if (ok) {
       const { token, payload } = data;
-      await getTokenFromLocalStorage(token);
+      await saveTokenToLocalStorage(token);
       return { user: new User(payload.id, payload.username ) };
     } else {
       throw new Error('Login failed');
@@ -46,7 +46,8 @@ export const register = async (username, password, email) => {
 
 export const logout = async () => {
     try {
-      await deleteTokenFromLocalStorage();  
+      await deleteTokenFromLocalStorage();
+  
       return true;
     } catch (error) {
       throw error;
