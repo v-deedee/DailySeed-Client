@@ -227,49 +227,29 @@ export default class HabitController {
         });
     };
 
-
     viewUserHabit = async (req, res) => {
-        try {
-            const userId = req.user.id; 
-    
-            const habits = await HabitService.findAll({ userId: userId });
-    
-            if (!habits || habits.length === 0) {
-                return res.status(404).json({
-                    ok: false,
-                    message: "No habits found for the user.",
-                });
-            }
-    
-            const habitsData = habits.map(habit => ({
+        const userId = req.user.id;
+
+        const habits = await HabitService.findAll({ userId: userId });
+
+        payload = {
+            habits: habits.map((habit) => ({
                 id: habit.id,
                 name: habit.name,
                 icon: habit.icon,
                 duration: habit.duration,
-                criteria: habit.Criteria.map(criterion => ({
+                criteria: habit.Criteria.map((criterion) => ({
                     id: criterion.id,
                     name: criterion.name,
                     icon: criterion.icon,
-                    score: criterion.score
-                }))
-            }));
+                    score: criterion.score,
+                })),
+            })),
+        };
 
-            payload = {
-                habits: habitsData
-            }
-    
-            return res.status(200).json({
-                ok: true,
-                payload,
-            });
-        } catch (error) {
-            // Xử lý lỗi nếu có
-            console.error("Error retrieving habits by user:", error);
-            return res.status(500).json({
-                ok: false,
-                message: "Internal server error."
-            });
-        }
+        return res.status(200).json({
+            ok: true,
+            data: payload,
+        });
     };
-    
 }
