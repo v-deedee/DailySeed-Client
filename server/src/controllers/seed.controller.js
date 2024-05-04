@@ -76,4 +76,33 @@ export default class SeedController {
             data: payload,
         });
     };
+
+    viewUserSeeds = async (req, res) => {
+        const { user } = req;
+
+        try {
+            if (user.role !== userRole.USER) {
+                throw new HttpError({
+                    ...errorCode.UNAUTHORIZED,
+                    message: "Only regular users can view their seeds.",
+                });
+            }
+
+            const seeds = await SeedService.findAll({ UserId: user.id });
+
+            const payload = seeds.map(seed => _.pick(seed, ["id", "name", "asset", "price"]));
+
+            res.status(200).json({
+                ok: true,
+                data: payload,
+            });
+        } catch (error) {
+            console.error("Error retrieving user seeds:", error);
+            res.status(error.status || 500).json({
+                ok: false,
+                message: error.message || "Internal server error.",
+            });
+        }
+    };
+
 }

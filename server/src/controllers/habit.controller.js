@@ -230,7 +230,6 @@ export default class HabitController {
 
     viewUserHabit = async (req, res) => {
         try {
-            console.log(req.user.id);
             const userId = req.user.id; 
     
             const habits = await HabitService.findAll({ userId: userId });
@@ -271,6 +270,6 @@ export default class HabitController {
                 message: "Internal server error."
             });
         }
-    }
+    };
     
 }

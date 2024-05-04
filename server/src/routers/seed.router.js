@@ -1,3 +1,4 @@
+import { method, round } from "lodash";
 import userRole from "../constants/user.role.js";
 import SeedController from "../controllers/seed.controller.js";
 import seedSchema from "../validations/seed.validation.js";
@@ -28,6 +29,12 @@ export default [
                 method: "listSeed",
                 roles: [userRole.USER, userRole.ADMIN],
             },
+            {
+                httpMethod: "get",
+                path: "/seed/all",
+                method: "viewUserSeed",
+                roles: [userRole.USER]
+            }
         ],
     },
 ];
