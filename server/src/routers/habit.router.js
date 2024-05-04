@@ -1,3 +1,4 @@
+import { method } from "lodash";
 import userRole from "../constants/user.role.js";
 import HabitController from "../controllers/habit.controller.js";
 import habitSchema from "../validations/habit.validation.js";
@@ -29,6 +30,13 @@ export default [
                 roles: [userRole.USER],
                 schema: habitSchema.update,
             },
+            // Get all user habit
+            {
+                httpMethod: "get",
+                path: "/habit/all",
+                method: "viewUserHabit",
+                roles: [userRole.USER]
+            }
         ],
     },
 ];
