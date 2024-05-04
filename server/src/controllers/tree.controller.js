@@ -62,25 +62,16 @@ export default class TreeController {
     viewUserTree = async (req, res) => {
         const { user } = req;
 
-        try {
-            const userTrees = await TreeService.findAll({ UserId: user.id });
+        const userTrees = await TreeService.findAll({ UserId: user.id });
 
-            const payload = userTrees.map(tree => ({
-                tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
-                seed: _.pick(tree.Seed, ["id", "name", "asset"]),
-            }));
+        const payload = userTrees.map((tree) => ({
+            tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
+            seed: _.pick(tree.Seed, ["id", "name", "asset"]),
+        }));
 
-            res.status(200).json({
-                ok: true,
-                data: payload,
-            });
-        } catch (error) {
-            console.error("Error retrieving user trees:", error);
-            res.status(error.status || 500).json({
-                ok: false,
-                message: error.message || "Internal server error.",
-            });
-        }
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
     };
-
 }
