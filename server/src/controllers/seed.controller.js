@@ -97,26 +97,4 @@ export default class SeedController {
             data: payload,
         });
     };
-
-    viewUserSeeds = async (req, res) => {
-        const { user } = req;
-
-        if (user.role !== userRole.USER) {
-            throw new HttpError({
-                ...errorCode.AUTH.ROLE_INVALID,
-                status: 403,
-            });
-        }
-
-        const seeds = await SeedService.findAll({ UserId: user.id });
-
-        const payload = seeds.map((seed) =>
-            _.pick(seed, ["id", "name", "asset", "price"])
-        );
-
-        res.status(200).json({
-            ok: true,
-            data: payload,
-        });
-    };
 }

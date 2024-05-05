@@ -226,30 +226,4 @@ export default class HabitController {
             data: payload,
         });
     };
-
-    viewUserHabit = async (req, res) => {
-        const userId = req.user.id;
-
-        const habits = await HabitService.findAll({ userId: userId });
-
-        payload = {
-            habits: habits.map((habit) => ({
-                id: habit.id,
-                name: habit.name,
-                icon: habit.icon,
-                duration: habit.duration,
-                criteria: habit.Criteria.map((criterion) => ({
-                    id: criterion.id,
-                    name: criterion.name,
-                    icon: criterion.icon,
-                    score: criterion.score,
-                })),
-            })),
-        };
-
-        return res.status(200).json({
-            ok: true,
-            data: payload,
-        });
-    };
 }
