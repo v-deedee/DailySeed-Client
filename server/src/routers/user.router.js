@@ -27,7 +27,7 @@ export default [
                 method: "updateProfile",
                 roles: [userRole.USER],
                 schema: userValidation.updateProfile,
-                file: "picture",
+                files: [{ name: "picture", maxCount: 1 }],
             },
             // Update password
             {
