@@ -261,6 +261,23 @@ npm run start
 
         `Authorization: Bearer <user's token>`
 
+3.  List Tree
+
+    `GET /api/tree`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+    -   Param
+
+        ```
+        date=20240425; // For a specific date
+        date=[20230425,20240501]; // For a range of date
+        ```
+
 ## Seed
 
 1.  Create Seed

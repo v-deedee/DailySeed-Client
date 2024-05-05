@@ -1,8 +1,9 @@
 import SeedService from "../services/seed.service.js";
-import _ from "lodash";
 import TreeService from "../services/tree.service.js";
 import { HttpError } from "../utils/http.error.js";
 import errorCode from "../constants/error.code.js";
+import { Op } from "sequelize";
+import _ from "lodash";
 
 export default class TreeController {
     constructor() {}
@@ -59,13 +60,45 @@ export default class TreeController {
         });
     };
 
-    viewUserTree = async (req, res) => {
+    #getDateQuery = (query) => {
+        let rangePattern = /\[\d{8},\d{8}\]/;
+        let pointPattern = /\d{8}/;
+
+        if (rangePattern.test(query.date)) {
+            const [start, end] = query.date
+                .substring(1, query.date.length - 1)
+                .split(",");
+
+            return { [Op.between]: [start, end] };
+        }
+
+        if (pointPattern.test(query.date)) {
+            return query.date;
+        }
+
+        return null;
+    };
+
+    listTree = async (req, res) => {
         const { user } = req;
+        const { query } = req;
 
-        const userTrees = await TreeService.findAll({ UserId: user.id });
+        const filter = { UserId: user.id };
+        const dateFilter = this.#getDateQuery(query);
+        if (dateFilter) filter.date = dateFilter;
 
-        const payload = userTrees.map((tree) => ({
-            tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
+        const trees = await TreeService.findAll(filter);
+
+        const payload = _.map(trees, (tree) => ({
+            tree: _.pick(tree, [
+                "id",
+                "date",
+                "score",
+                "note",
+                "picture",
+                "coordinate_x",
+                "coordinate_y",
+            ]),
             seed: _.pick(tree.Seed, ["id", "name", "asset"]),
         }));
 

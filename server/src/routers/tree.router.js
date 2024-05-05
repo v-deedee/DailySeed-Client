@@ -21,10 +21,10 @@ export default [
             },
             {
                 httpMethod: "get",
-                path: "/tree/all",
-                method: "viewUserTree",
+                path: "/tree",
+                method: "listTree",
                 roles: [userRole.USER],
-            }
+            },
         ],
     },
 ];

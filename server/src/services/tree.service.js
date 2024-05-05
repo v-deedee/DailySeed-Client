@@ -16,6 +16,7 @@ class TreeService {
         Tree.findAll({
             attributes: attributes,
             where: conditions,
+            include: [{ association: Tree.Seed }],
         });
 
     create = async (data) => Tree.create(data);
