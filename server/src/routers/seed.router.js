@@ -12,7 +12,7 @@ export default [
                 method: "createSeed",
                 roles: [userRole.ADMIN],
                 schema: seedSchema.create,
-                file: "asset",
+                files: [{ name: "assets", maxCount: 4 }],
             },
             {
                 httpMethod: "put",
@@ -20,7 +20,7 @@ export default [
                 method: "updateSeed",
                 roles: [userRole.ADMIN],
                 schema: seedSchema.update,
-                file: "asset",
+                files: [{ name: "assets", maxCount: 4 }],
             },
             {
                 httpMethod: "get",
@@ -32,8 +32,8 @@ export default [
                 httpMethod: "get",
                 path: "/seed/all",
                 method: "viewUserSeed",
-                roles: [userRole.USER]
-            }
+                roles: [userRole.USER],
+            },
         ],
     },
 ];

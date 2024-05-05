@@ -279,7 +279,7 @@ npm run start
 
             name
             price
-            asset
+            assets
 
 2.  Update Seed
 
@@ -297,7 +297,7 @@ npm run start
 
               name
               price
-              asset
+              assets
 
 3.  List Seed
 
