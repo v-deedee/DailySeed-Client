@@ -276,6 +276,7 @@ npm run start
         ```
         date=20240425; // For a specific date
         date=[20230425,20240501]; // For a range of date
+        extend=true // for more tree info
         ```
 
 ## Seed

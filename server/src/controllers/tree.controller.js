@@ -89,17 +89,15 @@ export default class TreeController {
 
         const trees = await TreeService.findAll(filter);
 
+        const treeSelectFields = ["id", "coordinate_x", "coordinate_y"];
+        const seedSelectFields = ["id", "asset"];
+        if (query.extend) {
+            treeSelectFields.push(...["date", "score", "note", "picture"]);
+            seedSelectFields.push(...["name"]);
+        }
         const payload = _.map(trees, (tree) => ({
-            tree: _.pick(tree, [
-                "id",
-                "date",
-                "score",
-                "note",
-                "picture",
-                "coordinate_x",
-                "coordinate_y",
-            ]),
-            seed: _.pick(tree.Seed, ["id", "name", "asset"]),
+            tree: _.pick(tree, treeSelectFields),
+            seed: _.pick(tree.Seed, seedSelectFields),
         }));
 
         res.status(200).json({
