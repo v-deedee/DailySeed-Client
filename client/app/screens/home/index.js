@@ -8,7 +8,7 @@ import SelectTreeModal from "./_component/modals/SelectTreeModal";
 import { UserContext } from "../../contexts/user.context";
 
 export default function HomeScreen({ navigation }) {
-  const {user} = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const route = useRoute();
   const value = route.params?.progress;
 

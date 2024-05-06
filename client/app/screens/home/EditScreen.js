@@ -16,11 +16,13 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 
 import { color } from "../../utils/utils";
 import LevelModal from "./_component/modals/LevelModal";
+import ConfirmSaveHabitModal from "./_component/modals/ConfirmSaveHabitModal";
 
 const habits = [
   {
     icon: "😈",
     name: "Emotion",
+    duration: 1,
     levels: [
       {
         label: "Bad",
@@ -39,6 +41,7 @@ const habits = [
   {
     icon: "🧹",
     name: "Housework",
+    duration: 1,
     levels: [
       {
         label: "Poor",
@@ -61,6 +64,7 @@ const habits = [
   {
     icon: "💻",
     name: "OOP",
+    duration: 1,
     levels: [
       {
         label: "Basic",
@@ -87,6 +91,7 @@ const habits = [
   {
     icon: "☺️",
     name: "Sample",
+    duration: 1,
     levels: [
       {
         label: "Sample 1",
@@ -106,13 +111,13 @@ export default function EditScreen({ navigation }) {
 
   const [habitIcon, setHabitIcon] = useState(habits[currentId].icon);
   const [habitName, setHabitName] = useState(habits[currentId].name);
+  const [habitDuration, setHabitDuration] = useState(
+    habits[currentId].duration.toString(),
+  );
 
   const [openLevelModal, setOpenLevelModal] = useState(false);
 
-  // slider value
-  const [value, setValue] = useState(0);
-
-  const [renderValue, setRenderValue] = useState(0);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
   const [modalType, setModalType] = useState("");
 
@@ -121,8 +126,17 @@ export default function EditScreen({ navigation }) {
 
   const [toggleReRender, setToggleReRender] = useState(false);
 
+  // slider value
+  const [value, setValue] = useState(0);
+
+  const [renderValue, setRenderValue] = useState(0);
+
   const toggleLevelModal = () => {
     setOpenLevelModal(!openLevelModal);
+  };
+
+  const toggleConfirmModal = () => {
+    setOpenConfirmModal(!openConfirmModal);
   };
 
   const addNewLevel = () => {
@@ -132,6 +146,7 @@ export default function EditScreen({ navigation }) {
         icon: iconInput,
       });
       setValue(habits[currentId].levels.length - 1);
+      setRenderValue(100);
       setIconInput("");
       setLabelInput("");
     }
@@ -154,6 +169,8 @@ export default function EditScreen({ navigation }) {
   const deleteLevel = () => {
     let temp = [...habits[currentId].levels];
     temp.splice(value, 1);
+    setValue(0);
+    setRenderValue(0);
     habits[currentId].levels = [...temp];
     setToggleReRender(!toggleReRender);
   };
@@ -184,7 +201,7 @@ export default function EditScreen({ navigation }) {
           <View style={{ gap: 10, marginBottom: 10 }}>
             {/* Habit icon */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ width: "20%", fontWeight: 700 }}>Icon: </Text>
+              <Text style={{ width: "22%", fontWeight: 700 }}>Icon: </Text>
               <View style={[styles.inputView, { flex: 1 }]}>
                 <TextInput
                   style={{ height: 50 }}
@@ -201,7 +218,7 @@ export default function EditScreen({ navigation }) {
 
             {/* Habit name */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ width: "20%", fontWeight: 700 }}>Name: </Text>
+              <Text style={{ width: "22%", fontWeight: 700 }}>Name: </Text>
               <View style={[styles.inputView, { flex: 1 }]}>
                 <TextInput
                   style={{ height: 50 }}
@@ -210,6 +227,36 @@ export default function EditScreen({ navigation }) {
                   value={habitName}
                   onChangeText={(text) => setHabitName(text)}
                 />
+              </View>
+              <TouchableOpacity style={{ paddingHorizontal: 10 }}>
+                <MaterialIcons name="check" size={30} color="#008D6A" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Habit duration */}
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+              >
+                <Text style={{ fontWeight: 700 }}>Duration: </Text>
+                <View
+                  style={{
+                    borderBottomWidth: 2,
+                    marginLeft: 10,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <TextInput
+                    keyboardType="numeric"
+                    maxLength={3}
+                    style={{ height: 30, width: 50 }}
+                    selectionColor="#aaa"
+                    value={habitDuration}
+                    onChangeText={(text) => setHabitDuration(text)}
+                  />
+                  <Text style={{}}>(days)</Text>
+                </View>
               </View>
               <TouchableOpacity style={{ paddingHorizontal: 10 }}>
                 <MaterialIcons name="check" size={30} color="#008D6A" />
@@ -262,7 +309,10 @@ export default function EditScreen({ navigation }) {
                 maximumValue={100}
                 minimumValue={0}
                 step={2}
-                minimumTrackTintColor="#50AA75"
+                minimumTrackTintColor={color(
+                  value,
+                  habits[currentId].levels.length - 1,
+                )}
                 onSlidingComplete={(value) => {
                   let divider = Math.floor(
                     100 / (habits[currentId].levels.length - 1),
@@ -358,8 +408,11 @@ export default function EditScreen({ navigation }) {
 
       {/* Submit button */}
       <View style={styles.submitBox}>
-        <TouchableOpacity style={styles.submitButton} onPress={submit}>
-          <Text style={styles.submitText}>Done</Text>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={toggleConfirmModal}
+        >
+          <Text style={styles.submitText}>Save</Text>
         </TouchableOpacity>
       </View>
 
@@ -374,6 +427,13 @@ export default function EditScreen({ navigation }) {
         setLabelInput={setLabelInput}
         addNewLevel={addNewLevel}
         editLevel={editLevel}
+      />
+
+      <ConfirmSaveHabitModal
+        isOpen={openConfirmModal}
+        toggle={toggleConfirmModal}
+        duration={parseInt(habitDuration)}
+        save={submit}
       />
     </View>
   );
