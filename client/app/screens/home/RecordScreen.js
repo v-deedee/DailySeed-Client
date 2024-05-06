@@ -92,7 +92,11 @@ const RecordScreen = ({ navigation }) => {
 
   const currentDate = getCurrentDate();
 
-  const [values, setValues] = useState([0, 0, 0]);
+  const [values, setValues] = useState(new Array(habits.length).fill(0));
+
+  const [renderValues, setRenderValues] = useState(
+    new Array(habits.length).fill(0),
+  );
 
   const closeRecord = () => {
     navigation.navigate("Home");
@@ -149,16 +153,14 @@ const RecordScreen = ({ navigation }) => {
           <View style={styles.recordContent} key={index}>
             {/* Icon + title */}
             <View
-              style={{ alignItems: "center", marginTop: -55, marginBottom: 15 }}
+              // style={{ alignItems: "center", marginTop: -55, marginBottom: 8 }}
+              style={{ position: "absolute", top: -27, left: 20 }}
             >
               <View style={styles.habitIconBox}>
                 <View style={styles.habitIcon}>
                   <Text style={{ fontSize: 35 }}>{habit.icon}</Text>
                 </View>
               </View>
-              <Text style={{ fontSize: 16, fontWeight: "700" }}>
-                {habit.name}
-              </Text>
             </View>
 
             {/* Action */}
@@ -182,46 +184,117 @@ const RecordScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
+            <View
+              style={{
+                marginBottom: 30,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{ fontSize: 16, fontWeight: "700", marginBottom: 5 }}
+              >
+                {habit.name}
+              </Text>
+              {/* Status */}
+              {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text>Status: </Text>
+                <Text
+                  style={[
+                    styles.statusContent,
+                    {
+                      backgroundColor: color(
+                        values[index],
+                        habit.levels.length - 1,
+                      ),
+                    },
+                  ]}
+                >
+                  {habit.levels[values[index]].label}
+                </Text>
+              </View> */}
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text
+                  style={{
+                    fontStyle: "italic",
+                    color: "#B3B3B3",
+                    fontWeight: 700,
+                  }}
+                >
+                  4 days left
+                </Text>
+              </View>
+            </View>
+
             <Slider
-              value={values[index]}
+              value={renderValues[index]}
               onValueChange={(value) => {
                 let newValues = [...values];
-                newValues[index] = value;
+                let newRenderValues = [...renderValues];
+
+                let divider = Math.floor(
+                  100 / (habits[index].levels.length - 1),
+                );
+                let shiftedValue = value + divider / 2;
+
+                newValues[index] = Math.floor(shiftedValue / divider);
+                newRenderValues[index] = value;
+
                 setValues(newValues);
+                setRenderValues(newRenderValues);
               }}
-              maximumValue={habit.levels.length - 1}
+              maximumValue={100}
               minimumValue={0}
-              minimumTrackTintColor="#50AA75"
-              step={1}
+              step={2}
+              minimumTrackTintColor={color(
+                values[index],
+                habit.levels.length - 1,
+              )}
+              onSlidingComplete={(value) => {
+                let newValues = [...values];
+                let newRenderValues = [...renderValues];
+
+                let divider = Math.floor(
+                  100 / (habits[index].levels.length - 1),
+                );
+                let shiftedValue = value + divider / 2;
+
+                newValues[index] = Math.floor(shiftedValue / divider);
+                newRenderValues[index] =
+                  Math.floor(shiftedValue / divider) * divider;
+
+                setValues(newValues);
+                setRenderValues(newRenderValues);
+              }}
               allowTouchTrack
               trackStyle={{ height: 25, borderRadius: 999 }}
-              thumbStyle={styles.sliderThumpStyle}
+              thumbStyle={{
+                height: 55,
+                width: 55,
+                borderRadius: 999,
+                backgroundColor: "#F9FDB8",
+                paddingTop: 2,
+              }}
               thumbProps={{
                 children: (
-                  <Text style={{ fontSize: 40, marginTop: -3 }}>
-                    {habit.levels[values[index]].icon}
-                  </Text>
+                  <View style={{ alignItems: "center", gap: 5 }}>
+                    <Text style={{ fontSize: 35 }}>
+                      {habit.levels[values[index]].icon}
+                    </Text>
+                    <Text
+                      style={{
+                        width: 100,
+                        textAlign: "center",
+                        fontWeight: 800,
+                        color: color(values[index], habit.levels.length - 1),
+                      }}
+                    >
+                      {habit.levels[values[index]].label}
+                    </Text>
+                  </View>
                 ),
               }}
             />
-
-            {/* Status */}
-            <View style={styles.statusBox}>
-              <Text>Status: </Text>
-              <Text
-                style={[
-                  styles.statusContent,
-                  {
-                    backgroundColor: color(
-                      values[index],
-                      habit.levels.length - 1,
-                    ),
-                  },
-                ]}
-              >
-                {habit.levels[values[index]].label}
-              </Text>
-            </View>
           </View>
         ))}
       </ScrollView>
@@ -260,44 +333,58 @@ const styles = StyleSheet.create({
     color: "#474838",
   },
   recordContent: {
-    marginTop: 40,
+    marginTop: 35,
     padding: 20,
+    paddingTop: 15,
+    paddingBottom: 40,
     height: "auto",
     backgroundColor: "#FFFFFF",
     marginHorizontal: 20,
-    marginVertical: 10,
+    marginVertical: 15,
     borderRadius: 20,
     position: "relative",
   },
   habitIconBox: {
     // padding: 5,
-    backgroundColor: "#FBF5E5",
+    // backgroundColor: "#FBF5E5",
+    backgroundColor: "#fff",
     borderRadius: 999,
   },
   habitIcon: {
-    width: 60,
-    height: 60,
+    width: 65,
+    height: 65,
     alignItems: "center",
+    justifyContent: "center",
     borderRadius: 999,
-    // backgroundColor: "#33B5B9",
+    // backgroundColor: "#F9FDB8",
+    backgroundColor: "#fff",
+    backgroundColor: "#50AA7555",
+    borderColor: "#3B6C78",
     // padding: 8,
-    borderWidth: 2,
+    // borderWidth: 2,
+    // borderBottomWidth: 2,
     // borderStyle: "dashed",
-    borderColor: "#33B5B9",
-    paddingTop: 6,
+    // elevation: 1,
+    // shadowColor: "#000000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 3,
+    // },
+    // shadowRadius: 5,
+    // shadowOpacity: 1.0,
   },
   actionIconBox: {
-    right: 10,
+    right: 15,
     top: -15,
     // top: 10,
     flexDirection: "row",
-    gap: 10,
+    gap: 8,
     position: "absolute",
   },
   actionIcon: {
     backgroundColor: "#3B6C78",
     borderRadius: 999,
-    padding: 10,
+    padding: 8,
   },
   sliderThumpStyle: {
     height: 60,
@@ -307,12 +394,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  statusBox: {
-    paddingTop: 20,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
   },
   statusContent: {
     padding: 10,

@@ -85,14 +85,8 @@ export const trees = [
   ],
 ];
 
-const interpolate = (start, end, value, maxValue) => {
-  let k = (value - 0) / maxValue;
-  return Math.ceil((1 - k) * start + k * end) % 256;
-};
+const colorPallette = ["#FF8B60", "#FFB246", "#FFD84C", "#A9D78C", "#6BC8A3"];
 
 export const color = (value, maxValue) => {
-  let r = interpolate(255, 0, value, maxValue);
-  let g = interpolate(0, 205, value, maxValue);
-  let b = interpolate(0, 0, value, maxValue);
-  return `rgb(${r},${g},${b})`;
+  return colorPallette[Math.round((value / maxValue) * 4)];
 };

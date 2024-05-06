@@ -112,6 +112,8 @@ export default function EditScreen({ navigation }) {
   // slider value
   const [value, setValue] = useState(0);
 
+  const [renderValue, setRenderValue] = useState(0);
+
   const [modalType, setModalType] = useState("");
 
   const [iconInput, setIconInput] = useState("");
@@ -248,12 +250,27 @@ export default function EditScreen({ navigation }) {
 
             <View style={styles.levelContent}>
               <Slider
-                value={value}
-                onValueChange={setValue}
-                maximumValue={habits[currentId].levels.length - 1}
+                value={renderValue}
+                onValueChange={(value) => {
+                  let divider = Math.floor(
+                    100 / (habits[currentId].levels.length - 1),
+                  );
+                  let shiftedValue = value + divider / 2;
+                  setValue(Math.floor(shiftedValue / divider));
+                  setRenderValue(value);
+                }}
+                maximumValue={100}
                 minimumValue={0}
+                step={2}
                 minimumTrackTintColor="#50AA75"
-                step={1}
+                onSlidingComplete={(value) => {
+                  let divider = Math.floor(
+                    100 / (habits[currentId].levels.length - 1),
+                  );
+                  let shiftedValue = value + divider / 2;
+                  setValue(Math.floor(shiftedValue / divider));
+                  setRenderValue(Math.floor(shiftedValue / divider) * divider);
+                }}
                 allowTouchTrack
                 style={{ width: "100%", marginBottom: 30 }}
                 trackStyle={{ height: 20, borderRadius: 999 }}
