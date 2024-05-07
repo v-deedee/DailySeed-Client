@@ -11,6 +11,9 @@ import { useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { Slider } from "@rneui/themed";
 
+import IconModal from './_component/IconPicker';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
@@ -102,6 +105,18 @@ const habits = [
 
 export default function EditScreen({ navigation }) {
   const route = useRoute();
+  const [showIconModal, setShowIconModal] = useState(false);
+
+  const toggleIconModal = () => {
+    setShowIconModal(!showIconModal);
+  };
+
+  const handleIconSelect = (icon) => {
+    setHabitIcon(icon);
+    console.log(icon)
+    toggleIconModal();
+  };
+
   let currentId = route.params?.id;
 
   const [habitIcon, setHabitIcon] = useState(habits[currentId].icon);
@@ -181,19 +196,14 @@ export default function EditScreen({ navigation }) {
           {/* Habit icon + habit name */}
           <View style={{ gap: 10, marginBottom: 10 }}>
             {/* Habit icon */}
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ width: "20%", fontWeight: 700 }}>Icon: </Text>
-              <View style={[styles.inputView, { flex: 1 }]}>
-                <TextInput
-                  style={{ height: 50 }}
-                  placeholder="Enter habit name"
-                  selectionColor="#ccc"
-                  value={habitIcon}
-                  onChangeText={(text) => setHabitIcon(text)}
-                />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ width: '20%', fontWeight: 700 }}>Icon: </Text>
+              <View style={[styles.inputView, { flex: 1, flexDirection: 'row', alignItems: 'center' }]}>
+                <Ionicons name={null} style={{ fontSize: 24 }}>{habitIcon}</Ionicons>
+                {/* <Text style={{ marginLeft: 10 }}>{habitIcon}</Text> */}
               </View>
-              <TouchableOpacity style={{ paddingHorizontal: 10 }}>
-                <MaterialIcons name="check" size={30} color="#008D6A" />
+              <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={toggleIconModal}>
+                <Text style={{ fontWeight: 'bold' }}>Choose Icon</Text>
               </TouchableOpacity>
             </View>
 
@@ -358,6 +368,13 @@ export default function EditScreen({ navigation }) {
         addNewLevel={addNewLevel}
         editLevel={editLevel}
       />
+
+      <IconModal
+          visible={showIconModal}
+          onIconSelect={handleIconSelect}
+          onClose={toggleIconModal}
+        />
+
     </View>
   );
 }

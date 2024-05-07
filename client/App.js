@@ -6,6 +6,13 @@ import LoadingScreen from "./app/screens/LoadingScreen";
 import { UserProvider } from "./app/contexts/user.context";
 import { getUserByToken } from "./app/services/user.service"
 import { UserContext } from "./app/contexts/user.context";
+import { SeedProvider } from "./app/contexts/seed.context";
+
+// import * as dotenv from 'react-native-dotenv';
+
+// dotenv.config(); // Load environment variables
+
+
 function getLoginStatus() {
   return false;
 }
@@ -44,13 +51,15 @@ export default function App() {
       <LoadingScreen />
     ) : (
       <UserProvider initialUser={user} setUserCallback={handleSetUser}>
-        <NavigationContainer>
-          {isSignedIn ? (
-            <User signOut={() => setIsSignedIn(false)} />
-          ) : (
-            <Login signIn={() => setIsSignedIn(true)} />
-          )}
-        </NavigationContainer>
+        <SeedProvider>
+          <NavigationContainer>
+            {isSignedIn ? (
+              <User signOut={() => setIsSignedIn(false)} />
+            ) : (
+              <Login signIn={() => setIsSignedIn(true)} />
+            )}
+          </NavigationContainer>
+        </SeedProvider>
       </UserProvider>
     )
   );

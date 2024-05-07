@@ -6,11 +6,17 @@ import { getCurrentDate } from "../../components/Calendar";
 import ProgressCircle from "./_component/ProgressCircle";
 import SelectTreeModal from "./_component/modals/SelectTreeModal";
 import { UserContext } from "../../contexts/user.context";
+import { SeedContext } from "../../contexts/seed.context";
 
 export default function HomeScreen({ navigation }) {
   const {user} = useContext(UserContext);
   const route = useRoute();
   const value = route.params?.progress;
+  const { seeds } = useContext(SeedContext);
+
+  useEffect(() => {
+    console.log(seeds);
+  }, [seeds])
 
   const [openSelectTreeModal, setOpenSelectTreeModal] = useState(true);
 
