@@ -56,7 +56,7 @@ export default class UserController {
 
         const user = await UserService.create(body);
 
-        const seed = await SeedService.findOne({ name: "default" });
+        const seed = await SeedService.findOne({ name: "tree0" });
         await user.addSeed(seed);
 
         const payload = {
