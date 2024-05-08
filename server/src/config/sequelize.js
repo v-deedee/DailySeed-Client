@@ -14,7 +14,7 @@ const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
             require: true,
             rejectUnauthorized: false,
         },
-        charset: "utf8mb4",
+        // charset: "utf8mb4",
     },
     logging: false,
 });
