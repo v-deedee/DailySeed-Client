@@ -73,6 +73,10 @@ export default {
             code: "TREE_INVALID_AUTHORIZATION",
             message: "You do not have permission to access this tree",
         },
+        ALREADY_CREATED: {
+            code: "TREE_ALREADY_CREATED",
+            message: "Today's tree has already created.",
+        },
     },
 
     BODY_INVALID: {
