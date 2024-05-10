@@ -11,12 +11,16 @@ import { useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { Slider } from "@rneui/themed";
 
+// import { EmojiModal } from "react-native-emojis-picker";
+
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import Entypo from "react-native-vector-icons/Entypo";
 
 import { color } from "../../utils/utils";
 import LevelModal from "./_component/modals/LevelModal";
 import ConfirmSaveHabitModal from "./_component/modals/ConfirmSaveHabitModal";
+import { EmojiPicker } from "../../components/EmojiPicker/EmojiPicker";
 
 const habits = [
   {
@@ -115,6 +119,8 @@ export default function EditScreen({ navigation }) {
     habits[currentId].duration.toString(),
   );
 
+  const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
+
   const [openLevelModal, setOpenLevelModal] = useState(false);
 
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
@@ -199,23 +205,6 @@ export default function EditScreen({ navigation }) {
         <View style={styles.recordContent}>
           {/* Habit icon + habit name */}
           <View style={{ gap: 10, marginBottom: 10 }}>
-            {/* Habit icon */}
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ width: "22%", fontWeight: 700 }}>Icon: </Text>
-              <View style={[styles.inputView, { flex: 1 }]}>
-                <TextInput
-                  style={{ height: 50 }}
-                  placeholder="Enter habit name"
-                  selectionColor="#ccc"
-                  value={habitIcon}
-                  onChangeText={(text) => setHabitIcon(text)}
-                />
-              </View>
-              <TouchableOpacity style={{ paddingHorizontal: 10 }}>
-                <MaterialIcons name="check" size={30} color="#008D6A" />
-              </TouchableOpacity>
-            </View>
-
             {/* Habit name */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ width: "22%", fontWeight: 700 }}>Name: </Text>
@@ -231,6 +220,42 @@ export default function EditScreen({ navigation }) {
               <TouchableOpacity style={{ paddingHorizontal: 10 }}>
                 <MaterialIcons name="check" size={30} color="#008D6A" />
               </TouchableOpacity>
+            </View>
+
+            {/* Habit icon */}
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={{ width: "22%", fontWeight: 700 }}>Icon: </Text>
+              <View
+                style={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderWidth: 1,
+                  borderColor: "#EAEAEA",
+                  borderRadius: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 25 }}>{habitIcon}</Text>
+              </View>
+              <TouchableOpacity
+                style={{ paddingHorizontal: 10, flexDirection: "row" }}
+                onPress={() => setOpenEmojiPicker(true)}
+              >
+                <Entypo name="emoji-happy" size={25} color="#aaa" />
+              </TouchableOpacity>
+              {/* {openEmojiPicker && (
+                <EmojiModal
+                  intensityBlur={1000}
+                  columns={9}
+                  darkMode={true}
+                  onPressOutside={() => setOpenEmojiPicker(false)}
+                  onEmojiSelected={(emoji) => {
+                    setOpenEmojiPicker(false);
+                    setHabitIcon(emoji);
+                  }}
+                />
+              )} */}
             </View>
 
             {/* Habit duration */}
@@ -406,6 +431,16 @@ export default function EditScreen({ navigation }) {
         </View>
       </ScrollView>
 
+      <EmojiPicker
+        open={openEmojiPicker}
+        onClose={() => {
+          setOpenEmojiPicker(false);
+        }}
+        onEmojiSelected={(emoji) => {
+          setHabitIcon(emoji);
+        }}
+      />
+
       {/* Submit button */}
       <View style={styles.submitBox}>
         <TouchableOpacity
@@ -466,7 +501,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   inputView: {
-    width: "70%",
+    // width: "70%",
     backgroundColor: "#ffffff",
     borderWidth: 1,
     borderColor: "#EAEAEA",

@@ -13,8 +13,8 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
 
 import ConfirmDeleteHabitModal from "./_component/modals/ConfirmDeleteHabitModal";
-import { getCurrentDate } from "../../components/Calendar";
-import { color } from "../../utils/utils";
+
+import { color, getCurrentDate } from "../../utils/utils";
 
 const habits = [
   {
@@ -152,10 +152,7 @@ const RecordScreen = ({ navigation }) => {
         {habits.map((habit, index) => (
           <View style={styles.recordContent} key={index}>
             {/* Icon + title */}
-            <View
-              // style={{ alignItems: "center", marginTop: -55, marginBottom: 8 }}
-              style={{ position: "absolute", top: -27, left: 20 }}
-            >
+            <View style={{ position: "absolute", top: -27, left: 20 }}>
               <View style={styles.habitIconBox}>
                 <View style={styles.habitIcon}>
                   <Text style={{ fontSize: 35 }}>{habit.icon}</Text>
@@ -196,23 +193,6 @@ const RecordScreen = ({ navigation }) => {
               >
                 {habit.name}
               </Text>
-              {/* Status */}
-              {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text>Status: </Text>
-                <Text
-                  style={[
-                    styles.statusContent,
-                    {
-                      backgroundColor: color(
-                        values[index],
-                        habit.levels.length - 1,
-                      ),
-                    },
-                  ]}
-                >
-                  {habit.levels[values[index]].label}
-                </Text>
-              </View> */}
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text
                   style={{

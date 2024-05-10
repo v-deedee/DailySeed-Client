@@ -2,10 +2,10 @@ import { StyleSheet, Image, View, Text, StatusBar } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { Button } from "@rneui/themed";
 import { useRoute } from "@react-navigation/native";
-import { getCurrentDate } from "../../components/Calendar";
 import ProgressCircle from "./_component/ProgressCircle";
 import SelectTreeModal from "./_component/modals/SelectTreeModal";
 import { UserContext } from "../../contexts/user.context";
+import { getCurrentDate } from "../../utils/utils";
 
 export default function HomeScreen({ navigation }) {
   const { user } = useContext(UserContext);
@@ -48,7 +48,7 @@ export default function HomeScreen({ navigation }) {
             style={{ width: 25, height: 25 }}
           />
           <Text style={{ fontSize: 16, fontWeight: 700 }}>
-            {`${user.name}'s diary`}
+            {/* {`${user.name}'s diary`} */}
           </Text>
         </View>
         <View style={styles.coinContainer}>
