@@ -13,7 +13,6 @@ export default function (router, apis) {
             const method = e.method;
             const roles = e.roles;
             const schema = e.schema;
-            const file = e.file;
             const files = e.files;
 
             const middlewares = [];
@@ -21,12 +20,8 @@ export default function (router, apis) {
                 middlewares.push(auth(roles));
             }
 
-            if (!_.isEmpty(file)) {
-                middlewares.push(upload.single(file));
-            }
-
             if (!_.isEmpty(files)) {
-                middlewares.push(upload.array(files));
+                middlewares.push(upload.fields(files));
             }
 
             if (!_.isEmpty(schema)) {

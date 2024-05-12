@@ -11,6 +11,22 @@ import _ from "lodash";
 export default class UserController {
     constructor() {}
 
+    #removeProfilePic = async (picture) => {
+        await CloudHanlder.remove(picture);
+    };
+
+    #uploadProfilePic = async (picture, folder) => {
+        const b64 = Buffer.from(picture.buffer).toString("base64");
+        let dataURI = "data:" + picture.mimetype + ";base64," + b64;
+        const uploadedPicture = await CloudHanlder.upload(
+            dataURI,
+            folder,
+            picture.originalname
+        );
+
+        return uploadedPicture.public_id;
+    };
+
     viewUser = async (req, res) => {
         const { user } = req;
 
@@ -40,7 +56,7 @@ export default class UserController {
 
         const user = await UserService.create(body);
 
-        const seed = await SeedService.findOne({ name: "default" });
+        const seed = await SeedService.findOne({ name: "tree0" });
         await user.addSeed(seed);
 
         const payload = {
@@ -56,23 +72,16 @@ export default class UserController {
     updateProfile = async (req, res) => {
         const { user } = req;
         const { body } = req;
-        const { file } = req;
+        const { files } = req;
 
         const profile = await ProfileService.findOne({ UserId: user.id });
 
-        if (file) {
-            // Remove old picture
-            await CloudHanlder.remove(profile.picture);
-
-            // Encoding picture
-            const b64 = Buffer.from(file.buffer).toString("base64");
-            let dataURI = "data:" + file.mimetype + ";base64," + b64;
-            const picture = await CloudHanlder.upload(
-                dataURI,
+        if (files["profile"]) {
+            await this.#removeProfilePic(profile.picture);
+            body.picture = await this.#uploadProfilePic(
+                files["picture"],
                 "profile-picture"
             );
-
-            body.picture = picture.public_id;
         }
 
         const updatedProfile = await ProfileService.update(profile, body);

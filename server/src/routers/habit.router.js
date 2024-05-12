@@ -1,4 +1,3 @@
-import { method } from "lodash";
 import userRole from "../constants/user.role.js";
 import HabitController from "../controllers/habit.controller.js";
 import habitSchema from "../validations/habit.validation.js";

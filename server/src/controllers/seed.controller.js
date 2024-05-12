@@ -8,21 +8,42 @@ import userRole from "../constants/user.role.js";
 export default class SeedController {
     constructor() {}
 
+    #uploadAssets = async (assets, folder) => {
+        let URLs = [];
+        for (const asset of assets) {
+            const b64 = Buffer.from(asset.buffer).toString("base64");
+            let dataURI = "data:" + asset.mimetype + ";base64," + b64;
+            const picture = await CloudHanlder.upload(
+                dataURI,
+                folder,
+                asset.originalname
+            );
+            URLs.push(picture.public_id);
+        }
+        return URLs.join("|");
+    };
+
+    #removeAssets = async (assets) => {
+        for (const asset in assets) {
+            await CloudHanlder.remove(asset);
+        }
+    };
+
     createSeed = async (req, res) => {
         const { body } = req;
-        const { file } = req;
+        const { files } = req;
 
-        if (!file)
+        if (!files["assets"])
             throw new HttpError({
                 ...errorCode.BODY_INVALID,
-                message: "Asset is required",
+                message: "Assets is required",
                 status: 403,
             });
 
-        const b64 = Buffer.from(file.buffer).toString("base64");
-        let dataURI = "data:" + file.mimetype + ";base64," + b64;
-        const picture = await CloudHanlder.upload(dataURI, "tree-asset");
-        body.asset = picture.public_id;
+        body.asset = await this.#uploadAssets(
+            files["assets"],
+            `seeds/${body.name}`
+        );
 
         const seed = await SeedService.create(body);
 
@@ -35,18 +56,18 @@ export default class SeedController {
 
     updateSeed = async (req, res) => {
         const { params } = req;
-        const { file } = req;
+        const { files } = req;
         const { body } = req;
 
         const seed = await SeedService.findOne({ id: params.id });
 
-        if (file) {
-            await CloudHanlder.remove(seed.asset);
-
-            const b64 = Buffer.from(file.buffer).toString("base64");
-            let dataURI = "data:" + file.mimetype + ";base64," + b64;
-            const picture = await CloudHanlder.upload(dataURI, "tree-asset");
-            body.asset = picture.public_id;
+        console.log(files);
+        if (files["assets"]) {
+            await this.#removeAssets(seed.asset.split("|"));
+            body.asset = await this.#uploadAssets(
+                files["assets"],
+                `seeds/${seed.name}`
+            );
         }
 
         const updatedSeed = await SeedService.update(seed, body);
@@ -76,33 +97,4 @@ export default class SeedController {
             data: payload,
         });
     };
-
-    viewUserSeeds = async (req, res) => {
-        const { user } = req;
-
-        try {
-            if (user.role !== userRole.USER) {
-                throw new HttpError({
-                    ...errorCode.UNAUTHORIZED,
-                    message: "Only regular users can view their seeds.",
-                });
-            }
-
-            const seeds = await SeedService.findAll({ UserId: user.id });
-
-            const payload = seeds.map(seed => _.pick(seed, ["id", "name", "asset", "price"]));
-
-            res.status(200).json({
-                ok: true,
-                data: payload,
-            });
-        } catch (error) {
-            console.error("Error retrieving user seeds:", error);
-            res.status(error.status || 500).json({
-                ok: false,
-                message: error.message || "Internal server error.",
-            });
-        }
-    };
-
 }

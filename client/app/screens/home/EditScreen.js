@@ -19,11 +19,13 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 
 import { color } from "../../utils/utils";
 import LevelModal from "./_component/modals/LevelModal";
+import ConfirmSaveHabitModal from "./_component/modals/ConfirmSaveHabitModal";
 
 const habits = [
   {
     icon: "😈",
     name: "Emotion",
+    duration: 1,
     levels: [
       {
         label: "Bad",
@@ -42,6 +44,7 @@ const habits = [
   {
     icon: "🧹",
     name: "Housework",
+    duration: 1,
     levels: [
       {
         label: "Poor",
@@ -64,6 +67,7 @@ const habits = [
   {
     icon: "💻",
     name: "OOP",
+    duration: 1,
     levels: [
       {
         label: "Basic",
@@ -90,6 +94,7 @@ const habits = [
   {
     icon: "☺️",
     name: "Sample",
+    duration: 1,
     levels: [
       {
         label: "Sample 1",
@@ -121,11 +126,13 @@ export default function EditScreen({ navigation }) {
 
   const [habitIcon, setHabitIcon] = useState(habits[currentId].icon);
   const [habitName, setHabitName] = useState(habits[currentId].name);
+  const [habitDuration, setHabitDuration] = useState(
+    habits[currentId].duration.toString(),
+  );
 
   const [openLevelModal, setOpenLevelModal] = useState(false);
 
-  // slider value
-  const [value, setValue] = useState(0);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
   const [modalType, setModalType] = useState("");
 
@@ -134,8 +141,17 @@ export default function EditScreen({ navigation }) {
 
   const [toggleReRender, setToggleReRender] = useState(false);
 
+  // slider value
+  const [value, setValue] = useState(0);
+
+  const [renderValue, setRenderValue] = useState(0);
+
   const toggleLevelModal = () => {
     setOpenLevelModal(!openLevelModal);
+  };
+
+  const toggleConfirmModal = () => {
+    setOpenConfirmModal(!openConfirmModal);
   };
 
   const addNewLevel = () => {
@@ -145,6 +161,7 @@ export default function EditScreen({ navigation }) {
         icon: iconInput,
       });
       setValue(habits[currentId].levels.length - 1);
+      setRenderValue(100);
       setIconInput("");
       setLabelInput("");
     }
@@ -167,6 +184,8 @@ export default function EditScreen({ navigation }) {
   const deleteLevel = () => {
     let temp = [...habits[currentId].levels];
     temp.splice(value, 1);
+    setValue(0);
+    setRenderValue(0);
     habits[currentId].levels = [...temp];
     setToggleReRender(!toggleReRender);
   };
@@ -196,11 +215,17 @@ export default function EditScreen({ navigation }) {
           {/* Habit icon + habit name */}
           <View style={{ gap: 10, marginBottom: 10 }}>
             {/* Habit icon */}
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ width: '20%', fontWeight: 700 }}>Icon: </Text>
-              <View style={[styles.inputView, { flex: 1, flexDirection: 'row', alignItems: 'center' }]}>
-                <Ionicons name={null} style={{ fontSize: 24 }}>{habitIcon}</Ionicons>
-                {/* <Text style={{ marginLeft: 10 }}>{habitIcon}</Text> */}
+
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={{ width: "22%", fontWeight: 700 }}>Icon: </Text>
+              <View style={[styles.inputView, { flex: 1 }]}>
+                <TextInput
+                  style={{ height: 50 }}
+                  placeholder="Enter habit name"
+                  selectionColor="#ccc"
+                  value={habitIcon}
+                  onChangeText={(text) => setHabitIcon(text)}
+                />
               </View>
               <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={toggleIconModal}>
                 <Text style={{ fontWeight: 'bold' }}>Choose Icon</Text>
@@ -209,7 +234,7 @@ export default function EditScreen({ navigation }) {
 
             {/* Habit name */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ width: "20%", fontWeight: 700 }}>Name: </Text>
+              <Text style={{ width: "22%", fontWeight: 700 }}>Name: </Text>
               <View style={[styles.inputView, { flex: 1 }]}>
                 <TextInput
                   style={{ height: 50 }}
@@ -218,6 +243,36 @@ export default function EditScreen({ navigation }) {
                   value={habitName}
                   onChangeText={(text) => setHabitName(text)}
                 />
+              </View>
+              <TouchableOpacity style={{ paddingHorizontal: 10 }}>
+                <MaterialIcons name="check" size={30} color="#008D6A" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Habit duration */}
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+              >
+                <Text style={{ fontWeight: 700 }}>Duration: </Text>
+                <View
+                  style={{
+                    borderBottomWidth: 2,
+                    marginLeft: 10,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <TextInput
+                    keyboardType="numeric"
+                    maxLength={3}
+                    style={{ height: 30, width: 50 }}
+                    selectionColor="#aaa"
+                    value={habitDuration}
+                    onChangeText={(text) => setHabitDuration(text)}
+                  />
+                  <Text style={{}}>(days)</Text>
+                </View>
               </View>
               <TouchableOpacity style={{ paddingHorizontal: 10 }}>
                 <MaterialIcons name="check" size={30} color="#008D6A" />
@@ -258,12 +313,30 @@ export default function EditScreen({ navigation }) {
 
             <View style={styles.levelContent}>
               <Slider
-                value={value}
-                onValueChange={setValue}
-                maximumValue={habits[currentId].levels.length - 1}
+                value={renderValue}
+                onValueChange={(value) => {
+                  let divider = Math.floor(
+                    100 / (habits[currentId].levels.length - 1),
+                  );
+                  let shiftedValue = value + divider / 2;
+                  setValue(Math.floor(shiftedValue / divider));
+                  setRenderValue(value);
+                }}
+                maximumValue={100}
                 minimumValue={0}
-                minimumTrackTintColor="#50AA75"
-                step={1}
+                step={2}
+                minimumTrackTintColor={color(
+                  value,
+                  habits[currentId].levels.length - 1,
+                )}
+                onSlidingComplete={(value) => {
+                  let divider = Math.floor(
+                    100 / (habits[currentId].levels.length - 1),
+                  );
+                  let shiftedValue = value + divider / 2;
+                  setValue(Math.floor(shiftedValue / divider));
+                  setRenderValue(Math.floor(shiftedValue / divider) * divider);
+                }}
                 allowTouchTrack
                 style={{ width: "100%", marginBottom: 30 }}
                 trackStyle={{ height: 20, borderRadius: 999 }}
@@ -351,8 +424,11 @@ export default function EditScreen({ navigation }) {
 
       {/* Submit button */}
       <View style={styles.submitBox}>
-        <TouchableOpacity style={styles.submitButton} onPress={submit}>
-          <Text style={styles.submitText}>Done</Text>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={toggleConfirmModal}
+        >
+          <Text style={styles.submitText}>Save</Text>
         </TouchableOpacity>
       </View>
 
@@ -375,6 +451,12 @@ export default function EditScreen({ navigation }) {
           onClose={toggleIconModal}
         />
 
+      <ConfirmSaveHabitModal
+        isOpen={openConfirmModal}
+        toggle={toggleConfirmModal}
+        duration={parseInt(habitDuration)}
+        save={submit}
+      />
     </View>
   );
 }

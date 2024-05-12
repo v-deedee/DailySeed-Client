@@ -9,7 +9,7 @@ import { UserContext } from "../../contexts/user.context";
 import { SeedContext } from "../../contexts/seed.context";
 
 export default function HomeScreen({ navigation }) {
-  const {user} = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const route = useRoute();
   const value = route.params?.progress;
   const { seeds } = useContext(SeedContext);

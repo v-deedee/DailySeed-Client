@@ -1,8 +1,9 @@
 import SeedService from "../services/seed.service.js";
-import _ from "lodash";
 import TreeService from "../services/tree.service.js";
 import { HttpError } from "../utils/http.error.js";
 import errorCode from "../constants/error.code.js";
+import { Op } from "sequelize";
+import _ from "lodash";
 
 export default class TreeController {
     constructor() {}
@@ -59,28 +60,49 @@ export default class TreeController {
         });
     };
 
-    viewUserTree = async (req, res) => {
-        const { user } = req;
+    #getDateQuery = (query) => {
+        let rangePattern = /\[\d{8},\d{8}\]/;
+        let pointPattern = /\d{8}/;
 
-        try {
-            const userTrees = await TreeService.findAll({ UserId: user.id });
+        if (rangePattern.test(query.date)) {
+            const [start, end] = query.date
+                .substring(1, query.date.length - 1)
+                .split(",");
 
-            const payload = userTrees.map(tree => ({
-                tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
-                seed: _.pick(tree.Seed, ["id", "name", "asset"]),
-            }));
-
-            res.status(200).json({
-                ok: true,
-                data: payload,
-            });
-        } catch (error) {
-            console.error("Error retrieving user trees:", error);
-            res.status(error.status || 500).json({
-                ok: false,
-                message: error.message || "Internal server error.",
-            });
+            return { [Op.between]: [start, end] };
         }
+
+        if (pointPattern.test(query.date)) {
+            return query.date;
+        }
+
+        return null;
     };
 
+    listTree = async (req, res) => {
+        const { user } = req;
+        const { query } = req;
+
+        const filter = { UserId: user.id };
+        const dateFilter = this.#getDateQuery(query);
+        if (dateFilter) filter.date = dateFilter;
+
+        const trees = await TreeService.findAll(filter);
+
+        const treeSelectFields = ["id", "coordinate_x", "coordinate_y"];
+        const seedSelectFields = ["id", "asset"];
+        if (query.extend) {
+            treeSelectFields.push(...["date", "score", "note", "picture"]);
+            seedSelectFields.push(...["name"]);
+        }
+        const payload = _.map(trees, (tree) => ({
+            tree: _.pick(tree, treeSelectFields),
+            seed: _.pick(tree.Seed, seedSelectFields),
+        }));
+
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
 }

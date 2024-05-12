@@ -1,4 +1,3 @@
-import { method } from "lodash";
 import userRole from "../constants/user.role.js";
 import TreeController from "../controllers/tree.controller.js";
 import treeSchema from "../validations/tree.validation.js";
@@ -22,10 +21,10 @@ export default [
             },
             {
                 httpMethod: "get",
-                path: "/tree/all",
-                method: "viewUserTree",
+                path: "/tree",
+                method: "listTree",
                 roles: [userRole.USER],
-            }
+            },
         ],
     },
 ];
