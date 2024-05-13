@@ -1,8 +1,13 @@
-import { StyleSheet, Image, View } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+} from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { trees } from "../../../utils/utils";
 
-export default function ProgressCircle({ progress, treeType }) {
+export default function ProgressCircle({ progress, treeType, selectTree }) {
   return (
     <AnimatedCircularProgress
       size={200}
@@ -14,42 +19,66 @@ export default function ProgressCircle({ progress, treeType }) {
       backgroundColor="#D8E1D0"
     >
       {() => {
-        if (progress <= 25)
+        if (!treeType) {
           return (
-            <View style={styles.treeBox}>
+            <TouchableOpacity onPress={selectTree}>
               <Image
-                source={trees[treeType - 1][0]}
-                style={{ width: 100, height: 100 }}
+                source={require("../../../../assets/theme/background2.png")}
+                style={{
+                  width: 180,
+                  height: 170,
+                  borderRadius: 999,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               />
-            </View>
+            </TouchableOpacity>
           );
-        else if (progress <= 50)
+        } else {
           return (
-            <View style={styles.treeBox}>
-              <Image
-                source={trees[treeType - 1][1]}
-                style={{ width: 85, height: 109 }}
-              />
-            </View>
+            <ImageBackground
+              source={require("../../../../assets/theme/background2.png")}
+              style={{
+                width: 180,
+                height: 170,
+                borderRadius: 999,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {(function () {
+                if (progress <= 25)
+                  return (
+                    <Image
+                      source={trees[treeType - 1][0]}
+                      style={{ width: 85, height: 85, marginTop: 20 }}
+                    />
+                  );
+                else if (progress <= 50)
+                  return (
+                    <Image
+                      source={trees[treeType - 1][1]}
+                      style={{ width: 80, height: 102 }}
+                    />
+                  );
+                else if (progress <= 75)
+                  return (
+                    <Image
+                      source={trees[treeType - 1][2]}
+                      style={{ width: 110, height: 110 }}
+                    />
+                  );
+                else
+                  return (
+                    <Image
+                      source={trees[treeType - 1][3]}
+                      style={{ width: 120, height: 120 }}
+                    />
+                  );
+              })()}
+            </ImageBackground>
           );
-        else if (progress <= 75)
-          return (
-            <View style={styles.treeBox}>
-              <Image
-                source={trees[treeType - 1][2]}
-                style={{ width: 120, height: 120 }}
-              />
-            </View>
-          );
-        else
-          return (
-            <View style={styles.treeBox}>
-              <Image
-                source={trees[treeType - 1][3]}
-                style={{ width: 130, height: 130 }}
-              />
-            </View>
-          );
+        }
       }}
     </AnimatedCircularProgress>
   );
