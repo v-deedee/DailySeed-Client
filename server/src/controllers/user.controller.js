@@ -7,7 +7,9 @@ import userRole from "../constants/user.role.js";
 import bcrypt from "bcrypt";
 import CloudHanlder from "../utils/cloud.handler.js";
 import _ from "lodash";
-const stripe = require('stripe')('sk_test_51P7bjf05CJZ8qs7kDcGSebDhXZPJ7VpPLceToyYQ7PQzfzYrwZqI8wuvfqBNDZeZ8wwlW07NFRO1CGza2softbc500Fz4T8jv6'); // Replace with your Stripe secret key
+import Stripe from 'stripe';
+
+const stripe = new Stripe('sk_test_51P7bjf05CJZ8qs7kDcGSebDhXZPJ7VpPLceToyYQ7PQzfzYrwZqI8wuvfqBNDZeZ8wwlW07NFRO1CGza2softbc500Fz4T8jv6'); // Replace with your Stripe secret key
 
 
 export default class UserController {
