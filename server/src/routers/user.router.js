@@ -37,6 +37,12 @@ export default [
                 roles: [userRole.USER],
                 schema: userValidation.udpatePassword,
             },
+            {
+                httpMethod: "post",
+                path: "/user/create-payment-intent",
+                method: "createPaymentIntent",
+                roles: [userRole.USER],
+            },
         ],
     },
 ];
