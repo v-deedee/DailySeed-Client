@@ -10,6 +10,7 @@ export const HabitProvider = ({ children }) => {
   const fetchHabits = async (TreeId) => {
     try {
         const data = await listTrackingHabits(TreeId);
+        console.log(data)
         setHabits(data)
     } catch (error) {
         console.error("Error fetching habits:", error);

@@ -5,7 +5,12 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
+import { useState } from "react";
 import { Dialog } from "@rneui/themed";
+
+import Entypo from "react-native-vector-icons/Entypo";
+
+import { EmojiPicker } from "../../../../components/EmojiPicker/EmojiPicker";
 
 export default function LevelModal({
   isOpen,
@@ -18,6 +23,8 @@ export default function LevelModal({
   addNewLevel,
   editLevel,
 }) {
+  const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
+
   return (
     <Dialog
       isVisible={isOpen}
@@ -33,14 +40,37 @@ export default function LevelModal({
         />
       </View>
 
-      <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Icon</Text>
-      <View style={styles.modalInputView}>
-        <TextInput
-          style={styles.modalInputText}
-          placeholder="Choose an icon from keyboard"
-          selectionColor="#ccc"
-          value={iconInput}
-          onChangeText={(text) => setIconInput(text)}
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Text style={{ fontWeight: 700 }}>Icon: </Text>
+        <View
+          style={{
+            minWidth: 40,
+            minHeight: 35,
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+            justifyContent: "center",
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: "#EAEAEA",
+            borderRadius: 10,
+          }}
+        >
+          <Text style={{ fontSize: 25 }}>{iconInput}</Text>
+        </View>
+        <TouchableOpacity
+          style={{ paddingHorizontal: 10, flexDirection: "row" }}
+          onPress={() => setOpenEmojiPicker(true)}
+        >
+          <Entypo name="emoji-happy" size={25} color="#aaa" />
+        </TouchableOpacity>
+        <EmojiPicker
+          open={openEmojiPicker}
+          onClose={() => {
+            setOpenEmojiPicker(false);
+          }}
+          onEmojiSelected={(emoji) => {
+            setIconInput(emoji);
+          }}
         />
       </View>
 

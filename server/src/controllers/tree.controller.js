@@ -19,12 +19,19 @@ export default class TreeController {
                 status: 400,
             });
 
+        let tree = await TreeService.findOne({ UserId: user.id, date: new Date() });
+        if (tree != null)
+            throw new HttpError({
+                ...errorCode.TREE.ALREADY_CREATED,
+                status: 403,
+            });
+
         delete body.seedId;
         body.SeedId = seed.id;
         body.UserId = user.id;
         body.date = new Date();
 
-        const tree = await TreeService.create(body);
+        tree = await TreeService.create(body);
 
         const payload = {
             tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),

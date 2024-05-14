@@ -13,10 +13,9 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
 
 import ConfirmDeleteHabitModal from "./_component/modals/ConfirmDeleteHabitModal";
-import { getCurrentDate } from "../../components/Calendar";
-import { color } from "../../utils/utils";
 import { HabitContext } from "../../contexts/habit.context";
 import { updateHabit } from "../../services/habit.service";
+import { color, getCurrentDate } from "../../utils/utils";
 
 // const habits = [
 //   {
@@ -97,6 +96,7 @@ const RecordScreen = ({ navigation }) => {
   const [values, setValues] = useState([0]);
 
   const [renderValues, setRenderValues] = useState([0]);
+  const { habits, setHabits} = useContext(HabitContext)
 
   useEffect(() => {
     if(habits && habits.length) {
@@ -107,7 +107,6 @@ const RecordScreen = ({ navigation }) => {
 
   }, [habits])
 
-  const { habits, setHabits} = useContext(HabitContext)
 
   const closeRecord = () => {
     navigation.navigate("Home");
@@ -163,10 +162,7 @@ const RecordScreen = ({ navigation }) => {
         {habits.map((habit, index) => (
           <View style={styles.recordContent} key={index}>
             {/* Icon + title */}
-            <View
-              // style={{ alignItems: "center", marginTop: -55, marginBottom: 8 }}
-              style={{ position: "absolute", top: -27, left: 20 }}
-            >
+            <View style={{ position: "absolute", top: -27, left: 20 }}>
               <View style={styles.habitIconBox}>
                 <View style={styles.habitIcon}>
                   <Text style={{ fontSize: 35 }}>{habit.icon}</Text>

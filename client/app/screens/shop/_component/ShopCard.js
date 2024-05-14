@@ -1,6 +1,6 @@
 import { Button, Card } from '@rneui/themed';
 import { View, Text, StyleSheet, Image, ImageBackground } from "react-native";
-import { TreePhase } from '../../../utils/utils';
+import TreePhase from './TreePhase';
 
 export default function ShopCard() {
     return (

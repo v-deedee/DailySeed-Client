@@ -84,6 +84,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 5,
     borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "transparent",
   },
   modalOptionActive: {
     flexDirection: "column",
