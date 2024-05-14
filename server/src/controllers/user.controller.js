@@ -132,7 +132,7 @@ export default class UserController {
     };
 
 
-    create_payment_intent = async (req, res) => {
+    createPaymentIntent = async (req, res) => {
         const { amount } = req.body;
 
         try {
