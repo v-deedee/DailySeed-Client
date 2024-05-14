@@ -5,6 +5,9 @@ import Login from "./navigation/LoginStack";
 import LoadingScreen from "./screens/LoadingScreen"; 
 import { getUserByToken } from "./services/user.service"
 import { UserContext } from "./contexts/user.context";
+import { SeedContext } from "./contexts/seed.context";
+import { listTrees } from "./services/tree.service";
+import { TreeContext } from "./contexts/tree.context";
 
 // import * as dotenv from 'react-native-dotenv';
 
@@ -19,9 +22,8 @@ export default function Root() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSignedIn, setIsSignedIn] = useState(getLoginStatus());
-  const {user, setUser} = useContext(UserContext); // Khởi tạo state user
-
-
+  const { user, setUser } = useContext(UserContext); // Khởi tạo state user
+  const { setTree } = useContext(TreeContext);
 
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export default function Root() {
     
     fetchUserData();
   }, [])
+
 
 
 

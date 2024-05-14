@@ -7,7 +7,7 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { Slider } from "@rneui/themed";
 
@@ -20,115 +20,138 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { color } from "../../utils/utils";
 import LevelModal from "./_component/modals/LevelModal";
 import ConfirmSaveHabitModal from "./_component/modals/ConfirmSaveHabitModal";
+import { HabitContext } from "../../contexts/habit.context";
+import { createHabit, updateHabit } from "../../services/habit.service";
 
-const habits = [
-  {
-    icon: "😈",
-    name: "Emotion",
-    duration: 1,
-    levels: [
-      {
-        label: "Bad",
-        icon: "☹️",
-      },
-      {
-        label: "Normal",
-        icon: "😐",
-      },
-      {
-        label: "Good",
-        icon: "😀",
-      },
-    ],
-  },
-  {
-    icon: "🧹",
-    name: "Housework",
-    duration: 1,
-    levels: [
-      {
-        label: "Poor",
-        icon: "👎",
-      },
-      {
-        label: "Bad",
-        icon: "👊",
-      },
-      {
-        label: "Good",
-        icon: "👍",
-      },
-      {
-        label: "Excellent",
-        icon: "👏",
-      },
-    ],
-  },
-  {
-    icon: "💻",
-    name: "OOP",
-    duration: 1,
-    levels: [
-      {
-        label: "Basic",
-        icon: "🤌",
-      },
-      {
-        label: "Intermediate",
-        icon: "💪",
-      },
-      {
-        label: "Hard",
-        icon: "🙏",
-      },
-      {
-        label: "Expert",
-        icon: "🏆",
-      },
-      {
-        label: "God",
-        icon: "👑",
-      },
-    ],
-  },
-  {
+// const habits = [
+//   {
+//     icon: "😈",
+//     name: "Emotion",
+//     duration: 1,
+//     criteria: [
+//       {
+//         label: "Bad",
+//         icon: "☹️",
+//       },
+//       {
+//         label: "Normal",
+//         icon: "😐",
+//       },
+//       {
+//         label: "Good",
+//         icon: "😀",
+//       },
+//     ],
+//   },
+//   {
+//     icon: "🧹",
+//     name: "Housework",
+//     duration: 1,
+//     criteria: [
+//       {
+//         label: "Poor",
+//         icon: "👎",
+//       },
+//       {
+//         label: "Bad",
+//         icon: "👊",
+//       },
+//       {
+//         label: "Good",
+//         icon: "👍",
+//       },
+//       {
+//         label: "Excellent",
+//         icon: "👏",
+//       },
+//     ],
+//   },
+//   {
+//     icon: "💻",
+//     name: "OOP",
+//     duration: 1,
+//     criteria: [
+//       {
+//         label: "Basic",
+//         icon: "🤌",
+//       },
+//       {
+//         label: "Intermediate",
+//         icon: "💪",
+//       },
+//       {
+//         label: "Hard",
+//         icon: "🙏",
+//       },
+//       {
+//         label: "Expert",
+//         icon: "🏆",
+//       },
+//       {
+//         label: "God",
+//         icon: "👑",
+//       },
+//     ],
+//   },
+//   {
+//     icon: "☺️",
+//     name: "Sample",
+//     duration: 1,
+//     criteria: [
+//       {
+//         label: "Sample 1",
+//         icon: "😟",
+//       },
+//       {
+//         label: "Sample 2",
+//         icon: "😀",
+//       },
+//     ],
+//   },
+// ];
+
+export default function EditScreen({ navigation }) {
+  const { habits, setHabits } = useContext(HabitContext);
+  const route = useRoute();
+  const [showIconModal, setShowIconModal] = useState(false);
+
+
+  const [currentHabit, setCurrentHabit] = useState({
+    id: -1,
     icon: "☺️",
     name: "Sample",
     duration: 1,
-    levels: [
+    criteria: [
       {
-        label: "Sample 1",
+        name: "Sample 1",
         icon: "😟",
+        score: 0,
       },
       {
-        label: "Sample 2",
+        name: "Sample 2",
         icon: "😀",
+        score: 1,
       },
     ],
-  },
-];
-
-export default function EditScreen({ navigation }) {
-  const route = useRoute();
-  const [showIconModal, setShowIconModal] = useState(false);
+  });
 
   const toggleIconModal = () => {
     setShowIconModal(!showIconModal);
   };
 
   const handleIconSelect = (icon) => {
-    setHabitIcon(icon);
-    console.log(icon)
+    setCurrentHabit({...currentHabit, icon: icon})
     toggleIconModal();
   };
 
   let currentId = route.params?.id;
 
-  const [habitIcon, setHabitIcon] = useState(habits[currentId].icon);
-  const [habitName, setHabitName] = useState(habits[currentId].name);
-  const [habitDuration, setHabitDuration] = useState(
-    habits[currentId].duration.toString(),
-  );
+
+  useEffect(() => {
+    if (currentId < habits.length) {
+      setCurrentHabit(habits[currentId]);
+    }
+  }, [habits, currentId]);
 
   const [openLevelModal, setOpenLevelModal] = useState(false);
 
@@ -150,17 +173,29 @@ export default function EditScreen({ navigation }) {
     setOpenLevelModal(!openLevelModal);
   };
 
-  const toggleConfirmModal = () => {
+  const toggleConfirmModal = async () => {
+    if (currentHabit.id === -1) {
+      // Create new habit
+      const newHabit = await createHabit(currentHabit);
+      setHabits([...habits, currentHabit]);
+    } else {
+      // Update existing habit
+      const updatedHabit = await updateHabit(currentHabit);
+      const updatedHabits = habits.map((habit) =>
+        habit.id === currentHabit.id ? currentHabit : habit
+      );
+      setHabits(updatedHabits);
+    }
     setOpenConfirmModal(!openConfirmModal);
   };
 
   const addNewLevel = () => {
     if (iconInput.length > 0 && labelInput.length > 0) {
-      habits[currentId].levels.push({
-        label: labelInput,
+      currentHabit.criteria.push({
+        name: labelInput,
         icon: iconInput,
       });
-      setValue(habits[currentId].levels.length - 1);
+      setValue(currentHabit.criteria.length - 1);
       setRenderValue(100);
       setIconInput("");
       setLabelInput("");
@@ -171,8 +206,8 @@ export default function EditScreen({ navigation }) {
 
   const editLevel = () => {
     if (iconInput.length > 0 && labelInput.length > 0) {
-      habits[currentId].levels[value].icon = iconInput;
-      habits[currentId].levels[value].label = labelInput;
+      currentHabit.criteria[value].icon = iconInput;
+      currentHabit.criteria[value].name = labelInput;
 
       setIconInput("");
       setLabelInput("");
@@ -182,11 +217,11 @@ export default function EditScreen({ navigation }) {
   };
 
   const deleteLevel = () => {
-    let temp = [...habits[currentId].levels];
+    let temp = [...currentHabit.criteria];
     temp.splice(value, 1);
     setValue(0);
     setRenderValue(0);
-    habits[currentId].levels = [...temp];
+    currentHabit.criteria = [...temp];
     setToggleReRender(!toggleReRender);
   };
 
@@ -223,8 +258,8 @@ export default function EditScreen({ navigation }) {
                   style={{ height: 50 }}
                   placeholder="Enter habit name"
                   selectionColor="#ccc"
-                  value={habitIcon}
-                  onChangeText={(text) => setHabitIcon(text)}
+                  value={currentHabit.icon}
+                  onChangeText={(text) => setCurrentHabit({...currentHabit, icon: text})}
                 />
               </View>
               <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={toggleIconModal}>
@@ -240,8 +275,8 @@ export default function EditScreen({ navigation }) {
                   style={{ height: 50 }}
                   placeholder="Enter habit name"
                   selectionColor="#ccc"
-                  value={habitName}
-                  onChangeText={(text) => setHabitName(text)}
+                  value={currentHabit.name}
+                  onChangeText={(text) => setCurrentHabit({...currentHabit, name: text})}
                 />
               </View>
               <TouchableOpacity style={{ paddingHorizontal: 10 }}>
@@ -268,8 +303,8 @@ export default function EditScreen({ navigation }) {
                     maxLength={3}
                     style={{ height: 30, width: 50 }}
                     selectionColor="#aaa"
-                    value={habitDuration}
-                    onChangeText={(text) => setHabitDuration(text)}
+                    value={currentHabit.duration}
+                    onChangeText={(text) => setCurrentHabit({...currentHabit, duration: text})}
                   />
                   <Text style={{}}>(days)</Text>
                 </View>
@@ -280,19 +315,19 @@ export default function EditScreen({ navigation }) {
             </View>
           </View>
 
-          {/* Habit levels */}
+          {/* Habit criteria */}
           <View
             style={{ paddingTop: 10, borderTopWidth: 0.5, borderColor: "#ccc" }}
           >
-            {/* Levels header: Title + Add level button */}
+            {/* criteria header: Title + Add level button */}
             <View style={styles.levelHeader}>
               {/* Title */}
-              <Text style={{ fontWeight: 700 }}>Levels: </Text>
+              <Text style={{ fontWeight: 700 }}>criteria: </Text>
 
               {/* Add level button */}
               <TouchableOpacity
                 style={
-                  habits[currentId].levels.length >= 5
+                  currentHabit.criteria.length >= 5
                     ? [styles.addLevelButton, { opacity: 0.5 }]
                     : styles.addLevelButton
                 }
@@ -302,7 +337,7 @@ export default function EditScreen({ navigation }) {
                   setLabelInput("");
                   toggleLevelModal();
                 }}
-                disabled={habits[currentId].levels.length >= 5}
+                disabled={currentHabit.criteria.length >= 5}
               >
                 <MaterialIcons name="playlist-add" color="#fff" size={15} />
                 <Text style={{ color: "#fff", fontWeight: 700 }}>
@@ -316,7 +351,7 @@ export default function EditScreen({ navigation }) {
                 value={renderValue}
                 onValueChange={(value) => {
                   let divider = Math.floor(
-                    100 / (habits[currentId].levels.length - 1),
+                    100 / (currentHabit.criteria.length - 1),
                   );
                   let shiftedValue = value + divider / 2;
                   setValue(Math.floor(shiftedValue / divider));
@@ -327,11 +362,11 @@ export default function EditScreen({ navigation }) {
                 step={2}
                 minimumTrackTintColor={color(
                   value,
-                  habits[currentId].levels.length - 1,
+                  currentHabit.criteria.length - 1,
                 )}
                 onSlidingComplete={(value) => {
                   let divider = Math.floor(
-                    100 / (habits[currentId].levels.length - 1),
+                    100 / (currentHabit.criteria.length - 1),
                   );
                   let shiftedValue = value + divider / 2;
                   setValue(Math.floor(shiftedValue / divider));
@@ -345,19 +380,19 @@ export default function EditScreen({ navigation }) {
                   children: (
                     <View style={{ alignItems: "center", gap: 10 }}>
                       <Text style={{ fontSize: 35 }}>
-                        {habits[currentId].levels[value].icon}
+                        {currentHabit.criteria[value].icon}
                       </Text>
                       <Text
                         style={{
                           fontWeight: 800,
                           color: color(
                             value,
-                            habits[currentId].levels.length - 1,
+                            currentHabit.criteria.length - 1,
                           ),
                         }}
                       >
                         {Math.floor(
-                          (value * 100) / (habits[currentId].levels.length - 1),
+                          (value * 100) / (currentHabit.criteria.length - 1),
                         )}
                         %
                       </Text>
@@ -375,12 +410,12 @@ export default function EditScreen({ navigation }) {
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text style={{ fontWeight: 700 }}>Icon: </Text>
                   <Text style={{ fontSize: 25 }}>
-                    {habits[currentId].levels[value].icon}
+                    {currentHabit.criteria[value].icon}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text style={{ fontWeight: 700 }}>Label: </Text>
-                  <Text>{habits[currentId].levels[value].label}</Text>
+                  <Text>{currentHabit.criteria[value].label}</Text>
                 </View>
               </View>
 
@@ -389,8 +424,8 @@ export default function EditScreen({ navigation }) {
                   style={[styles.actionButton, { backgroundColor: "#529290" }]}
                   onPress={() => {
                     setModalType("edit");
-                    setIconInput(habits[currentId].levels[value].icon);
-                    setLabelInput(habits[currentId].levels[value].label);
+                    setIconInput(currentHabit.criteria[value].icon);
+                    setLabelInput(currentHabit.criteria[value].label);
                     toggleLevelModal();
                   }}
                 >
@@ -401,7 +436,7 @@ export default function EditScreen({ navigation }) {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={
-                    habits[currentId].levels.length <= 2
+                    currentHabit.criteria.length <= 2
                       ? [
                           styles.actionButton,
                           { backgroundColor: "#E94D61", opacity: 0.5 },
@@ -409,7 +444,7 @@ export default function EditScreen({ navigation }) {
                       : [styles.actionButton, { backgroundColor: "#E94D61" }]
                   }
                   onPress={deleteLevel}
-                  disabled={habits[currentId].levels.length <= 2}
+                  disabled={currentHabit.criteria.length <= 2}
                 >
                   <MaterialIcons name="delete" color="#fff" size={15} />
                   <Text style={{ fontWeight: "bold", color: "#fff" }}>
@@ -454,7 +489,7 @@ export default function EditScreen({ navigation }) {
       <ConfirmSaveHabitModal
         isOpen={openConfirmModal}
         toggle={toggleConfirmModal}
-        duration={parseInt(habitDuration)}
+        duration={parseInt(currentHabit.duration)}
         save={submit}
       />
     </View>

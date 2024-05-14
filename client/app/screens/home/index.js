@@ -7,16 +7,19 @@ import ProgressCircle from "./_component/ProgressCircle";
 import SelectTreeModal from "./_component/modals/SelectTreeModal";
 import { UserContext } from "../../contexts/user.context";
 import { SeedContext } from "../../contexts/seed.context";
+import { TreeContext } from "../../contexts/tree.context";
+import { listTrees } from "../../services/tree.service";
+import { HabitContext } from "../../contexts/habit.context";
+import { listTrackingHabits } from "../../services/habit.service";
+
 
 export default function HomeScreen({ navigation }) {
   const { user } = useContext(UserContext);
   const route = useRoute();
   const value = route.params?.progress;
-  const { seeds } = useContext(SeedContext);
-
-  useEffect(() => {
-    console.log(seeds);
-  }, [seeds])
+  const { seeds, fetchSeeds } = useContext(SeedContext);
+  const { tree, setTree } = useContext(TreeContext);
+  const { habits, fetchHabits } = useContext(HabitContext);
 
   const [openSelectTreeModal, setOpenSelectTreeModal] = useState(true);
 
@@ -41,6 +44,50 @@ export default function HomeScreen({ navigation }) {
       console.log("Value is undefined");
     }
   }, [value]);
+
+  useEffect(() => {
+    if(tree) {
+      setOpenSelectTreeModal(false);        
+    }
+
+  }, [tree])
+
+  useEffect(() => {
+    async function fetchData() {
+        const today = new Date().toISOString().replace(/\//g, '');
+
+        // const today = new Date().toLocaleString('vi-VN', options).replace(/\//g, '');
+        // const formattedDate = `${today.slice(4, 8)}${today.slice(2, 4)}${today.slice(0, 2)}`;
+        const treeData = await listTrees(today, true);
+        if(treeData[0]) {
+
+            const modifiedSeed = {
+              ...treeData[0].seed,
+              asset: treeData[0].seed.asset.split('|'),
+            };
+            const modifiedTree = {
+              ...treeData[0],
+              seed: modifiedSeed,
+            };
+            setTree(modifiedTree);
+        }
+        else {
+            fetchSeeds();
+        }           
+    }
+
+    fetchData();
+  }, [user])
+
+  useEffect(() => {
+    async function fetchData() {
+      if(tree) {
+        fetchHabits(tree.tree.id);
+        console.log(habits)
+      }
+    }
+    fetchData();
+  }, [tree]);
 
   return (
     <View style={styles.container}>

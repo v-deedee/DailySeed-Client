@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react';
+import { getTree } from '../services/tree.service';
 
 export const TreeContext = createContext();
 

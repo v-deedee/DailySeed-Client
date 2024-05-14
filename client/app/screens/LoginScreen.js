@@ -15,7 +15,6 @@ const LoginScreen = ({ navigation, signIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); // Thêm state cho hiệu ứng loading
-
   const { setUser } = useContext(UserContext);
 
   const handleLogin = async () => {

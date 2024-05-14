@@ -1,11 +1,17 @@
 import { StyleSheet, Image, View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Dialog, CheckBox } from "@rneui/themed";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SeedContext } from "../../../../contexts/seed.context";
 import { CLOUDINARY_BASE_URL } from "../../../../utils/constants/cloudinary.constants"
+import { createTree } from "../../../../services/tree.service";
+import { TreeContext } from "../../../../contexts/tree.context";
+import { HabitContext } from "../../../../contexts/habit.context";
 
 export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType, }) {
   const { seeds } = useContext(SeedContext);
+  const { setTree } = useContext(TreeContext);
+  const { fetchHabits } = useContext(HabitContext);
+  const [selectedSeed, setSelectedSeed] = useState(null);
 
   if (!seeds) {
     return (
@@ -14,6 +20,30 @@ export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType,
       </View>
     );
   }
+
+  useEffect(() => {
+    if(seeds) {
+      setSelectedSeed(seeds[0]);
+    }
+  }, [seeds])
+
+  const handleSeedSelect = (seed) => {
+    setSelectedSeed(seed);
+    console.log(seed);
+  };
+
+  const handleDone = async () => {
+    try {
+      const newTree = await createTree(selectedSeed.id);
+      setTree(newTree.tree);
+      fetchHabits(newTree.tree.id);
+    } catch (error) {
+      console.error("Error creating tree:", error);
+    }
+    toggle();
+  };
+  
+  
 
   return (
     <Dialog isVisible={isOpen} overlayStyle={{ borderRadius: 30, width: "90%", }} style={{ width: "100%" }} >
@@ -25,15 +55,14 @@ export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType,
           <TouchableOpacity
             key={index}
             style={treeType === index + 1 ? styles.modalOptionActive : styles.modalOption}
-            onPress={() => setTreeType(index + 1)}
-          >
+            onPress={() => handleSeedSelect(seed)}
+            >
             <Image
               source={{ uri: `${CLOUDINARY_BASE_URL}${seed.assets[0]}` }}
               style={{ width: 80, height: 80 }}
             />
             <CheckBox
               checked={treeType === index + 1}
-              onPress={() => setTreeType(index + 1)}
               checkedIcon="dot-circle-o"
               uncheckedIcon="circle-o"
             />
@@ -41,7 +70,7 @@ export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType,
         ))}
       </View>
       <View style={styles.modalButtonGroup}>
-        <TouchableOpacity style={[styles.modalButton, { backgroundColor: "#50AA75" }]} onPress={toggle} >
+        <TouchableOpacity style={[styles.modalButton, { backgroundColor: "#50AA75" }]} onPress={handleDone} >
           <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
         </TouchableOpacity>
       </View>

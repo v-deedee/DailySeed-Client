@@ -3,7 +3,11 @@ import authApi from './authApi';
 export const createTree = async (seedId) => {
   try {
     const response = await authApi.post('/api/tree', { seedId });
-    return response.data;
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to create tree');
+    }
   } catch (error) {
     throw error.response.data;
   }
@@ -12,7 +16,11 @@ export const createTree = async (seedId) => {
 export const getTree = async (treeId) => {
   try {
     const response = await authApi.get(`/api/tree/${treeId}`);
-    return response.data;
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to get tree');
+    }
   } catch (error) {
     throw error.response.data;
   }
@@ -28,7 +36,11 @@ export const listTrees = async (date, extend = false) => {
       params.extend = true;
     }
     const response = await authApi.get('/api/tree', { params });
-    return response.data;
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to list trees');
+    }
   } catch (error) {
     throw error.response.data;
   }

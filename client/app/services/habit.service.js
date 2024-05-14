@@ -2,8 +2,14 @@ import authApi from './authApi';
 
 export const createHabit = async (habitData) => {
   try {
-    const response = await authApi.post('/api/habit', habitData);
-    return response.data;
+    console.log(habitData)
+    const response = await authApi.post('/api/habit', 
+    {habit: {name: habitData.name, icon: habitData.icon, duration: habitData.duration}, criteria: habitData.criteria});
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to create habit');
+    }
   } catch (error) {
     throw error.response.data;
   }
@@ -12,16 +18,27 @@ export const createHabit = async (habitData) => {
 export const getHabit = async (habitId) => {
   try {
     const response = await authApi.get(`/api/habit/${habitId}`);
-    return response.data;
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to get habit');
+    }
   } catch (error) {
     throw error.response.data;
   }
 };
 
-export const updateHabit = async (habitId, habitData) => {
+export const updateHabit = async (habitData, active = true) => {
   try {
-    const response = await authApi.put(`/api/habit/${habitId}`, habitData);
-    return response.data;
+    console.log(habitData)
+    const response = await authApi.put(`/api/habit/${habitData.id}`, 
+    {habit: {name: habitData.name, icon: habitData.icon, duration: habitData.duration, active}, criteria: habitData.criteria});
+
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to update habit');
+    }
   } catch (error) {
     throw error.response.data;
   }
@@ -30,7 +47,11 @@ export const updateHabit = async (habitId, habitData) => {
 export const listTrackingHabits = async (treeId) => {
   try {
     const response = await authApi.get(`/api/habit/tracking/${treeId}`);
-    return response.data;
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to list tracking habits');
+    }
   } catch (error) {
     throw error.response.data;
   }
@@ -39,7 +60,11 @@ export const listTrackingHabits = async (treeId) => {
 export const trackHabit = async (treeId, habitData) => {
   try {
     const response = await authApi.post(`/api/habit/tracking/${treeId}`, habitData);
-    return response.data;
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to track habit');
+    }
   } catch (error) {
     throw error.response.data;
   }

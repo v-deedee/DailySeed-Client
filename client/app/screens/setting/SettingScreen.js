@@ -30,14 +30,14 @@ export default function SettingScreen({ signOut }) {
 
       <CustomCard />
 
-      {/* <View style={{ marginTop: 30 }}>
+      <View style={{ marginTop: 30 }}>
         <Button
           onPress={() => handleLogout()}
           title="Log out"
           color="red"
           accessibilityLabel="Log out button"
         />
-      </View> */}
+      </View>
     </View>
   );
 }
