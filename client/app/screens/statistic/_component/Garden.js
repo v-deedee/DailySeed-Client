@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Shovel, TreeAvatar, TreeBox, CellComponent, HitBox, CrossHair, ShareSocial, ViewTree, ViewGarden } from "./Tree";
 import { StyleSheet, View, TouchableOpacity, Text, ImageBackground, ScrollView, SafeAreaView } from "react-native";
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
-import { BottomSheet } from "@rneui/themed";
+import { BottomSheet, Icon } from "@rneui/themed";
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import TreeDetail from "./TreeDetail";

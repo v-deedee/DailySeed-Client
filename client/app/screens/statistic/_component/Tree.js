@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Pressable
 } from "react-native";
-import { Avatar, Badge } from "@rneui/themed";
+import { Avatar, Badge, Icon } from "@rneui/themed";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const numRows = 6; // Number of rows in the garden
 const numColumns = 6; // Number of columns in the garden
@@ -84,13 +85,20 @@ export const HitBox = ({ x, y, openBorder, handleTool }) => {
 export const TreeBox = ({ toggleBottomSheet }) => {
   return (
     <View>
-      <TouchableOpacity activeOpacity={0.5} onPress={toggleBottomSheet}>
-        <Image
+      <TouchableOpacity activeOpacity={0.5} onPress={toggleBottomSheet} >
+        {/* <Image
           source={require("../../../../assets/garden/seeds.png")}
           style={styles.image}
-        />
+        /> */}
+        <Icon
+          name='seed'
+          type='material-community'
+          color='#FFBB64'
+          size={36}
+          containerStyle={styles.image} />
       </TouchableOpacity>
     </View>
+
   );
 };
 
@@ -98,10 +106,16 @@ export const Shovel = ({ handleShovelPress }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={handleShovelPress}>
-        <ImageBackground
+        {/* <ImageBackground
           source={require("../../../../assets/garden/shovel.png")}
           style={styles.image}
-        />
+        /> */}
+        <Icon
+          name='shovel'
+          type='material-community'
+          color='#FF6868'
+          size={36}
+          containerStyle={styles.image} />
       </TouchableOpacity>
     </View>
   );
@@ -111,10 +125,16 @@ export const ViewTree = ({ handleLoupePress }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={handleLoupePress}>
-        <ImageBackground
+        {/* <ImageBackground
           source={require("../../../../assets/garden/tree.png")}
           style={styles.image}
-        />
+        /> */}
+        <Icon
+          name='preview'
+          type='material'
+          color='#00B8A9'
+          size={36}
+          containerStyle={styles.image} />
       </TouchableOpacity>
     </View>
   );
@@ -124,10 +144,16 @@ export const CrossHair = ({ resetZoom }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={resetZoom}>
-        <ImageBackground
+        {/* <ImageBackground
           source={require("../../../../assets/garden/crosshair.png")}
           style={styles.image}
-        />
+        /> */}
+        <Icon
+          name='crosshairs-gps'
+          type='material-community'
+          color='#804674'
+          size={36}
+          containerStyle={styles.image} />
       </TouchableOpacity>
     </View>
   );
@@ -137,10 +163,16 @@ export const ShareSocial = ({ handleShare }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={handleShare}>
-        <ImageBackground
+        {/* <ImageBackground
           source={require("../../../../assets/garden/share.png")}
           style={styles.image}
-        />
+        /> */}
+        <Icon
+          name='share-variant'
+          type='material-community'
+          color='#62CDFF'
+          size={36}
+          containerStyle={styles.image} />
       </TouchableOpacity>
     </View>
   );
@@ -150,10 +182,16 @@ export const ViewGarden = ({ handleCalendarPress }) => {
   return (
     <View>
       <TouchableOpacity activeOpacity={0.5} onPress={handleCalendarPress}>
-        <ImageBackground
+        {/* <ImageBackground
           source={require("../../../../assets/garden/calendar.png")}
           style={styles.image}
-        />
+        /> */}
+        <Icon
+          name='calendar-month'
+          type='material-community'
+          color='#A86464'
+          size={36}
+          containerStyle={styles.image} />
       </TouchableOpacity>
     </View>
   );
@@ -236,9 +274,6 @@ const styles = StyleSheet.create({
   image: {
     width: 36,
     height: 36,
-    resizeMode: "contain",
-    borderWidth: 0,
-    borderColor: "#fff",
   },
   treeContainer: {
     transform: [
