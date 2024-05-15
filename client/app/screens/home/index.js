@@ -1,24 +1,30 @@
 import { StyleSheet, Image, View, Text, StatusBar } from "react-native";
 import { useContext, useEffect, useState } from "react";
-import { Button } from "@rneui/themed";
 import { useRoute } from "@react-navigation/native";
-import { getCurrentDate } from "../../components/Calendar";
-import ProgressCircle from "./_component/ProgressCircle";
+
 import SelectTreeModal from "./_component/modals/SelectTreeModal";
 import { UserContext } from "../../contexts/user.context";
+import { SeedContext } from "../../contexts/seed.context";
+import { TreeContext } from "../../contexts/tree.context";
+import { listTrees } from "../../services/tree.service";
+import { HabitContext } from "../../contexts/habit.context";
+import { listTrackingHabits } from "../../services/habit.service";
+import { getCurrentDate } from "../../utils/utils";
+import Tab from "./inner_screens/Tab";
 
 export default function HomeScreen({ navigation }) {
   const { user } = useContext(UserContext);
   const route = useRoute();
   const value = route.params?.progress;
-
-  const [openSelectTreeModal, setOpenSelectTreeModal] = useState(true);
-
-  const [treeType, setTreeType] = useState(1);
+  const { seeds, fetchSeeds } = useContext(SeedContext);
+  const { tree, setTree } = useContext(TreeContext);
+  const { habits, fetchHabits } = useContext(HabitContext);
 
   const [progress, setProgress] = useState(0);
 
-  const currentDate = getCurrentDate();
+  const [treeType, setTreeType] = useState(null);
+
+  const [openSelectTreeModal, setOpenSelectTreeModal] = useState(false);
 
   const toggleSelectTreeModal = () => {
     setOpenSelectTreeModal(!openSelectTreeModal);
@@ -36,6 +42,50 @@ export default function HomeScreen({ navigation }) {
     }
   }, [value]);
 
+  useEffect(() => {
+    if(tree) {
+      setOpenSelectTreeModal(false);        
+    }
+
+  }, [tree])
+
+  useEffect(() => {
+    async function fetchData() {
+        const today = new Date().toISOString().replace(/\//g, '');
+
+        // const today = new Date().toLocaleString('vi-VN', options).replace(/\//g, '');
+        // const formattedDate = `${today.slice(4, 8)}${today.slice(2, 4)}${today.slice(0, 2)}`;
+        const treeData = await listTrees(today, true);
+        if(treeData[0]) {
+
+            const modifiedSeed = {
+              ...treeData[0].seed,
+              asset: treeData[0].seed.asset.split('|'),
+            };
+            const modifiedTree = {
+              ...treeData[0],
+              seed: modifiedSeed,
+            };
+            setTree(modifiedTree);
+        }
+        else {
+            fetchSeeds();
+        }           
+    }
+
+    fetchData();
+  }, [user])
+
+  useEffect(() => {
+    async function fetchData() {
+      if(tree) {
+        fetchHabits(tree.tree.id);
+        console.log(habits)
+      }
+    }
+    fetchData();
+  }, [tree]);
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="black" />
@@ -48,7 +98,8 @@ export default function HomeScreen({ navigation }) {
             style={{ width: 25, height: 25 }}
           />
           <Text style={{ fontSize: 16, fontWeight: 700 }}>
-            {`${user.name}'s diary`}
+            {/* {`${user.name}'s diary`} */}
+            Diary
           </Text>
         </View>
         <View style={styles.coinContainer}>
@@ -61,53 +112,30 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       {/* Date */}
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ color: "#787878", fontWeight: 700 }}>{currentDate}</Text>
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          margin: 20,
+        }}
+      >
+        <Text style={{ color: "#787878", fontWeight: 700 }}>
+          {getCurrentDate()}
+        </Text>
       </View>
 
-      {/* Main */}
-      <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
-        {/* Instruction */}
-        <View style={{ alignItems: "center" }}>
-          <Text style={styles.instruction}>
-            Record your day and build up garden !!!
-          </Text>
-        </View>
-
-        {/* Progress: % */}
-        <View style={styles.percentProgressContainer}>
-          <Image
-            source={require("../../../assets/home/water.png")}
-            style={{ width: 25, height: 25 }}
-          />
-          <Text style={{ fontWeight: 700 }}>{progress}%</Text>
-        </View>
-
-        {/* Progress: Circle */}
-        <ProgressCircle progress={progress} treeType={treeType} />
-
-        {/* Record button */}
-        <Button
-          title={"Start"}
-          titleStyle={{ fontWeight: 700 }}
-          containerStyle={{
-            width: 200,
-            margin: 20,
-            marginBottom: 100,
-          }}
-          buttonStyle={{ padding: 20 }}
-          style={{}}
-          radius={50}
-          color={"#184D47"}
-          onPress={openRecord}
-        />
-      </View>
+      <Tab
+        openRecord={openRecord}
+        progress={progress}
+        treeType={treeType}
+        toggleSelectTreeModal={toggleSelectTreeModal}
+      />
 
       {/* Select tree modal */}
       <SelectTreeModal
         isOpen={openSelectTreeModal}
         toggle={toggleSelectTreeModal}
-        treeType={treeType}
+        treeType={treeType || 1}
         setTreeType={setTreeType}
       />
     </View>
@@ -121,6 +149,7 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
+    paddingBottom: 0,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -141,29 +170,5 @@ const styles = StyleSheet.create({
     gap: 5,
     backgroundColor: "#ffecb3",
     alignItems: "center",
-  },
-  instruction: {
-    width: 200,
-    marginVertical: 20,
-    fontSize: 20,
-    // color: "#474838",
-    textAlign: "center",
-    lineHeight: 30,
-  },
-  percentProgressContainer: {
-    marginVertical: 10,
-    marginRight: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-  },
-  treeBox: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 200,
-    height: 200,
-    backgroundColor: "#EDEBE4",
-    borderRadius: 9999,
   },
 });

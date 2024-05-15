@@ -7,6 +7,10 @@ import userRole from "../constants/user.role.js";
 import bcrypt from "bcrypt";
 import CloudHanlder from "../utils/cloud.handler.js";
 import _ from "lodash";
+import Stripe from 'stripe';
+
+const stripe = new Stripe('sk_test_51P7bjf05CJZ8qs7kDcGSebDhXZPJ7VpPLceToyYQ7PQzfzYrwZqI8wuvfqBNDZeZ8wwlW07NFRO1CGza2softbc500Fz4T8jv6'); // Replace with your Stripe secret key
+
 
 export default class UserController {
     constructor() {}
@@ -128,4 +132,25 @@ export default class UserController {
             data: payload,
         });
     };
+
+
+    createPaymentIntent = async (req, res) => {
+        const { amount } = req.body;
+
+        try {
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount,
+                currency: 'vnd',
+                payment_method_types: ['card'],
+            });
+    
+            res.status(200).send({
+                ok: true,
+                clientSecret: paymentIntent.client_secret,
+            });
+        } catch (error) {
+            res.status(500).send({ error: error.message });
+        }
+    
+    }
 }

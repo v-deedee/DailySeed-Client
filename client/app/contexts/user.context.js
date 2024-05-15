@@ -2,18 +2,11 @@ import React, { createContext, useState } from 'react';
 
 export const UserContext = createContext();
 
-export const UserProvider = ({ children, initialUser, setUserCallback }) => {
-  const [user, setUser] = useState(initialUser);
-
-  const handleSetUser = (userData) => {
-    setUser(userData);
-    if (setUserCallback) {
-      setUserCallback(userData);
-    }
-  };
+export const UserProvider = ( {children} ) => {
+  const [user, setUser] = useState();
 
   return (
-    <UserContext.Provider value={{ user, setUser: handleSetUser }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );

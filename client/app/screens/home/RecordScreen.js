@@ -6,84 +6,85 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Slider } from "@rneui/themed";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
 
 import ConfirmDeleteHabitModal from "./_component/modals/ConfirmDeleteHabitModal";
-import { getCurrentDate } from "../../components/Calendar";
-import { color } from "../../utils/utils";
+import { HabitContext } from "../../contexts/habit.context";
+import { updateHabit } from "../../services/habit.service";
+import { color, getCurrentDate } from "../../utils/utils";
 
-const habits = [
-  {
-    icon: "😈",
-    name: "Emotion",
-    levels: [
-      {
-        label: "Bad",
-        icon: "☹️",
-      },
-      {
-        label: "Normal",
-        icon: "😐",
-      },
-      {
-        label: "Good",
-        icon: "😀",
-      },
-    ],
-  },
-  {
-    icon: "🧹",
-    name: "Housework",
-    levels: [
-      {
-        label: "Poor",
-        icon: "👎",
-      },
-      {
-        label: "Bad",
-        icon: "👊",
-      },
-      {
-        label: "Good",
-        icon: "👍",
-      },
-      {
-        label: "Excellent",
-        icon: "👏",
-      },
-    ],
-  },
-  {
-    icon: "💻",
-    name: "OOP",
-    levels: [
-      {
-        label: "Basic",
-        icon: "🤌",
-      },
-      {
-        label: "Intermediate",
-        icon: "💪",
-      },
-      {
-        label: "Hard",
-        icon: "🙏",
-      },
-      {
-        label: "Expert",
-        icon: "🏆",
-      },
-      {
-        label: "God",
-        icon: "👑",
-      },
-    ],
-  },
-];
+// const habits = [
+//   {
+//     icon: "😈",
+//     name: "Emotion",
+//     criteria: [
+//       {
+//         label: "Bad",
+//         icon: "☹️",
+//       },
+//       {
+//         label: "Normal",
+//         icon: "😐",
+//       },
+//       {
+//         label: "Good",
+//         icon: "😀",
+//       },
+//     ],
+//   },
+//   {
+//     icon: "🧹",
+//     name: "Housework",
+//     criteria: [
+//       {
+//         label: "Poor",
+//         icon: "👎",
+//       },
+//       {
+//         label: "Bad",
+//         icon: "👊",
+//       },
+//       {
+//         label: "Good",
+//         icon: "👍",
+//       },
+//       {
+//         label: "Excellent",
+//         icon: "👏",
+//       },
+//     ],
+//   },
+//   {
+//     icon: "💻",
+//     name: "OOP",
+//     criteria: [
+//       {
+//         label: "Basic",
+//         icon: "🤌",
+//       },
+//       {
+//         label: "Intermediate",
+//         icon: "💪",
+//       },
+//       {
+//         label: "Hard",
+//         icon: "🙏",
+//       },
+//       {
+//         label: "Expert",
+//         icon: "🏆",
+//       },
+//       {
+//         label: "God",
+//         icon: "👑",
+//       },
+//     ],
+//   },
+// ];
 
 const RecordScreen = ({ navigation }) => {
   const [openDelHabitModal, setOpenDelHabitModal] = useState(false);
@@ -92,11 +93,20 @@ const RecordScreen = ({ navigation }) => {
 
   const currentDate = getCurrentDate();
 
-  const [values, setValues] = useState(new Array(habits.length).fill(0));
+  const [values, setValues] = useState([0]);
 
-  const [renderValues, setRenderValues] = useState(
-    new Array(habits.length).fill(0),
-  );
+  const [renderValues, setRenderValues] = useState([0]);
+  const { habits, setHabits} = useContext(HabitContext)
+
+  useEffect(() => {
+    if(habits && habits.length) {
+      console.log(habits.length)
+      setValues(new Array(habits.length).fill(0))
+      setRenderValues(new Array(habits.length).fill(0))
+    }
+
+  }, [habits])
+
 
   const closeRecord = () => {
     navigation.navigate("Home");
@@ -110,7 +120,7 @@ const RecordScreen = ({ navigation }) => {
     let progress = 0;
     values.forEach((value, index) => {
       progress +=
-        (value * 100) / ((habits[index].levels.length - 1) * habits.length);
+        (value * 100) / ((habits[index].criteria.length - 1) * habits.length);
     });
 
     navigation.navigate("Home", { progress: parseInt(progress) });
@@ -120,9 +130,9 @@ const RecordScreen = ({ navigation }) => {
     setOpenDelHabitModal(!openDelHabitModal);
   };
 
-  const deleteHabit = () => {
+  const deleteHabit = async () => {
+    const data = updateHabit(habits[currentHabitId], false);
     habits.splice(currentHabitId, 1);
-
     toggleDelHabitModal();
   };
 
@@ -152,10 +162,7 @@ const RecordScreen = ({ navigation }) => {
         {habits.map((habit, index) => (
           <View style={styles.recordContent} key={index}>
             {/* Icon + title */}
-            <View
-              // style={{ alignItems: "center", marginTop: -55, marginBottom: 8 }}
-              style={{ position: "absolute", top: -27, left: 20 }}
-            >
+            <View style={{ position: "absolute", top: -27, left: 20 }}>
               <View style={styles.habitIconBox}>
                 <View style={styles.habitIcon}>
                   <Text style={{ fontSize: 35 }}>{habit.icon}</Text>
@@ -205,12 +212,12 @@ const RecordScreen = ({ navigation }) => {
                     {
                       backgroundColor: color(
                         values[index],
-                        habit.levels.length - 1,
+                        habit.criteria.length - 1,
                       ),
                     },
                   ]}
                 >
-                  {habit.levels[values[index]].label}
+                  {habit.criteria[values[index]].label}
                 </Text>
               </View> */}
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -226,14 +233,14 @@ const RecordScreen = ({ navigation }) => {
               </View>
             </View>
 
-            <Slider
+            {/* <Slider
               value={renderValues[index]}
               onValueChange={(value) => {
                 let newValues = [...values];
                 let newRenderValues = [...renderValues];
 
                 let divider = Math.floor(
-                  100 / (habits[index].levels.length - 1),
+                  100 / (habits[index].criteria.length - 1),
                 );
                 let shiftedValue = value + divider / 2;
 
@@ -248,14 +255,14 @@ const RecordScreen = ({ navigation }) => {
               step={2}
               minimumTrackTintColor={color(
                 values[index],
-                habit.levels.length - 1,
+                habit.criteria.length - 1,
               )}
               onSlidingComplete={(value) => {
                 let newValues = [...values];
                 let newRenderValues = [...renderValues];
 
                 let divider = Math.floor(
-                  100 / (habits[index].levels.length - 1),
+                  100 / (habits[index].criteria.length - 1),
                 );
                 let shiftedValue = value + divider / 2;
 
@@ -279,22 +286,22 @@ const RecordScreen = ({ navigation }) => {
                 children: (
                   <View style={{ alignItems: "center", gap: 5 }}>
                     <Text style={{ fontSize: 35 }}>
-                      {habit.levels[values[index]].icon}
+                      {habit.criteria[values[index]].icon}
                     </Text>
                     <Text
                       style={{
                         width: 100,
                         textAlign: "center",
                         fontWeight: 800,
-                        color: color(values[index], habit.levels.length - 1),
+                        color: color(values[index], habit.criteria.length - 1),
                       }}
                     >
-                      {habit.levels[values[index]].label}
+                      {habit.criteria[values[index]].label}
                     </Text>
                   </View>
                 ),
               }}
-            />
+            /> */}
           </View>
         ))}
       </ScrollView>
