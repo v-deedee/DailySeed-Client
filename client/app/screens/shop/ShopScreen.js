@@ -1,4 +1,4 @@
-import { Image, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { Tab, TabView } from '@rneui/themed';
 import { useContext, useState } from "react";
 import TabAll from "./_component/TabAll";

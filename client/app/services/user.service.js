@@ -53,3 +53,17 @@ export const logout = async () => {
       throw error;
     }
   };
+
+
+export const createPaymentIntent = async (amount) => {
+  try {
+    const data = authApi.post('/api/user/create-payment-intent', { amount })
+    if(data.ok) {
+      return data.clientSecret;
+    } else {
+      throw new Error('Failed to create payment intent');
+    }
+  } catch (error) {
+    throw error;
+  }
+}
