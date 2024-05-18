@@ -84,9 +84,9 @@ export const HitBox = ({ x, y, openBorder, handleTool }) => {
   );
 };
 
-export const TreeBox = ({ toggleBottomSheet }) => (
+export const TreeBox = ({ toggleBottomSheet, setDisable }) => (
   <View>
-    <TouchableOpacity activeOpacity={0.5} onPress={toggleBottomSheet}>
+    <TouchableOpacity activeOpacity={0.5} onPress={toggleBottomSheet} disabled={setDisable}>
       <Icon
         name="seed"
         type="material-community"
@@ -98,9 +98,9 @@ export const TreeBox = ({ toggleBottomSheet }) => (
   </View>
 );
 
-export const Shovel = ({ handleShovelPress }) => (
+export const Shovel = ({ handleShovelPress, setDisable }) => (
   <View>
-    <TouchableOpacity activeOpacity={0.5} onPress={handleShovelPress}>
+    <TouchableOpacity activeOpacity={0.5} onPress={handleShovelPress} disabled={setDisable}>
       <Icon
         name="shovel"
         type="material-community"
@@ -112,9 +112,9 @@ export const Shovel = ({ handleShovelPress }) => (
   </View>
 );
 
-export const ViewTree = ({ handleLoupePress }) => (
+export const ViewTree = ({ handleLoupePress, setDisable }) => (
   <View>
-    <TouchableOpacity activeOpacity={0.5} onPress={handleLoupePress}>
+    <TouchableOpacity activeOpacity={0.5} onPress={handleLoupePress} disabled={setDisable}>
       <Icon
         name="preview"
         type="material"

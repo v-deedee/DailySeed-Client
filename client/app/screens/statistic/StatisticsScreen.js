@@ -16,5 +16,6 @@ export default function StatisticsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fbf5e5",
   },
 });

@@ -34,6 +34,8 @@ const Garden = () => {
   const [isRemoveTree, setRemoveTree] = useState(false);
   const [isOpenDetail, setOpenDetail] = useState(false);
   const [isOpenMonthPicker, setOpenMonthPicker] = useState(false);
+  const [isViewTree, setViewTree] = useState(false);
+  const [selectedTreePosition, setSelectedTreePosition] = useState();
 
   const zoomableViewRef = useRef(null);
   const gardenShareRef = useRef();
@@ -52,6 +54,11 @@ const Garden = () => {
     setOpenBorder(!isOpenBorder);
     setRemoveTree(!isRemoveTree);
   };
+
+  const handleViewPress = () => {
+    setOpenBorder(!isOpenBorder);
+    setViewTree(!isViewTree);
+  }
 
   const handlePlantTree = (x, y) => {
     if (map[y][x] === 0) {
@@ -75,9 +82,12 @@ const Garden = () => {
       });
       setMap(newMap);
     }
-    setOpenBorder(false);
-    setRemoveTree(false);
   };
+
+  const handleViewTree = (x, y) => {
+    setOpenDetail(true);
+    setSelectedTreePosition({ x, y });
+  }
 
   const handleTool = (x, y) => {
     if (isPlantTree) {
@@ -92,6 +102,14 @@ const Garden = () => {
     }
     if (isRemoveTree) {
       handleRemoveTree(x, y);
+      setOpenBorder(false);
+      setRemoveTree(false);
+    }
+
+    if (isViewTree) {
+      handleViewTree(x, y);
+      setOpenBorder(false);
+      setViewTree(false);
     }
   };
 
@@ -120,12 +138,12 @@ const Garden = () => {
           <ViewGarden handleCalendarPress={toggleBottomSheet(setOpenMonthPicker)} />
         </View>
         <View style={styles.monthTextContainer}>
-          <Text style={styles.monthText}>April, 2024</Text>
+          <Text style={styles.monthText}>{selectedMonth + 1} </Text>
         </View>
         <View style={styles.row}>
-          <TreeBox toggleBottomSheet={toggleBottomSheet(setIsVisible)} />
-          <Shovel handleShovelPress={handleShovelPress} />
-          <ViewTree handleLoupePress={() => setOpenDetail(true)} />
+          <TreeBox toggleBottomSheet={toggleBottomSheet(setIsVisible)} setDisable={isRemoveTree || isViewTree} />
+          <Shovel handleShovelPress={handleShovelPress} setDisable={isPlantTree || isViewTree} />
+          <ViewTree handleLoupePress={handleViewPress} setDisable={isPlantTree || isRemoveTree} />
         </View>
       </View>
 
@@ -162,7 +180,7 @@ const Garden = () => {
                     key={`hitbox_${x}_${y}`}
                     x={x}
                     y={y}
-                    openBorder={(isPlantTree && map[y][x] === 0) || (isRemoveTree && map[y][x] !== 0)}
+                    openBorder={(isPlantTree && map[y][x] === 0) || (isRemoveTree && map[y][x] !== 0) || (isViewTree && map[y][x] !== 0)}
                     handleTool={handleTool}
                   />
                 ))
@@ -186,8 +204,8 @@ const Garden = () => {
       </BottomSheet>
 
       <BottomSheet isVisible={isOpenDetail} onBackdropPress={toggleBottomSheet(setOpenDetail)}>
-        <View style={styles.bottomSheet}>
-          <TreeDetail />
+        <View>
+          <TreeDetail selectedTreePosition={selectedTreePosition} />
         </View>
       </BottomSheet>
 
