@@ -110,10 +110,23 @@ export default class TreeController {
             treeSelectFields.push(...["date", "note", "picture"]);
             seedSelectFields.push(...["name"]);
         }
-        const payload = _.map(trees, (tree) => ({
-            tree: _.pick(tree, treeSelectFields),
-            seed: _.pick(tree.Seed, seedSelectFields),
-        }));
+        // const payload = _.map(trees, (tree) => ({
+        //     tree: _.pick(tree, treeSelectFields),
+        //     seed: _.pick(tree.Seed, seedSelectFields),
+        // }));
+        const payload = _.map(trees, (tree) => {
+            const treeData = _.pick(tree, treeSelectFields);
+            const seedData = _.pick(tree.Seed, seedSelectFields);
+
+            const score = treeData.score;
+            const phase = score < 25 ? 1 : score < 50 ? 2 : score < 75 ? 3 : 4;
+            seedData.phase = phase;
+
+            return {
+                tree: treeData,
+                seed: seedData,
+            };
+        });
 
         res.status(200).json({
             ok: true,
