@@ -62,6 +62,10 @@ export default {
             code: "SEED_NOT_FOUND",
             message: "Your seed is not in the system",
         },
+        NOT_ENOUGH_MONEY: {
+            code: "SEED_NOT_ENOUGH_MONERY",
+            message: "Your money is not enough to buy this asset.",
+        },
     },
 
     TREE: {

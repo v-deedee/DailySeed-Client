@@ -10,4 +10,8 @@ export default {
         name: Joi.string(),
         price: Joi.number().integer().min(0),
     }).required(),
+
+    buy: Joi.object({
+        id: Joi.number().integer().required(),
+    }).required(),
 };

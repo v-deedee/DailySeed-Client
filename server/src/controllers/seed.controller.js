@@ -61,7 +61,6 @@ export default class SeedController {
 
         const seed = await SeedService.findOne({ id: params.id });
 
-        console.log(files);
         if (files["assets"]) {
             await this.#removeAssets(seed.asset.split("|"));
             body.asset = await this.#uploadAssets(
@@ -95,6 +94,28 @@ export default class SeedController {
         res.status(200).json({
             ok: true,
             data: payload,
+        });
+    };
+
+    buySeed = async (req, res) => {
+        const { body } = req;
+        const { user } = req;
+
+        const seed = await SeedService.findOne({ id: body.id });
+        if (!seed)
+            throw new HttpError({ ...errorCode.SEED.NOT_FOUND, status: 403 });
+
+        if (seed.price > user.Profile.money)
+            throw new HttpError({
+                ...errorCode.SEED.NOT_ENOUGH_MONEY,
+                status: 403,
+            });
+
+        await user.addSeed(seed);
+
+        res.status(200).json({
+            ok: true,
+            data: null,
         });
     };
 }

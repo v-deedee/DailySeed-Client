@@ -19,7 +19,10 @@ export default class TreeController {
                 status: 400,
             });
 
-        let tree = await TreeService.findOne({ UserId: user.id, date: new Date() });
+        let tree = await TreeService.findOne({
+            UserId: user.id,
+            date: new Date(),
+        });
         if (tree != null)
             throw new HttpError({
                 ...errorCode.TREE.ALREADY_CREATED,
@@ -96,10 +99,15 @@ export default class TreeController {
 
         const trees = await TreeService.findAll(filter);
 
-        const treeSelectFields = ["id", "coordinate_x", "coordinate_y"];
+        const treeSelectFields = [
+            "id",
+            "coordinate_x",
+            "coordinate_y",
+            "score",
+        ];
         const seedSelectFields = ["id", "asset"];
         if (query.extend) {
-            treeSelectFields.push(...["date", "score", "note", "picture"]);
+            treeSelectFields.push(...["date", "note", "picture"]);
             seedSelectFields.push(...["name"]);
         }
         const payload = _.map(trees, (tree) => ({
@@ -107,6 +115,36 @@ export default class TreeController {
             seed: _.pick(tree.Seed, seedSelectFields),
         }));
 
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
+
+    updateTree = async (req, res) => {
+        const { body } = req;
+        const { user } = req;
+
+        for (const tree of body.trees) {
+            const targetTree = await TreeService.findOne({ id: tree.id });
+            if (!targetTree)
+                throw new HttpError({
+                    ...errorCode.TREE.NOT_FOUND,
+                    status: 403,
+                });
+
+            if (targetTree.UserId != user.id)
+                throw new HttpError({
+                    ...errorCode.AUTH.ROLE_INVALID,
+                    status: 403,
+                });
+
+            targetTree.coordinate_x = tree.coordinate_x;
+            targetTree.coordinate_y = tree.coordinate_y;
+            await targetTree.save();
+        }
+
+        const payload = null;
         res.status(200).json({
             ok: true,
             data: payload,
