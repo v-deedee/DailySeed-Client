@@ -25,6 +25,13 @@ export default [
                 method: "listTree",
                 roles: [userRole.USER],
             },
+            {
+                httpMethod: "put",
+                path: "/tree",
+                method: "updateTree",
+                roles: [userRole.USER],
+                schema: treeSchema.update,
+            }
         ],
     },
 ];
