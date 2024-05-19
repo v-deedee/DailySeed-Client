@@ -279,6 +279,28 @@ npm run start
         extend=true // for more tree info
         ```
 
+4.  Update Tree
+
+    `PUT /api/tree`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+    -   Param
+
+        ```
+        [
+            {
+                id: 3,
+                coordinate_x: 5,
+                coordinate_y: 5
+            }
+        ]
+        ```
+
 ## Seed
 
 1.  Create Seed
