@@ -274,8 +274,9 @@ npm run start
     -   Param
 
         ```
-        date=20240425; // For a specific date
-        date=[20230425,20240501]; // For a range of date
+        day=23 // skip this to get all days in month
+        month=5
+        year=2024
         extend=true // for more tree info
         ```
 
