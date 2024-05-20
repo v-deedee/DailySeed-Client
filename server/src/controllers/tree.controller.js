@@ -160,13 +160,17 @@ export default class TreeController {
 
             targetTree.coordinate_x = tree.coordinate_x;
             targetTree.coordinate_y = tree.coordinate_y;
+
+            if (targetTree.coordinate_x * targetTree.coordinate_y < 0) {
+                targetTree.coordinate_x = null;
+                targetTree.coordinate_y = null;
+            }
+
             await targetTree.save();
         }
 
-        const payload = null;
         res.status(200).json({
             ok: true,
-            data: payload,
         });
     };
 }
