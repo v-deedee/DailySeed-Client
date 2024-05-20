@@ -54,11 +54,11 @@ export default class TreeController {
         const tree = await TreeService.findOne({ id: params.id });
         if (!tree)
             throw new HttpError({ ...errorCode.TREE.NOT_FOUND, status: 403 });
-        // if (tree.UserId != user.id)
-        //     throw new HttpError({
-        //         ...errorCode.AUTH.ROLE_INVALID,
-        //         status: 403,
-        //     });
+        if (tree.UserId != user.id)
+            throw new HttpError({
+                ...errorCode.AUTH.ROLE_INVALID,
+                status: 403,
+            });
 
         const selectedCriteria = _.keyBy(await tree.getCriteria(), "HabitId");
         const habits = await habitService.findAll({
