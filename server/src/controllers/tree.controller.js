@@ -76,19 +76,23 @@ export default class TreeController {
     };
 
     #getDateQuery = (query) => {
-        let rangePattern = /\[\d{8},\d{8}\]/;
-        let pointPattern = /\d{8}/;
+        const { day, month, year } = query;
 
-        if (rangePattern.test(query.date)) {
-            const [start, end] = query.date
-                .substring(1, query.date.length - 1)
-                .split(",");
+        if (year && month && day) {
+            const date = `${year}${month.padStart(2, '0')}${day.padStart(2, '0')}`;
+            return date;
+        }
 
+        if (year && month) {
+            const start = `${year}${month.padStart(2, '0')}01`;
+            const end = `${year}${month.padStart(2, '0')}${new Date(year, month, 0).getDate().toString().padStart(2, '0')}`;
             return { [Op.between]: [start, end] };
         }
 
-        if (pointPattern.test(query.date)) {
-            return query.date;
+        if (year) {
+            const start = `${year}0101`;
+            const end = `${year}1231`;
+            return { [Op.between]: [start, end] };
         }
 
         return null;
@@ -115,10 +119,7 @@ export default class TreeController {
             treeSelectFields.push(...["date", "note", "picture"]);
             seedSelectFields.push(...["name"]);
         }
-        // const payload = _.map(trees, (tree) => ({
-        //     tree: _.pick(tree, treeSelectFields),
-        //     seed: _.pick(tree.Seed, seedSelectFields),
-        // }));
+
         const payload = _.map(trees, (tree) => {
             const treeData = _.pick(tree, treeSelectFields);
             const seedData = _.pick(tree.Seed, seedSelectFields);
