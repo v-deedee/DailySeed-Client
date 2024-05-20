@@ -1,40 +1,28 @@
-import authApi from './authApi';
-
-export const createSeed = async (seedData) => {
-  try {
-    const response = await authApi.post('/api/seed', seedData);
-    if (response.data.ok) {
-      return response.data.data;
-    } else {
-      throw new Error('Failed to create seed');
-    }
-  } catch (error) {
-    throw error.response.data;
-  }
-};
-
-export const updateSeed = async (seedId, seedData) => {
-  try {
-    const response = await authApi.put(`/api/seed/${seedId}`, seedData);
-    if (response.data.ok) {
-      return response.data.data;
-    } else {
-      throw new Error('Failed to update seed');
-    }
-  } catch (error) {
-    throw error.response.data;
-  }
-};
+import authApi from "./authApi";
 
 export const listSeeds = async () => {
   try {
-    const response = await authApi.get('/api/seed');
+    const response = await authApi.get("/api/seed");
     if (response.data.ok) {
       return response.data.data;
     } else {
-      throw new Error('Failed to list seeds');
+      throw new Error("Failed to list seeds");
     }
   } catch (error) {
     throw error.response.data;
+  }
+};
+
+export const listShopSeeds = async () => {
+  try {
+    const response = await authApi.get("/api/seed/shop");
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error("Failed to list shop seeds");
+    }
+  } catch (error) {
+    // throw error.response.data;
+    return error.response.data;
   }
 };

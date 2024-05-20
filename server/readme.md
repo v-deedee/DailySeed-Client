@@ -375,3 +375,13 @@ npm run start
         ```js
             id: 1,
         ```
+
+5.  List Seed in Shop
+
+    `GET /api/seed/shop`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <admin or user's token>`

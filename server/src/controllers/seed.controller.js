@@ -78,19 +78,30 @@ export default class SeedController {
         });
     };
 
-    listSeed = async (req, res) => {
+    listUserSeed = async (req, res) => {
         const { user } = req;
 
-        let seeds;
-        if (user.role == userRole.USER) {
-            seeds = await user.getSeeds();
-        } else {
-            seeds = await SeedService.findAll();
-        }
+        const seeds = await user.getSeeds();
 
-        const payload = _.map(seeds, (seed) =>
-            _.pick(seed, ["id", "name", "asset", "price"])
-        );
+        const payload = _.map(seeds, (seed) => _.pick(seed, ["id", "asset"]));
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
+
+    listShopSeed = async (req, res) => {
+        const { user } = req;
+
+        const ownedSeeds = new Set(_.map(await user.getSeeds(), "id"));
+
+        const seeds = await SeedService.findAll();
+
+        const payload = _.map(seeds, (seed) => {
+            const seedData = _.pick(seed, ["id", "name", "asset", "price"]);
+            seedData.owned = ownedSeeds.has(seedData.id);
+            return seedData;
+        });
         res.status(200).json({
             ok: true,
             data: payload,
