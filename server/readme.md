@@ -302,6 +302,16 @@ npm run start
         ]
         ```
 
+5.  Find Tree
+
+    `GET /api/tree/:day/:month/:year`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
 ## Seed
 
 1.  Create Seed

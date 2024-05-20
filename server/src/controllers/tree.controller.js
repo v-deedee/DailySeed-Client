@@ -97,6 +97,26 @@ export default class TreeController {
     };
 
 
+    findTree = async (req, res) => {
+        const { user } = req;
+        const { params } = req;
+
+        const filter = { UserId: user.id };
+        const dateFilter = this.#getDateQuery(params);
+        if (dateFilter) filter.date = dateFilter;
+        const tree = await TreeService.findOne(filter);
+
+        const payload = {
+            tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
+            seed: _.pick(tree.Seed, ["id", "asset"])
+        }
+
+        res.status(200).json({
+            ok: true,
+            data: payload
+        })
+    }
+
 
     listTree = async (req, res) => {
         const { user } = req;

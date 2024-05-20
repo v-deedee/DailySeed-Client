@@ -31,6 +31,12 @@ export default [
                 method: "updateTree",
                 roles: [userRole.USER],
                 schema: treeSchema.update,
+            },
+            {
+                httpMethod: "get",
+                path: "/tree/:day/:month/:year",
+                method: "findTree",
+                roles: [userRole.USER],
             }
         ],
     },
