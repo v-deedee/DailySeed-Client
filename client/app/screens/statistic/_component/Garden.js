@@ -13,6 +13,7 @@ import {
 } from "./Tree";
 import TreeDetail from "./TreeDetail";
 import { MyBottomSheet } from "./BottomSheet/MyBottomSheet";
+import { listTrees, updateTree } from "../../../services/tree.service";
 
 
 const numRows = 6;
@@ -30,7 +31,7 @@ const Garden = () => {
     setSelectedYear(parseInt(options[index], 10));
   };
 
-  const [imgURL, setImgURL] = useState({});
+  const [treeInfo, setTreeInfo] = useState({});
   const [map, setMap] = useState([
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
@@ -40,7 +41,7 @@ const Garden = () => {
     [0, 0, 0, 0, 0, 0],
   ]);
 
-
+  const [listUpdateTree, seListtUpdateTree] = useState([])
   useFocusEffect(
     useCallback(() => {
       console.log("Hello")
@@ -55,31 +56,20 @@ const Garden = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjYsInVzZXJuYW1lIjoib25seXphYmFvIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MTYwNDU4MjIsImV4cCI6MTcxODYzNzgyMn0.JaN0zOzbDHZprkloQlBlKWTaZZm1clmsf6a9MUBHz8A';
-
-        const response = await fetch('https://dailyseed.onrender.com/api/tree', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+        const data = await listTrees();
+        const newMap = map.map((row) => row.slice());
+        const newTreeInfo = {};
+        data.forEach(({ tree, seed }) => {
+          if (tree.coordinate_x !== null && tree.coordinate_y !== null && tree.coordinate_x !== -1 && tree.coordinate_y !== -1) {
+            const assetArray = seed.asset.split('|');
+            const phaseImage = assetArray[assetArray.length - seed.phase];
+            newMap[tree.coordinate_y][tree.coordinate_x] = seed.phase;
+            newTreeInfo[`${tree.coordinate_x}_${tree.coordinate_y}`] = { imageURL: phaseImage, id: tree.id };
+            setTreeInfo(newTreeInfo);
           }
         });
-        const data = await response.json();
+        setMap(newMap);
 
-        if (data.ok) {
-          const newMap = map.map((row) => row.slice());
-          const newImgURL = {};
-          data.data.forEach(({ tree, seed }) => {
-            if (tree.coordinate_x !== null && tree.coordinate_y !== null) {
-              const assetArray = seed.asset.split('|');
-              const phaseImage = assetArray[assetArray.length - seed.phase];
-              newMap[tree.coordinate_y][tree.coordinate_x] = seed.phase;
-              newImgURL[`${tree.coordinate_x}_${tree.coordinate_y}`] = phaseImage;
-              setImgURL(newImgURL);
-            }
-          });
-          setMap(newMap);
-        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -126,21 +116,45 @@ const Garden = () => {
       const newMap = map.map((row, i) =>
         row.map((cell, j) => (i === y && j === x ? selectedTreePhase : cell))
       );
-      const newImgURL = { ...imgURL, [`${x}_${y}`]: "seeds/tree2/phase3.png" };
+      const newTreeInfo = { ...treeInfo, [`${x}_${y}`]: { imageURL: "seeds/tree2/phase3.png", id: null } };
       setMap(newMap);
-      setImgURL(newImgURL);
+      setTreeInfo(newTreeInfo);
     }
   };
 
-  const handleRemoveTree = (x, y) => {
+  const handleRemoveTree = async (x, y) => {
+    console.log("Before", treeInfo)
     if ([1, 2, 3, 4].includes(map[y][x])) {
-      const newMap = map.map((row, i) => {
-        if (i === y) {
-          return row.map((cell, j) => (j === x ? 0 : cell));
+      const treeCoordinateKey = `${x}_${y}`;
+      const treeId = treeInfo[treeCoordinateKey]?.id;
+      if (treeId) {
+        try {
+          const treesToUpdate = [{
+            id: treeId,
+            coordinate_x: -1,
+            coordinate_y: -1
+          }];
+          const newMap = map.map((row, i) => {
+            if (i === y) {
+              return row.map((cell, j) => (j === x ? 0 : cell));
+            }
+            return row;
+          });
+          setMap(newMap);
+          const response = await updateTree(treesToUpdate);
+
+          const newTreeInfo = { ...treeInfo };
+          if (newTreeInfo.hasOwnProperty(treeCoordinateKey)) {
+            delete newTreeInfo[treeCoordinateKey];
+          }
+          setTreeInfo(newTreeInfo);
+
+        } catch (error) {
+          console.error('Error updating tree');
         }
-        return row;
-      });
-      setMap(newMap);
+      } else {
+        console.error('Could not find tree ID for the given coordinates');
+      }
     }
   };
 
@@ -218,37 +232,40 @@ const Garden = () => {
         doubleTapZoomToCenter
         ref={zoomableViewRef}
       >
-        {imgURL && <View ref={gardenShareRef} collapsable={false} style={styles.gardenBackground}>
-          <View style={styles.mapContainer}>
-            <View style={styles.assetContainer}>
-              {map.map((row, y) =>
-                row.map((cellType, x) => (
-                  <CellComponent
-                    key={`${x}_${y}`}
-                    type={cellType}
-                    x={x}
-                    y={y}
-                    imgURL={imgURL[`${x}_${y}`]}
-                    openBorder={isOpenBorder}
-                  />
-                ))
-              )}
-            </View>
-            <View style={styles.hitboxContainer}>
-              {map.map((row, y) =>
-                row.map((cellType, x) => (
-                  <HitBox
-                    key={`hitbox_${x}_${y}`}
-                    x={x}
-                    y={y}
-                    openBorder={(isPlantTree && map[y][x] === 0) || (isRemoveTree && map[y][x] !== 0) || (isViewTree && map[y][x] !== 0)}
-                    handleTool={handleTool}
-                  />
-                ))
-              )}
+        {treeInfo && (
+          <View ref={gardenShareRef} collapsable={false} style={styles.gardenBackground}>
+            <View style={styles.mapContainer}>
+              <View style={styles.assetContainer}>
+                {map.map((row, y) =>
+                  row.map((cellType, x) => (
+                    <CellComponent
+                      key={`${x}_${y}`}
+                      type={cellType}
+                      x={x}
+                      y={y}
+                      imgURL={treeInfo[`${x}_${y}`]?.imageURL || null}
+                      openBorder={isOpenBorder}
+                    />
+                  ))
+                )}
+              </View>
+              <View style={styles.hitboxContainer}>
+                {map.map((row, y) =>
+                  row.map((cellType, x) => (
+                    <HitBox
+                      key={`hitbox_${x}_${y}`}
+                      x={x}
+                      y={y}
+                      openBorder={(isPlantTree && map[y][x] === 0) || (isRemoveTree && map[y][x] !== 0) || (isViewTree && map[y][x] !== 0)}
+                      handleTool={handleTool}
+                    />
+                  ))
+                )}
+              </View>
             </View>
           </View>
-        </View>}
+        )}
+
       </ReactNativeZoomableView>
 
       <MyBottomSheet

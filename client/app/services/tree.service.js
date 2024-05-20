@@ -45,3 +45,17 @@ export const listTrees = async (date, extend = false) => {
     throw error.response.data;
   }
 };
+
+export const updateTree = async (trees) => {
+  try {
+    const response = await authApi.put(`/api/tree`, { trees: trees });
+    console.log("OKOK", response)
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to update tree');
+    }
+  } catch (error) {
+    throw error.response.data;
+  }
+};
