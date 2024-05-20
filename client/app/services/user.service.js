@@ -41,7 +41,7 @@ export const register = async (username, password, email) => {
     const response = await publicApi.post('/api/user', { username, password, email });
     return response.data;
   } catch (error) {
-    throw error;
+    return error.response.data;
   }
 };
 

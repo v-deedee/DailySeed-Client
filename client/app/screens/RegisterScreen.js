@@ -25,7 +25,7 @@ const RegisterScreen = ({ navigation }) => {
 
     console.log("Register with username:", username, "and password:", password);
     const data = await register(username, password, email);
-    if(data) {
+    if(data.ok) {
       navigation.navigate("Login");
       alert('Successful account registration');
     } else {
