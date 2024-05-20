@@ -10,8 +10,8 @@ export default {
             .items(
                 Joi.object({
                     id: Joi.number().integer().required(),
-                    coordinate_x: Joi.number().integer().required(),
-                    coordinate_y: Joi.number().integer().required(),
+                    coordinate_x: Joi.number().integer().allow(null).required(),
+                    coordinate_y: Joi.number().integer().allow(null).required(),
                 }).required()
             )
             .min(1)

@@ -59,13 +59,11 @@ export default class TreeController {
                 status: 403,
             });
 
-        const phase = tree.score < 25 ? 1 : tree.score < 50 ? 2 : tree.score < 75 ? 3 : 4;
-
         const payload = {
             tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
             seed: {
                 ..._.pick(tree.Seed, ["id", "name", "asset"]),
-                phase: phase
+                phase: tree.getPhase(),
             }
         };
 
@@ -98,6 +96,8 @@ export default class TreeController {
         return null;
     };
 
+
+
     listTree = async (req, res) => {
         const { user } = req;
         const { query } = req;
@@ -105,34 +105,38 @@ export default class TreeController {
         const filter = { UserId: user.id };
         const dateFilter = this.#getDateQuery(query);
         if (dateFilter) filter.date = dateFilter;
-
         const trees = await TreeService.findAll(filter);
 
-        const treeSelectFields = [
-            "id",
-            "coordinate_x",
-            "coordinate_y",
-            "score",
-        ];
+        const treeSelectFields = ["id", "coordinate_x", "coordinate_y", "score"];
         const seedSelectFields = ["id", "asset"];
         if (query.extend) {
             treeSelectFields.push(...["date", "note", "picture"]);
             seedSelectFields.push(...["name"]);
         }
 
-        const payload = _.map(trees, (tree) => {
-            const treeData = _.pick(tree, treeSelectFields);
-            const seedData = _.pick(tree.Seed, seedSelectFields);
+        let garden = [];
+        let inventory = {}; 
+        for (const tree of trees) {
+            const phase = tree.getPhase();
+            if (tree.isPlanted()) {
+                garden.push({
+                    tree: _.pick(tree, treeSelectFields),
+                    seed: {
+                        ..._.pick(tree.Seed, seedSelectFields),
+                        phase: phase
+                    }
+                });
+            } else {
+                inventory[tree.Seed.name] ??= {};
+                inventory[tree.Seed.name][phase] ??= 0;
+                inventory[tree.Seed.name][phase] += 1;
+            }
+        }
 
-            const score = treeData.score;
-            const phase = score < 25 ? 1 : score < 50 ? 2 : score < 75 ? 3 : 4;
-            seedData.phase = phase;
-
-            return {
-                tree: treeData,
-                seed: seedData,
-            };
-        });
+        const payload = {
+            garden: garden,
+            inventory: inventory
+        }
 
         res.status(200).json({
             ok: true,
@@ -160,11 +164,6 @@ export default class TreeController {
 
             targetTree.coordinate_x = tree.coordinate_x;
             targetTree.coordinate_y = tree.coordinate_y;
-
-            if (targetTree.coordinate_x * targetTree.coordinate_y < 0) {
-                targetTree.coordinate_x = null;
-                targetTree.coordinate_y = null;
-            }
 
             await targetTree.save();
         }
