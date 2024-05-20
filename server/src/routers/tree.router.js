@@ -25,6 +25,19 @@ export default [
                 method: "listTree",
                 roles: [userRole.USER],
             },
+            {
+                httpMethod: "put",
+                path: "/tree",
+                method: "updateTree",
+                roles: [userRole.USER],
+                schema: treeSchema.update,
+            },
+            {
+                httpMethod: "get",
+                path: "/tree/:day/:month/:year",
+                method: "findTree",
+                roles: [userRole.USER],
+            }
         ],
     },
 ];

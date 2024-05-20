@@ -1,24 +1,36 @@
 import { View, Text, StyleSheet, Image, ImageBackground } from "react-native";
 import { Button, Card } from '@rneui/themed';
 
-export default function TreeDetail() {
+export default function TreeDetail({ selectedTreePosition }) {
     return (
         <View>
             <ImageBackground source={require("../../../../assets/theme/background.png")} style={styles.imgContainer} >
-                <Image source={require("../../../../assets/garden/Tree2/tree2-phase1.png")} style={{ width: 40, height: 40, top: '20%' }} />
+                <Text style={{ color: '#533718', fontWeight: 'bold' }}>Normal Tree</Text>
+                <Image source={require("../../../../assets/garden/Tree2/tree2-phase1.png")} style={{ width: 50, height: 50, top: '10%' }} />
             </ImageBackground>
 
             <View style={styles.contentContainer}>
                 <View style={styles.treeStatusContainer}>
-                    <Text style={{ color: '#6d4100', fontWeight: 'bold' }}>10%</Text>
+                    <Text style={{ color: '#6d4100', fontWeight: 'bold' }}>{selectedTreePosition.x}</Text>
+                    <Text style={{ color: '#6d4100', fontWeight: 'bold' }}>{selectedTreePosition.y}</Text>
                 </View>
 
                 <View style={styles.infoContainer}>
-                    <Text style={{ color: '#fcf0be', fontWeight: 'bold' }}>24/11/2003</Text>
-                    <Text style={{ color: '#fcf0be', fontWeight: 'bold' }}>Record 3/3</Text>
+                    <Text style={{ color: '#e0d6b3', fontWeight: 'bold' }}>24/11/2003</Text>
+                    <Text style={{ color: '#e0d6b3', fontWeight: 'bold' }}>Record 3/3</Text>
                 </View>
 
-                <View style={styles.cardContainer}>
+                <View style={styles.infoContainer}>
+                    <Text style={{ color: '#e3dcc5', fontWeight: 'bold' }}>👌 DSA: 3</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={{ color: '#e3dcc5', fontWeight: 'bold' }}>💦 OOP: 3</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={{ color: '#e3dcc5', fontWeight: 'bold' }}>🆘 OOAD: 10</Text>
+                </View>
+
+                {/* <View style={styles.cardContainer}>
                     <View style={styles.row}>
                         <Text>👌</Text>
                         <Text>HomeWork:</Text>
@@ -46,7 +58,7 @@ export default function TreeDetail() {
                     </View>
 
                     <Image source={require("../../../../assets/garden/tag.png")} style={styles.tag} />
-                </View>
+                </View> */}
             </View>
         </View>
 
@@ -61,7 +73,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        overflow: "hidden"
+        overflow: "hidden",
     },
     contentContainer: {
         backgroundColor: '#6d4100',
@@ -80,6 +92,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginLeft: 20,
         marginRight: 20,
+        marginBottom: 10,
     },
     cardContainer: {
         flexDirection: 'row',

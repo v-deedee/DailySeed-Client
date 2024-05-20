@@ -34,5 +34,13 @@ export default function (sequelize, DataTypes) {
         });
     };
 
+    Tree.prototype.getPhase = function () {
+        return this.score < 25 ? 1 : this.score < 50 ? 2 : this.score < 75 ? 3 : 4;
+    }
+
+    Tree.prototype.isPlanted = function () {
+        return this.coordinate_x != null && this.coordinate_y != null;
+    }
+
     return Tree;
 }

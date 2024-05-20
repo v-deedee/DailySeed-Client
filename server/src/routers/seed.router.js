@@ -34,6 +34,13 @@ export default [
                 method: "viewUserSeed",
                 roles: [userRole.USER],
             },
+            {
+                httpMethod: "post",
+                path: "/seed/buy",
+                method: "buySeed",
+                roles: [userRole.USER],
+                schema: seedSchema.buy,
+            },
         ],
     },
 ];
