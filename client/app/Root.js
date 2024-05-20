@@ -30,8 +30,11 @@ export default function Root() {
     async function fetchUserData() {
       try {
         const userData = await getUserByToken();
-        setUser(userData);
-        setIsSignedIn(true);
+        console.log(userData);
+        if(userData) {
+          setUser(userData);
+          setIsSignedIn(true);  
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
       }

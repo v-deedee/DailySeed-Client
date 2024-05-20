@@ -35,8 +35,11 @@ export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType,
   const handleDone = async () => {
     try {
       const newTree = await createTree(selectedSeed.id);
-      setTree(newTree.tree);
-      fetchHabits(newTree.tree.id);
+      console.log(newTree)
+      if(newTree) {
+        setTree(newTree.tree);
+        fetchHabits(newTree.tree.id);  
+      }
     } catch (error) {
       console.error("Error creating tree:", error);
     }

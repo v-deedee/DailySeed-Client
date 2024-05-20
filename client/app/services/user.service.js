@@ -26,12 +26,15 @@ export const getUserByToken = async () => {
   try {
     const response = await authApi.get('/api/user');
     const { ok, data } = response.data;
+    console.log(response)
+    console.log(data)
     if (ok) {
-      return { user: new User(data.user.id, data.user.username, new Profile(data.profile.id, data.profile.email, data.profile.picture, data.profile.money))};
+      return data;
+    } else {
+      return '';
     }
-    throw new Error('Failed to get user by token');
   } catch (error) {
-    throw error;
+    console.log(error);
   }
 };
 
@@ -57,7 +60,8 @@ export const logout = async () => {
 
 export const createPaymentIntent = async (amount) => {
   try {
-    const data = authApi.post('/api/user/create-payment-intent', { amount })
+    const response = await authApi.post('/api/user/create-payment-intent', { amount: 100000 })
+    const data = response.data
     if(data.ok) {
       return data.clientSecret;
     } else {

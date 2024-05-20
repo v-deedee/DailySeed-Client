@@ -1,3 +1,4 @@
+import { method } from "lodash";
 import userRole from "../constants/user.role.js";
 import UserController from "../controllers/user.controller.js";
 import userValidation from "../validations/user.validation.js";
@@ -43,6 +44,12 @@ export default [
                 method: "createPaymentIntent",
                 roles: [userRole.USER],
             },
+            {
+                httpMethod: "post",
+                path: "/user/handle-payment-success",
+                method: "handlePaymentSuccess",
+                roles: [userRole.USER]
+            }
         ],
     },
 ];

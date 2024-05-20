@@ -136,7 +136,6 @@ export default class UserController {
 
     createPaymentIntent = async (req, res) => {
         const { amount } = req.body;
-
         try {
             const paymentIntent = await stripe.paymentIntents.create({
                 amount,
@@ -153,4 +152,32 @@ export default class UserController {
         }
     
     }
+
+
+    handlePaymentSuccess = async (req, res) => {
+        const { user } = req;
+        const { amount } = req.body;
+
+        if (!amount || amount <= 0) {
+            throw new HttpError({
+                ...errorCode.BAD_REQUEST,
+                message: "Invalid amount",
+            });
+        }
+
+        const profile = await ProfileService.findOne({ UserId: user.id });
+        const updatedProfile = await ProfileService.update(profile, {
+            money: profile.money + amount,
+        });
+
+        const payload = {
+            profile: _.pick(updatedProfile, ["id", "email", "picture", "money"]),
+        };
+
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
+
 }
