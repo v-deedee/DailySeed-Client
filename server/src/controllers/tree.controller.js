@@ -105,10 +105,15 @@ export default class TreeController {
         const dateFilter = this.#getDateQuery(params);
         if (dateFilter) filter.date = dateFilter;
         const tree = await TreeService.findOne(filter);
+        if (!tree)
+            throw new HttpError({ ...errorCode.TREE.NOT_FOUND, status: 403 });
 
         const payload = {
             tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
-            seed: _.pick(tree.Seed, ["id", "asset"])
+            seed: {
+                ..._.pick(tree.Seed, ["id", "asset"]),
+                phase: tree.getPhase()
+            }
         }
 
         res.status(200).json({
