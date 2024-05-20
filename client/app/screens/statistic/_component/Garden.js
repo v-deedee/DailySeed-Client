@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
+import { StyleSheet, View, Text, ScrollView, Button } from "react-native";
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
 import { BottomSheet } from "@rneui/themed";
 import { captureRef } from 'react-native-view-shot';
@@ -11,6 +12,9 @@ import {
   CrossHair, ShareSocial, ViewTree, ViewGarden
 } from "./Tree";
 import TreeDetail from "./TreeDetail";
+import { MyBottomSheet } from "./BottomSheet/MyBottomSheet";
+import { listTrees, updateTree } from "../../../services/tree.service";
+
 
 const numRows = 6;
 const numColumns = 6;
@@ -18,16 +22,63 @@ const cellSize = 50;
 
 const Garden = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const currentYear = new Date().getFullYear();
+  const options = ['2020', '2021', '2022', '2023', '2024'];
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const selectedIndex = options.indexOf(selectedYear.toString());
+
+  const handleYearChange = (index) => {
+    setSelectedYear(parseInt(options[index], 10));
+  };
+
+  const [treeInfo, setTreeInfo] = useState({});
   const [map, setMap] = useState([
-    [4, 1, 0, 4, 0, 2],
-    [0, 2, 0, 1, 0, 0],
-    [2, 0, 0, 1, 2, 4],
-    [0, 0, 3, 2, 3, 0],
-    [1, 4, 0, 2, 0, 1],
-    [3, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
   ]);
 
-  const [isVisible, setIsVisible] = useState(false);
+  const [listUpdateTree, seListtUpdateTree] = useState([])
+  useFocusEffect(
+    useCallback(() => {
+      console.log("Hello")
+
+      return () => {
+        console.log("DM")
+      };
+    }, [])
+  );
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await listTrees();
+        const newMap = map.map((row) => row.slice());
+        const newTreeInfo = {};
+        data.forEach(({ tree, seed }) => {
+          if (tree.coordinate_x !== null && tree.coordinate_y !== null && tree.coordinate_x !== -1 && tree.coordinate_y !== -1) {
+            const assetArray = seed.asset.split('|');
+            const phaseImage = assetArray[assetArray.length - seed.phase];
+            newMap[tree.coordinate_y][tree.coordinate_x] = seed.phase;
+            newTreeInfo[`${tree.coordinate_x}_${tree.coordinate_y}`] = { imageURL: phaseImage, id: tree.id };
+            setTreeInfo(newTreeInfo);
+          }
+        });
+        setMap(newMap);
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const [openSeedBox, setOpenSeedBox] = useState(false);
   const [isOpenBorder, setOpenBorder] = useState(false);
   const [isPlantTree, setPlantTree] = useState(false);
   const [selectedTreePhase, setSelectedTreePhase] = useState(null);
@@ -45,7 +96,7 @@ const Garden = () => {
   const handleAvatarPress = (phase) => {
     setOpenBorder(true);
     setPlantTree(true);
-    setIsVisible(false);
+    setOpenSeedBox(false);
     setRemoveTree(false);
     setSelectedTreePhase(phase);
   };
@@ -62,25 +113,48 @@ const Garden = () => {
 
   const handlePlantTree = (x, y) => {
     if (map[y][x] === 0) {
-      const newMap = map.map((row, i) => {
-        if (i === y) {
-          return row.map((cell, j) => (j === x ? selectedTreePhase : cell));
-        }
-        return row;
-      });
+      const newMap = map.map((row, i) =>
+        row.map((cell, j) => (i === y && j === x ? selectedTreePhase : cell))
+      );
+      const newTreeInfo = { ...treeInfo, [`${x}_${y}`]: { imageURL: "seeds/tree2/phase3.png", id: null } };
       setMap(newMap);
+      setTreeInfo(newTreeInfo);
     }
   };
 
-  const handleRemoveTree = (x, y) => {
+  const handleRemoveTree = async (x, y) => {
+    console.log("Before", treeInfo)
     if ([1, 2, 3, 4].includes(map[y][x])) {
-      const newMap = map.map((row, i) => {
-        if (i === y) {
-          return row.map((cell, j) => (j === x ? 0 : cell));
+      const treeCoordinateKey = `${x}_${y}`;
+      const treeId = treeInfo[treeCoordinateKey]?.id;
+      if (treeId) {
+        try {
+          const treesToUpdate = [{
+            id: treeId,
+            coordinate_x: -1,
+            coordinate_y: -1
+          }];
+          const newMap = map.map((row, i) => {
+            if (i === y) {
+              return row.map((cell, j) => (j === x ? 0 : cell));
+            }
+            return row;
+          });
+          setMap(newMap);
+          const response = await updateTree(treesToUpdate);
+
+          const newTreeInfo = { ...treeInfo };
+          if (newTreeInfo.hasOwnProperty(treeCoordinateKey)) {
+            delete newTreeInfo[treeCoordinateKey];
+          }
+          setTreeInfo(newTreeInfo);
+
+        } catch (error) {
+          console.error('Error updating tree');
         }
-        return row;
-      });
-      setMap(newMap);
+      } else {
+        console.error('Could not find tree ID for the given coordinates');
+      }
     }
   };
 
@@ -141,7 +215,7 @@ const Garden = () => {
           <Text style={styles.monthText}>{selectedMonth + 1} </Text>
         </View>
         <View style={styles.row}>
-          <TreeBox toggleBottomSheet={toggleBottomSheet(setIsVisible)} setDisable={isRemoveTree || isViewTree} />
+          <TreeBox toggleBottomSheet={() => setOpenSeedBox(true)} setDisable={isRemoveTree || isViewTree} />
           <Shovel handleShovelPress={handleShovelPress} setDisable={isPlantTree || isViewTree} />
           <ViewTree handleLoupePress={handleViewPress} setDisable={isPlantTree || isRemoveTree} />
         </View>
@@ -158,39 +232,49 @@ const Garden = () => {
         doubleTapZoomToCenter
         ref={zoomableViewRef}
       >
-        <View ref={gardenShareRef} collapsable={false} style={styles.gardenBackground}>
-          <View style={styles.mapContainer}>
-            <View style={styles.assetContainer}>
-              {map.map((row, y) =>
-                row.map((cellType, x) => (
-                  <CellComponent
-                    key={`${x}_${y}`}
-                    type={cellType}
-                    x={x}
-                    y={y}
-                    openBorder={isOpenBorder}
-                  />
-                ))
-              )}
-            </View>
-            <View style={styles.hitboxContainer}>
-              {map.map((row, y) =>
-                row.map((cellType, x) => (
-                  <HitBox
-                    key={`hitbox_${x}_${y}`}
-                    x={x}
-                    y={y}
-                    openBorder={(isPlantTree && map[y][x] === 0) || (isRemoveTree && map[y][x] !== 0) || (isViewTree && map[y][x] !== 0)}
-                    handleTool={handleTool}
-                  />
-                ))
-              )}
+        {treeInfo && (
+          <View ref={gardenShareRef} collapsable={false} style={styles.gardenBackground}>
+            <View style={styles.mapContainer}>
+              <View style={styles.assetContainer}>
+                {map.map((row, y) =>
+                  row.map((cellType, x) => (
+                    <CellComponent
+                      key={`${x}_${y}`}
+                      type={cellType}
+                      x={x}
+                      y={y}
+                      imgURL={treeInfo[`${x}_${y}`]?.imageURL || null}
+                      openBorder={isOpenBorder}
+                    />
+                  ))
+                )}
+              </View>
+              <View style={styles.hitboxContainer}>
+                {map.map((row, y) =>
+                  row.map((cellType, x) => (
+                    <HitBox
+                      key={`hitbox_${x}_${y}`}
+                      x={x}
+                      y={y}
+                      openBorder={(isPlantTree && map[y][x] === 0) || (isRemoveTree && map[y][x] !== 0) || (isViewTree && map[y][x] !== 0)}
+                      handleTool={handleTool}
+                    />
+                  ))
+                )}
+              </View>
             </View>
           </View>
-        </View>
+        )}
+
       </ReactNativeZoomableView>
 
-      <BottomSheet isVisible={isVisible} onBackdropPress={toggleBottomSheet(setIsVisible)}>
+      <MyBottomSheet
+        open={openSeedBox}
+        onClose={() => {
+          setOpenSeedBox(false);
+        }}
+        defaultHeight={150}
+      >
         <View style={[styles.bottomSheet, styles.bottomSheetPlant]}>
           {[1, 2, 3, 4].map(phase => (
             <TreeAvatar
@@ -201,24 +285,45 @@ const Garden = () => {
             />
           ))}
         </View>
-      </BottomSheet>
+      </MyBottomSheet>
 
-      <BottomSheet isVisible={isOpenDetail} onBackdropPress={toggleBottomSheet(setOpenDetail)}>
+      <MyBottomSheet
+        open={isOpenDetail}
+        onClose={() => {
+          setOpenDetail(false);
+        }}
+        defaultHeight={305}
+        backgroundColor={"#6d4100"}
+      >
         <View>
           <TreeDetail selectedTreePosition={selectedTreePosition} />
         </View>
-      </BottomSheet>
+      </MyBottomSheet>
+
 
       <BottomSheet isVisible={isOpenMonthPicker} onBackdropPress={toggleBottomSheet(setOpenMonthPicker)}>
         <View style={styles.bottomSheet}>
           <ScrollView horizontal={false} contentContainerStyle={styles.centeredContent}>
             <ScrollView horizontal contentContainerStyle={styles.pickerContainer}>
-              <WheelPicker
-                containerStyle={styles.wheelPicker}
-                selectedIndex={selectedMonth}
-                options={['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']}
-                onChange={setSelectedMonth}
-              />
+              <View>
+                <WheelPicker
+                  containerStyle={styles.wheelPicker}
+                  selectedIndex={selectedMonth}
+                  options={['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']}
+                  onChange={setSelectedMonth}
+                />
+              </View>
+
+
+              <View>
+                <WheelPicker
+                  containerStyle={styles.wheelPicker}
+                  selectedIndex={selectedIndex}
+                  options={options}
+                  onChange={handleYearChange}
+                />
+              </View>
+
             </ScrollView>
           </ScrollView>
         </View>
@@ -238,8 +343,8 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     height: 0,
     position: 'relative',
-    top: 10,
-    gap: 5,
+    top: 30,
+    gap: 10,
     marginLeft: 10,
     marginRight: 10,
     flexDirection: "row",

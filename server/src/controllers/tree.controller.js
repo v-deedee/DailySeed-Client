@@ -6,7 +6,7 @@ import { Op } from "sequelize";
 import _ from "lodash";
 
 export default class TreeController {
-    constructor() {}
+    constructor() { }
 
     createTree = async (req, res) => {
         const { user } = req;
@@ -59,9 +59,14 @@ export default class TreeController {
                 status: 403,
             });
 
+        const phase = tree.score < 25 ? 1 : tree.score < 50 ? 2 : tree.score < 75 ? 3 : 4;
+
         const payload = {
             tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
-            seed: _.pick(tree.Seed, ["id", "name", "asset"]),
+            seed: {
+                ..._.pick(tree.Seed, ["id", "name", "asset"]),
+                phase: phase
+            }
         };
 
         res.status(200).json({

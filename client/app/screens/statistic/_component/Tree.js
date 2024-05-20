@@ -8,12 +8,13 @@ import {
   Pressable,
 } from "react-native";
 import { Avatar, Badge, Icon } from "@rneui/themed";
+import { CLOUDINARY_BASE_URL } from "../../../utils/constants/cloudinary.constants";
 
 const numRows = 6; // Number of rows in the garden
 const numColumns = 6; // Number of columns in the garden
 const cellSize = 50; // Fixed size for each cell
 
-export const CellComponent = ({ type, x, y, openBorder }) => {
+export const CellComponent = ({ type, x, y, openBorder, imgURL }) => {
   const assets = {
     1: require("../../../../assets/garden/Tree3/tree3-phase1.png"),
     2: require("../../../../assets/garden/Tree3/tree3-phase2.png"),
@@ -46,7 +47,7 @@ export const CellComponent = ({ type, x, y, openBorder }) => {
         source={require("../../../../assets/garden/block.png")}
         style={[styles.img, positionStyle]}
       >
-        <Image source={assets[type]} style={cellStyle} />
+        <Image source={{ uri: `${CLOUDINARY_BASE_URL}${imgURL}` }} style={cellStyle} />
       </ImageBackground>
     </View>
   );
