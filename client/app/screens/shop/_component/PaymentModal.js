@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Modal, View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { CardForm, useConfirmPayment } from '@stripe/stripe-react-native';
 import { createPaymentIntent } from '../../../services/user.service';
 import { color } from '@rneui/base';
-
+import { handlePaymentSuccess } from '../../../services/user.service';
+import { UserContext } from '../../../contexts/user.context';
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -11,11 +12,11 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-export default function PaymentModal({ isVisible, onClose, amount }) {
+export default function PaymentModal({ isVisible, onClose, amount, coin }) {
   const { confirmPayment, loading } = useConfirmPayment();
   const [email, setEmail] = useState('');
   const [cardDetails, setCardDetails] = useState({ complete: false });
-
+  const { user, setUser } = useContext(UserContext);
   const handlePayment = async () => {
     if (!cardDetails.complete || !email) {
       Alert.alert('Please enter complete card details and email');
@@ -36,6 +37,9 @@ export default function PaymentModal({ isVisible, onClose, amount }) {
       if (error) {
         Alert.alert('Payment failed', error.message);
       } else {
+        const profile = await handlePaymentSuccess(coin);
+        console.log(profile);
+        setUser({user: user.user, profile: profile})
         Alert.alert('Payment successful', 'Your payment was successful!');
         onClose();
       }

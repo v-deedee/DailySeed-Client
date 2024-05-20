@@ -49,7 +49,6 @@ export const listTrees = async (date, extend = false) => {
 export const updateTree = async (trees) => {
   try {
     const response = await authApi.put(`/api/tree`, { trees: trees });
-    console.log("OKOK", response)
     if (response.data.ok) {
       return response.data.data;
     } else {

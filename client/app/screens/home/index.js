@@ -80,7 +80,6 @@ export default function HomeScreen({ navigation }) {
     async function fetchData() {
       if(tree) {
         fetchHabits(tree.tree.id);
-        console.log(habits)
       }
     }
     fetchData();
@@ -98,7 +97,7 @@ export default function HomeScreen({ navigation }) {
             style={{ width: 25, height: 25 }}
           />
           <Text style={{ fontSize: 16, fontWeight: 700 }}>
-            {/* {`${user.name}'s diary`} */}
+            {`${user.user.username}'s diary`}
             Diary
           </Text>
         </View>

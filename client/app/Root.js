@@ -30,7 +30,6 @@ export default function Root() {
     async function fetchUserData() {
       try {
         const userData = await getUserByToken();
-        console.log(userData);
         if(userData) {
           setUser(userData);
           setIsSignedIn(true);  

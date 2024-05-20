@@ -165,9 +165,11 @@ export default class UserController {
             });
         }
 
+        const intAmount = parseInt(amount, 10);
+
         const profile = await ProfileService.findOne({ UserId: user.id });
         const updatedProfile = await ProfileService.update(profile, {
-            money: profile.money + amount,
+            money: profile.money + intAmount,
         });
 
         const payload = {

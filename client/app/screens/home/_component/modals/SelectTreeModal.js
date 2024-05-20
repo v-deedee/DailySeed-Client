@@ -29,13 +29,11 @@ export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType,
 
   const handleSeedSelect = (seed) => {
     setSelectedSeed(seed);
-    console.log(seed);
   };
 
   const handleDone = async () => {
     try {
       const newTree = await createTree(selectedSeed.id);
-      console.log(newTree)
       if(newTree) {
         setTree(newTree.tree);
         fetchHabits(newTree.tree.id);  

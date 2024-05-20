@@ -1,6 +1,6 @@
 import { Image, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { Tab, TabView } from '@rneui/themed';
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TabAll from "./_component/TabAll";
 import TabCoin from "./_component/TabCoin";
 import { UserContext } from "../../contexts/user.context";
@@ -8,6 +8,10 @@ import { UserContext } from "../../contexts/user.context";
 export default function ShopScreen() {
   const [index, setIndex] = useState(0);
   const { user } = useContext(UserContext);
+  useEffect(() => {
+    console.log(user.profile.money)
+    console.log(user)
+  }, [user])
   return (
     <View style={styles.container}>
       <View>
@@ -17,7 +21,7 @@ export default function ShopScreen() {
           </View>
           <View style={styles.coinContainer}>
             <ImageBackground source={require('../../../assets/shop/coin.png')} style={{ width: 30, height: 30 }} />
-            <Text style={{ fontWeight: 700 }}>{user.coin}</Text>
+            <Text style={{ fontWeight: 700 }}>{user.profile.money}</Text>
           </View>
         </View>
 

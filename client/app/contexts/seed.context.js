@@ -27,7 +27,6 @@ export const SeedProvider = ({ children }) => {
           assets: assetPaths, // Use the split asset paths as an array
         };
       });
-      console.log(newData);
 
       setSeeds(newData);
     } catch (error) {

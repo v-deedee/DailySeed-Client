@@ -29,7 +29,6 @@ const RegisterScreen = ({ navigation }) => {
       navigation.navigate("Login");
       alert('Successful account registration');
     } else {
-      console.log(data.message);
       alert(data.message);
     }
     setIsLoading(false); // Dừng hiển thị biểu tượng load khi nhận được kết quả

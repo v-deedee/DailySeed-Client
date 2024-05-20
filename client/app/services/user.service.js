@@ -26,8 +26,6 @@ export const getUserByToken = async () => {
   try {
     const response = await authApi.get('/api/user');
     const { ok, data } = response.data;
-    console.log(response)
-    console.log(data)
     if (ok) {
       return data;
     } else {
@@ -60,10 +58,25 @@ export const logout = async () => {
 
 export const createPaymentIntent = async (amount) => {
   try {
-    const response = await authApi.post('/api/user/create-payment-intent', { amount: 100000 })
+    const response = await authApi.post('/api/user/create-payment-intent', { amount: amount })
     const data = response.data
     if(data.ok) {
       return data.clientSecret;
+    } else {
+      throw new Error('Failed to create payment intent');
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+export const handlePaymentSuccess = async (amount) => {
+  try {
+    const response = await authApi.post('/api/user/handle-payment-success', { amount: amount })
+    const data = response.data
+    if(data.ok) {
+      return data.data.profile;
     } else {
       throw new Error('Failed to create payment intent');
     }

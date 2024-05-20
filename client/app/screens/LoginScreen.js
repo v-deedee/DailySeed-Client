@@ -8,7 +8,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { login } from "../services/user.service";
+import { getUserByToken, login } from "../services/user.service";
 import { UserContext } from "../contexts/user.context";
 
 const LoginScreen = ({ navigation, signIn }) => {
@@ -20,11 +20,12 @@ const LoginScreen = ({ navigation, signIn }) => {
   const handleLogin = async () => {
     setLoading(true); // Bắt đầu hiển thị hiệu ứng loading
     try {
-      const { user } = await login(username, password);
-      if (user) {
-        console.log("Login successful!");
+      await login(username, password);
+      const data = await getUserByToken();
+      if (data) {
+        setUser(data);
+        alert("Login successful!");
         signIn();
-        setUser(user);
       } else {
         console.error("Login failed!");
       }

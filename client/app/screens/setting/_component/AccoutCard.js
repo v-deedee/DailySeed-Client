@@ -1,7 +1,7 @@
 import { Card, Button } from '@rneui/themed';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { UserContext } from '../../../contexts/user.context';
 
 export default function AccoutCard() {
@@ -17,7 +17,7 @@ export default function AccoutCard() {
                         </View>
 
                         <View style={{ marginLeft: 10 }}>
-                            <Text>{user.name}</Text>
+                            <Text>{user.user.username}</Text>
                         </View>
                     </View>
 

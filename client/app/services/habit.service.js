@@ -2,7 +2,6 @@ import authApi from './authApi';
 
 export const createHabit = async (habitData) => {
   try {
-    console.log(habitData)
     const response = await authApi.post('/api/habit', 
     {habit: {name: habitData.name, icon: habitData.icon, duration: habitData.duration}, criteria: habitData.criteria});
     if (response.data.ok) {
@@ -30,7 +29,6 @@ export const getHabit = async (habitId) => {
 
 export const updateHabit = async (habitData, active = true) => {
   try {
-    console.log(habitData)
     const response = await authApi.put(`/api/habit/${habitData.id}`, 
     {habit: {name: habitData.name, icon: habitData.icon, duration: habitData.duration, active}, criteria: habitData.criteria});
 

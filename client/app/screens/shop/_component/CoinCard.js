@@ -34,6 +34,7 @@ export default function CoinCard({ value, vnd }) {
         isVisible={isModalVisible}
         onClose={toggleModal}
         amount={vnd}
+        coin={value}
       />
     </>
   );

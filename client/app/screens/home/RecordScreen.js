@@ -100,7 +100,6 @@ const RecordScreen = ({ navigation }) => {
 
   useEffect(() => {
     if(habits && habits.length) {
-      console.log(habits.length)
       setValues(new Array(habits.length).fill(0))
       setRenderValues(new Array(habits.length).fill(0))
     }
