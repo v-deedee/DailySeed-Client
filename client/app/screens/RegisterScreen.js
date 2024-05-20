@@ -3,36 +3,56 @@ import {
   Alert,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   Image,
   ActivityIndicator,
 } from "react-native";
-import { register } from "../services/user.service"
+import { register } from "../services/user.service";
 import { UserContext } from "../contexts/user.context";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import FormInput from "../components/FormInput/formInput";
+
+const formSchema = z
+  .object({
+    email: z.string().email('Please enter a valid email'),
+    username: z.string().min(3, 'Username must be at least 3 characters'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirm: z.string().min(8, 'Password must be at least 8 characters')
+  })
+  .refine((data) => data.password === data.confirm, {
+    message: "Passwords don't match",
+    path: ["confirm"],
+  });;
 
 const RegisterScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const {setUser} = useContext(UserContext);
-  const [isLoading, setIsLoading] = useState(false); // State để kiểm soát hiển thị biểu tượng load
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      email: '',
+      username: '',
+      password: '',
+      confirm: '',
+    },
+    resolver: zodResolver(formSchema),
+  });
 
+  const { setUser } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = async () => {
-    setIsLoading(true); // Bắt đầu hiển thị biểu tượng load
-
-    console.log("Register with username:", username, "and password:", password);
-    const data = await register(username, password, email);
-    if(data.ok) {
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    const { confirm, ...registerData } = data;
+    const response = await register(registerData);
+    if (response.ok) {
+      setUser(data);
       navigation.navigate("Login");
-      alert('Successful account registration');
+      Alert.alert('Success', 'Account registered successfully');
     } else {
-      alert(data.message);
+      Alert.alert('Error', response.message);
     }
-    setIsLoading(false); // Dừng hiển thị biểu tượng load khi nhận được kết quả
-
+    setIsLoading(false);
   };
 
   const handleLoginPress = () => {
@@ -46,41 +66,37 @@ const RegisterScreen = ({ navigation }) => {
         source={require("../../assets/logo/logo-with-text.png")}
       />
       <View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
+        <FormInput
+          control={control}
+          name='email'
           placeholder="Email"
-          placeholderTextColor="#003f5c"
-          onChangeText={(text) => setEmail(text)}
         />
       </View>
       <View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
+        <FormInput
+          control={control}
+          name='username'
           placeholder="Username"
-          placeholderTextColor="#003f5c"
-          onChangeText={(text) => setUsername(text)}
         />
       </View>
       <View style={styles.inputView}>
-        <TextInput
-          secureTextEntry
-          style={styles.inputText}
+        <FormInput
+          control={control}
+          name='password'
           placeholder="Password"
-          placeholderTextColor="#003f5c"
-          onChangeText={(text) => setPassword(text)}
+          secureTextEntry
         />
       </View>
       <View style={styles.inputView}>
-        <TextInput
+        <FormInput
+          control={control}
+          name='confirm'
+          placeholder="Confirm Password"
           secureTextEntry
-          style={styles.inputText}
-          placeholder="Confirm password"
-          placeholderTextColor="#003f5c"
-          // onChangeText={text => setPassword(text)}
         />
       </View>
-      <TouchableOpacity style={styles.registerBtn} onPress={handleRegister}>
-        {isLoading ? ( // Hiển thị biểu tượng load nếu isLoading là true
+      <TouchableOpacity style={styles.registerBtn} onPress={handleSubmit(onSubmit)}>
+        {isLoading ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
           <Text style={styles.registerText}>REGISTER</Text>
@@ -110,14 +126,13 @@ const styles = StyleSheet.create({
   },
   inputView: {
     width: "80%",
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#EAEAEA",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 20,
-    justifyContent: "center",
-    padding: 20,
+    //backgroundColor: "#ffffff",
+    // borderWidth: 1,
+    // borderColor: "#EAEAEA",
+    // borderRadius: 25,
+    // height: 50,
+    // marginBottom: 30,
+    // justifyContent: "center",
   },
   inputText: {
     height: 50,
