@@ -41,25 +41,26 @@ const Garden = () => {
     [0, 0, 0, 0, 0, 0],
   ]);
 
-  const [listUpdateTree, seListtUpdateTree] = useState([])
-  useFocusEffect(
-    useCallback(() => {
-      console.log("Hello")
+  // const [listUpdateTree, seListtUpdateTree] = useState([])
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     console.log("Hello")
 
-      return () => {
-        console.log("DM")
-      };
-    }, [])
-  );
+  //     return () => {
+  //       console.log("DM")
+  //     };
+  //   }, [listUpdateTree])
+  // );
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await listTrees();
+
         const newMap = map.map((row) => row.slice());
         const newTreeInfo = {};
-        data.forEach(({ tree, seed }) => {
+        data.garden.forEach(({ tree, seed }) => {
           if (tree.coordinate_x !== null && tree.coordinate_y !== null && tree.coordinate_x !== -1 && tree.coordinate_y !== -1) {
             const assetArray = seed.asset.split('|');
             const phaseImage = assetArray[assetArray.length - seed.phase];
@@ -86,7 +87,7 @@ const Garden = () => {
   const [isOpenDetail, setOpenDetail] = useState(false);
   const [isOpenMonthPicker, setOpenMonthPicker] = useState(false);
   const [isViewTree, setViewTree] = useState(false);
-  const [selectedTreePosition, setSelectedTreePosition] = useState();
+  const [selectedTreeID, setSelectedTreeID] = useState();
 
   const zoomableViewRef = useRef(null);
   const gardenShareRef = useRef();
@@ -116,14 +117,13 @@ const Garden = () => {
       const newMap = map.map((row, i) =>
         row.map((cell, j) => (i === y && j === x ? selectedTreePhase : cell))
       );
-      const newTreeInfo = { ...treeInfo, [`${x}_${y}`]: { imageURL: "seeds/tree2/phase3.png", id: null } };
+      const newTreeInfo = { ...treeInfo, [`${x}_${y}`]: { imageURL: "seeds/tree3/phase3.png", id: null } };
       setMap(newMap);
       setTreeInfo(newTreeInfo);
     }
   };
 
   const handleRemoveTree = async (x, y) => {
-    console.log("Before", treeInfo)
     if ([1, 2, 3, 4].includes(map[y][x])) {
       const treeCoordinateKey = `${x}_${y}`;
       const treeId = treeInfo[treeCoordinateKey]?.id;
@@ -131,8 +131,8 @@ const Garden = () => {
         try {
           const treesToUpdate = [{
             id: treeId,
-            coordinate_x: -1,
-            coordinate_y: -1
+            coordinate_x: null,
+            coordinate_y: null
           }];
           const newMap = map.map((row, i) => {
             if (i === y) {
@@ -141,7 +141,6 @@ const Garden = () => {
             return row;
           });
           setMap(newMap);
-          const response = await updateTree(treesToUpdate);
 
           const newTreeInfo = { ...treeInfo };
           if (newTreeInfo.hasOwnProperty(treeCoordinateKey)) {
@@ -149,6 +148,7 @@ const Garden = () => {
           }
           setTreeInfo(newTreeInfo);
 
+          const response = await updateTree(treesToUpdate);
         } catch (error) {
           console.error('Error updating tree');
         }
@@ -160,7 +160,9 @@ const Garden = () => {
 
   const handleViewTree = (x, y) => {
     setOpenDetail(true);
-    setSelectedTreePosition({ x, y });
+    const treeCoordinateKey = `${x}_${y}`;
+    const treeId = treeInfo[treeCoordinateKey]?.id;
+    setSelectedTreeID(treeId);
   }
 
   const handleTool = (x, y) => {
@@ -221,6 +223,8 @@ const Garden = () => {
         </View>
       </View>
 
+      {/* <Button title="Chịu" onPress={() => console.log(treeInfo)}/> */}
+
       <ReactNativeZoomableView
         maxZoom={1.5}
         minZoom={0.5}
@@ -243,7 +247,7 @@ const Garden = () => {
                       type={cellType}
                       x={x}
                       y={y}
-                      imgURL={treeInfo[`${x}_${y}`]?.imageURL || null}
+                      imgURL={treeInfo[`${x}_${y}`]?.imageURL || ""}
                       openBorder={isOpenBorder}
                     />
                   ))
@@ -292,11 +296,11 @@ const Garden = () => {
         onClose={() => {
           setOpenDetail(false);
         }}
-        defaultHeight={305}
+        defaultHeight={280}
         backgroundColor={"#6d4100"}
       >
         <View>
-          <TreeDetail selectedTreePosition={selectedTreePosition} />
+          <TreeDetail treeID={selectedTreeID} />
         </View>
       </MyBottomSheet>
 
@@ -323,7 +327,6 @@ const Garden = () => {
                   onChange={handleYearChange}
                 />
               </View>
-
             </ScrollView>
           </ScrollView>
         </View>
