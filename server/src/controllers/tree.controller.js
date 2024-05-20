@@ -4,9 +4,10 @@ import { HttpError } from "../utils/http.error.js";
 import errorCode from "../constants/error.code.js";
 import { Op } from "sequelize";
 import _ from "lodash";
+import habitService from "../services/habit.service.js";
 
 export default class TreeController {
-    constructor() { }
+    constructor() {}
 
     createTree = async (req, res) => {
         const { user } = req;
@@ -59,12 +60,22 @@ export default class TreeController {
                 status: 403,
             });
 
+        const selectedCriteria = _.keyBy(await tree.getCriteria(), "HabitId");
+        const habits = await habitService.findAll({
+            id: Object.keys(selectedCriteria),
+        });
+
         const payload = {
             tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
             seed: {
                 ..._.pick(tree.Seed, ["id", "name", "asset"]),
                 phase: tree.getPhase(),
-            }
+            },
+            habits: _.map(habits, (habit) => {
+                const habitData = _.pick(habit, ["id", "name", "icon"]);
+                habitData.selected = _.pick(selectedCriteria[habit.id], ["id", "name", "icon", "score"]);
+                return habitData;
+            }),
         };
 
         res.status(200).json({
@@ -77,13 +88,23 @@ export default class TreeController {
         const { day, month, year } = query;
 
         if (year && month && day) {
-            const date = `${year}${month.padStart(2, '0')}${day.padStart(2, '0')}`;
+            const date = `${year}${month.padStart(2, "0")}${day.padStart(
+                2,
+                "0"
+            )}`;
             return date;
         }
 
         if (year && month) {
-            const start = `${year}${month.padStart(2, '0')}01`;
-            const end = `${year}${month.padStart(2, '0')}${new Date(year, month, 0).getDate().toString().padStart(2, '0')}`;
+            const start = `${year}${month.padStart(2, "0")}01`;
+            const end = `${year}${month.padStart(2, "0")}${new Date(
+                year,
+                month,
+                0
+            )
+                .getDate()
+                .toString()
+                .padStart(2, "0")}`;
             return { [Op.between]: [start, end] };
         }
 
@@ -95,7 +116,6 @@ export default class TreeController {
 
         return null;
     };
-
 
     findTree = async (req, res) => {
         const { user } = req;
@@ -112,16 +132,15 @@ export default class TreeController {
             tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
             seed: {
                 ..._.pick(tree.Seed, ["id", "asset"]),
-                phase: tree.getPhase()
-            }
-        }
+                phase: tree.getPhase(),
+            },
+        };
 
         res.status(200).json({
             ok: true,
-            data: payload
-        })
-    }
-
+            data: payload,
+        });
+    };
 
     listTree = async (req, res) => {
         const { user } = req;
@@ -132,7 +151,12 @@ export default class TreeController {
         if (dateFilter) filter.date = dateFilter;
         const trees = await TreeService.findAll(filter);
 
-        const treeSelectFields = ["id", "coordinate_x", "coordinate_y", "score"];
+        const treeSelectFields = [
+            "id",
+            "coordinate_x",
+            "coordinate_y",
+            "score",
+        ];
         const seedSelectFields = ["id", "asset"];
         if (query.extend) {
             treeSelectFields.push(...["date", "note", "picture"]);
@@ -140,7 +164,7 @@ export default class TreeController {
         }
 
         let garden = [];
-        let inventory = {}; 
+        let inventory = {};
         for (const tree of trees) {
             const phase = tree.getPhase();
             if (tree.isPlanted()) {
@@ -148,8 +172,8 @@ export default class TreeController {
                     tree: _.pick(tree, treeSelectFields),
                     seed: {
                         ..._.pick(tree.Seed, seedSelectFields),
-                        phase: phase
-                    }
+                        phase: phase,
+                    },
                 });
             } else {
                 inventory[tree.Seed.name] ??= {};
@@ -160,8 +184,8 @@ export default class TreeController {
 
         const payload = {
             garden: garden,
-            inventory: inventory
-        }
+            inventory: inventory,
+        };
 
         res.status(200).json({
             ok: true,
