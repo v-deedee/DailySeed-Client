@@ -38,7 +38,7 @@ const RecordScreen = ({ navigation }) => {
     if (habits && habits.length) {
       const initialValues = habits.map(habit => {
         if(!habit.selected) return 0;
-        const selectedId = habit.selected.id;
+        const selectedId = habit.selected;
         const criteriaIds = habit.criteria.map(criteria => criteria.id);
         return criteriaIds.includes(selectedId) ? criteriaIds.indexOf(selectedId) : 0;
       });
@@ -50,7 +50,20 @@ const RecordScreen = ({ navigation }) => {
         });
     
         return updatedValues;
-      });  
+      }); 
+      
+      const initialRenderValues = habits.map((habit, index) => {
+        return habit.criteria[initialValues[index]].score;
+      });
+      setRenderValues((prevValues) => {
+        const updatedValues = [...prevValues];
+        initialRenderValues.forEach((value, index) => {
+          updatedValues[index] = value;
+        });
+    
+        return updatedValues;
+      }); 
+      
       setDaysLeft(new Array(habits.length).fill(4)); // Số ngày còn lại mặc định là 4
     }
   }, [habits]);
@@ -77,8 +90,21 @@ const RecordScreen = ({ navigation }) => {
     })
     console.log(habitData);
 
-    await trackHabit(tree.tree.id, habitData);
-    const averageProgress = totalProgress / habits.length;
+    const treeData = await trackHabit(tree.tree.id, habitData);
+    if(treeData) {
+
+      const modifiedSeed = {
+        ...treeData.seed,
+        asset: treeData.seed.asset.split('|'),
+      };
+      const modifiedTree = {
+        ...treeData,
+        seed: modifiedSeed,
+      };
+      console.log(modifiedTree)
+      setTree(modifiedTree);
+  }       
+
 
     navigation.navigate("Home");
   };

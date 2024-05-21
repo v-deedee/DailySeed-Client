@@ -37,6 +37,7 @@ export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType,
       if(newTree) {
         setTree(newTree.tree);
         fetchHabits(newTree.tree.id);  
+        console.log(112341234)
         openRecord();
       }
     } catch (error) {
