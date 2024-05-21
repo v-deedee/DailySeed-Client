@@ -25,14 +25,14 @@ export default [
             {
                 httpMethod: "get",
                 path: "/seed",
-                method: "listSeed",
-                roles: [userRole.USER, userRole.ADMIN],
+                method: "listUserSeed",
+                roles: [userRole.USER],
             },
             {
                 httpMethod: "get",
-                path: "/seed/all",
-                method: "viewUserSeed",
-                roles: [userRole.USER],
+                path: "/seed/shop",
+                method: "listShopSeed",
+                roles: [userRole.USER, userRole.ADMIN],
             },
             {
                 httpMethod: "post",

@@ -359,3 +359,29 @@ npm run start
     -   Header
 
         `Authorization: Bearer <token>`
+
+4.  Buy Seed
+
+    `POST /api/seed/buy`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <user's token>`
+
+    -   Body
+
+        ```js
+            id: 1,
+        ```
+
+5.  List Seed in Shop
+
+    `GET /api/seed/shop`
+
+    Request
+
+    -   Header
+
+        `Authorization: Bearer <admin or user's token>`
