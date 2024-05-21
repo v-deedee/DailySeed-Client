@@ -1,6 +1,5 @@
 import { Button, Card } from '@rneui/themed';
 import { View, Text, StyleSheet, Image, ImageBackground } from "react-native";
-import TreePhase from './TreePhase';
 
 export default function ShopCard() {
     return (
@@ -8,7 +7,7 @@ export default function ShopCard() {
             <Card.Image source={require("../../../../assets/theme/background.png")} stryle={styles.image} >
                 <View style={styles.treeImgContainer}>
                     <View style={{ justifyContent: 'flex-end' }}>
-                        <TreePhase phase={1} style={{ width: 40, height: 40 }} />
+                        {/* <TreePhase phase={1} style={{ width: 40, height: 40 }} /> */}
                     </View>
                     <View style={{ justifyContent: 'flex-end' }}>
                         <Image source={require("../../../../assets/garden/Tree2/tree2-phase2.png")} style={{ width: 60, height: 70 }} />

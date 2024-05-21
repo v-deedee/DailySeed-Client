@@ -1,6 +1,9 @@
 import { StyleSheet, Image, View, Text } from "react-native";
 import { Button } from "@rneui/themed";
 import ProgressCircle from "../_component/ProgressCircle";
+import { useContext, useEffect } from "react";
+import { TreeContext } from "../../../contexts/tree.context";
+import { SeedContext } from "../../../contexts/seed.context";
 
 export default function TreeScreen({
   openRecord,
@@ -8,6 +11,9 @@ export default function TreeScreen({
   treeType,
   toggleSelectTreeModal,
 }) {
+  const { tree } = useContext(TreeContext)
+
+  const { seeds } = useContext(SeedContext);
   return (
     <>
       {/* Main */}
@@ -32,12 +38,12 @@ export default function TreeScreen({
             source={require("../../../../assets/home/water.png")}
             style={{ width: 25, height: 25 }}
           />
-          <Text style={{ fontWeight: 700 }}>{progress}%</Text>
+          <Text style={{ fontWeight: 700 }}>{tree?.tree?.score | 0 }%</Text>
         </View>
 
         {/* Progress: Circle */}
         <ProgressCircle
-          progress={progress}
+          progress={tree?.tree?.score | 0 }
           treeType={treeType}
           selectTree={toggleSelectTreeModal}
         />
@@ -51,7 +57,7 @@ export default function TreeScreen({
           style={{}}
           radius={50}
           color={"#184D47"}
-          onPress={treeType ? openRecord : toggleSelectTreeModal}
+          onPress={tree ? openRecord : toggleSelectTreeModal}
         />
       </View>
     </>

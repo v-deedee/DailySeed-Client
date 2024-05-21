@@ -7,6 +7,10 @@ import userRole from "../constants/user.role.js";
 import bcrypt from "bcrypt";
 import CloudHanlder from "../utils/cloud.handler.js";
 import _ from "lodash";
+import Stripe from 'stripe';
+
+const stripe = new Stripe('sk_test_51P7bjf05CJZ8qs7kDcGSebDhXZPJ7VpPLceToyYQ7PQzfzYrwZqI8wuvfqBNDZeZ8wwlW07NFRO1CGza2softbc500Fz4T8jv6'); // Replace with your Stripe secret key
+
 
 export default class UserController {
     constructor() {}
@@ -128,4 +132,54 @@ export default class UserController {
             data: payload,
         });
     };
+
+
+    createPaymentIntent = async (req, res) => {
+        const { amount } = req.body;
+        try {
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount,
+                currency: 'vnd',
+                payment_method_types: ['card'],
+            });
+    
+            res.status(200).send({
+                ok: true,
+                clientSecret: paymentIntent.client_secret,
+            });
+        } catch (error) {
+            res.status(500).send({ error: error.message });
+        }
+    
+    }
+
+
+    handlePaymentSuccess = async (req, res) => {
+        const { user } = req;
+        const { amount } = req.body;
+
+        if (!amount || amount <= 0) {
+            throw new HttpError({
+                ...errorCode.BAD_REQUEST,
+                message: "Invalid amount",
+            });
+        }
+
+        const intAmount = parseInt(amount, 10);
+
+        const profile = await ProfileService.findOne({ UserId: user.id });
+        const updatedProfile = await ProfileService.update(profile, {
+            money: profile.money + intAmount,
+        });
+
+        const payload = {
+            profile: _.pick(updatedProfile, ["id", "email", "picture", "money"]),
+        };
+
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+    };
+
 }

@@ -4,6 +4,11 @@ import { useRoute } from "@react-navigation/native";
 
 import SelectTreeModal from "./_component/modals/SelectTreeModal";
 import { UserContext } from "../../contexts/user.context";
+import { SeedContext } from "../../contexts/seed.context";
+import { TreeContext } from "../../contexts/tree.context";
+import { findTree } from "../../services/tree.service";
+import { HabitContext } from "../../contexts/habit.context";
+import { listTrackingHabits } from "../../services/habit.service";
 import { getCurrentDate } from "../../utils/utils";
 import Tab from "./inner_screens/Tab";
 
@@ -11,6 +16,8 @@ export default function HomeScreen({ navigation }) {
   const { user } = useContext(UserContext);
   const route = useRoute();
   const value = route.params?.progress;
+  const { tree, setTree } = useContext(TreeContext);
+  const { habits, fetchHabits } = useContext(HabitContext);
 
   const [progress, setProgress] = useState(0);
 
@@ -34,6 +41,52 @@ export default function HomeScreen({ navigation }) {
     }
   }, [value]);
 
+  useEffect(() => {
+    console.log(tree,1234132)
+    if(tree) {
+      setOpenSelectTreeModal(false);        
+    }
+
+  }, [tree])
+
+  useEffect(() => {
+    async function fetchDataTree() {
+        const today = new Date();
+        console.log(today);
+        
+        // Chuyển đổi đối tượng Date thành chuỗi định dạng ISO (YYYY-MM-DD)
+        const dateString = today.toISOString().split('T')[0];
+        
+        // Phân tích cú pháp chuỗi để lấy lại ngày, tháng và năm
+        const [year, month, day] = dateString.split('-').map(Number);
+        const treeData = await findTree(day, month, year);
+        if(treeData) {
+
+            const modifiedSeed = {
+              ...treeData.seed,
+              asset: treeData.seed.asset.split('|'),
+            };
+            const modifiedTree = {
+              ...treeData,
+              seed: modifiedSeed,
+            };
+            console.log(modifiedTree)
+            setTree(modifiedTree);
+        }       
+    }
+
+    fetchDataTree();
+  }, [user])
+
+  useEffect(() => {
+    async function fetchData() {
+      if(tree) {
+        fetchHabits(tree.tree.id);
+      }
+    }
+    fetchData();
+  }, [tree]);
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="black" />
@@ -46,7 +99,7 @@ export default function HomeScreen({ navigation }) {
             style={{ width: 25, height: 25 }}
           />
           <Text style={{ fontSize: 16, fontWeight: 700 }}>
-            {/* {`${user.name}'s diary`} */}
+            {`${user.user.username}'s diary`}
             Diary
           </Text>
         </View>
@@ -55,7 +108,7 @@ export default function HomeScreen({ navigation }) {
             source={require("../../../assets/shop/coin.png")}
             style={{ width: 25, height: 25 }}
           />
-          <Text style={{ fontWeight: 700 }}>15</Text>
+          <Text style={{ fontWeight: 700 }}>{user.profile.money}</Text>
         </View>
       </View>
 
@@ -85,6 +138,7 @@ export default function HomeScreen({ navigation }) {
         toggle={toggleSelectTreeModal}
         treeType={treeType || 1}
         setTreeType={setTreeType}
+        openRecord={openRecord}
       />
     </View>
   );

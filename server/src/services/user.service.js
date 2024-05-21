@@ -9,6 +9,7 @@ class UserService {
         User.findOne({
             attributes: { exclude: ["createdAt", "updatedAt"] },
             where: conditions,
+            include: [{ association: User.Profile }],
         });
 
     create = async (data) =>

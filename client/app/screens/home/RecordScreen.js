@@ -6,129 +6,97 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Slider } from "@rneui/themed";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
 
 import ConfirmDeleteHabitModal from "./_component/modals/ConfirmDeleteHabitModal";
-
+import { HabitContext } from "../../contexts/habit.context";
+import { updateHabit } from "../../services/habit.service";
 import { color, getCurrentDate } from "../../utils/utils";
-
-const habits = [
-  {
-    icon: "😈",
-    name: "Emotion",
-    levels: [
-      {
-        label: "Bad",
-        icon: "☹️",
-      },
-      {
-        label: "Normal",
-        icon: "😐",
-      },
-      {
-        label: "Good",
-        icon: "😀",
-      },
-    ],
-  },
-  {
-    icon: "🧹",
-    name: "Housework",
-    levels: [
-      {
-        label: "Poor",
-        icon: "👎",
-      },
-      {
-        label: "Bad",
-        icon: "👊",
-      },
-      {
-        label: "Good",
-        icon: "👍",
-      },
-      {
-        label: "Excellent",
-        icon: "👏",
-      },
-    ],
-  },
-  {
-    icon: "💻",
-    name: "OOP",
-    levels: [
-      {
-        label: "Basic",
-        icon: "🤌",
-      },
-      {
-        label: "Intermediate",
-        icon: "💪",
-      },
-      {
-        label: "Hard",
-        icon: "🙏",
-      },
-      {
-        label: "Expert",
-        icon: "🏆",
-      },
-      {
-        label: "God",
-        icon: "👑",
-      },
-    ],
-  },
-];
+import { trackHabit } from "../../services/habit.service";
+import { TreeContext } from "../../contexts/tree.context";
 
 const RecordScreen = ({ navigation }) => {
   const [openDelHabitModal, setOpenDelHabitModal] = useState(false);
-
+  const { tree } = useContext(TreeContext)
   const [currentHabitId, setCurrentHabitId] = useState(0);
 
   const currentDate = getCurrentDate();
 
-  const [values, setValues] = useState(new Array(habits.length).fill(0));
+  const [values, setValues] = useState(new Array(10).fill(0));
 
-  const [renderValues, setRenderValues] = useState(
-    new Array(habits.length).fill(0),
-  );
+  const [renderValues, setRenderValues] = useState(new Array(10).fill(0));
+  const [daysLeft, setDaysLeft] = useState([]);
+  const { habits, setHabits } = useContext(HabitContext);
+
+
+  useEffect(() => {
+    console.log(habits)
+    if (habits && habits.length) {
+      const initialValues = habits.map(habit => {
+        if(!habit.selected) return 0;
+        const selectedId = habit.selected.id;
+        const criteriaIds = habit.criteria.map(criteria => criteria.id);
+        return criteriaIds.includes(selectedId) ? criteriaIds.indexOf(selectedId) : 0;
+      });
+      console.log(initialValues)
+      setValues((prevValues) => {
+        const updatedValues = [...prevValues];
+        initialValues.forEach((value, index) => {
+          updatedValues[index] = value;
+        });
+    
+        return updatedValues;
+      });  
+      setDaysLeft(new Array(habits.length).fill(4)); // Số ngày còn lại mặc định là 4
+    }
+  }, [habits]);
 
   const closeRecord = () => {
     navigation.navigate("Home");
+  
   };
 
   const editHabit = (habitId) => {
     navigation.navigate("Edit", { id: habitId });
   };
 
-  const submitRecord = () => {
-    let progress = 0;
-    values.forEach((value, index) => {
-      progress +=
-        (value * 100) / ((habits[index].levels.length - 1) * habits.length);
-    });
+  const submitRecord = async () => {
+    let totalProgress = 0;
 
-    navigation.navigate("Home", { progress: parseInt(progress) });
+    habits.forEach((habit, index) => {
+      const criteriaLength = habit.criteria.length;
+      const value = values[index] || 0; // lấy giá trị tương ứng từ values, hoặc 0 nếu không có
+      totalProgress += (value * 100) / (criteriaLength - 1);
+    });
+    const habitData = habits.map((habit, index) => {
+      return {id: habit.criteria[values[index]].id, score: habit.criteria[values[index]].score};
+    })
+    console.log(habitData);
+
+    await trackHabit(tree.tree.id, habitData);
+    const averageProgress = totalProgress / habits.length;
+
+    navigation.navigate("Home");
   };
 
   const toggleDelHabitModal = () => {
     setOpenDelHabitModal(!openDelHabitModal);
   };
 
-  const deleteHabit = () => {
+  const deleteHabit = async () => {
+    const data = updateHabit(habits[currentHabitId], false);
     habits.splice(currentHabitId, 1);
-
     toggleDelHabitModal();
   };
 
   const addNewHabit = () => {
     navigation.navigate("Edit", { id: habits.length });
   };
+
 
   return (
     <View style={styles.container}>
@@ -193,6 +161,13 @@ const RecordScreen = ({ navigation }) => {
               >
                 {habit.name}
               </Text>
+              {/* Value */}
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text>Value: </Text>
+                <Text style={styles.statusContent}>
+                  {renderValues[index]}
+                </Text>
+              </View>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text
                   style={{
@@ -201,7 +176,7 @@ const RecordScreen = ({ navigation }) => {
                     fontWeight: 700,
                   }}
                 >
-                  4 days left
+                  {daysLeft[index]} days left
                 </Text>
               </View>
             </View>
@@ -213,7 +188,7 @@ const RecordScreen = ({ navigation }) => {
                 let newRenderValues = [...renderValues];
 
                 let divider = Math.floor(
-                  100 / (habits[index].levels.length - 1),
+                  100 / (habits[index].criteria.length - 1)
                 );
                 let shiftedValue = value + divider / 2;
 
@@ -228,20 +203,20 @@ const RecordScreen = ({ navigation }) => {
               step={2}
               minimumTrackTintColor={color(
                 values[index],
-                habit.levels.length - 1,
+                habit.criteria.length - 1
               )}
               onSlidingComplete={(value) => {
                 let newValues = [...values];
                 let newRenderValues = [...renderValues];
 
                 let divider = Math.floor(
-                  100 / (habits[index].levels.length - 1),
+                  100 / (habits[index].criteria.length - 1),
                 );
                 let shiftedValue = value + divider / 2;
 
                 newValues[index] = Math.floor(shiftedValue / divider);
                 newRenderValues[index] =
-                  Math.floor(shiftedValue / divider) * divider;
+                Math.floor(shiftedValue / divider) * divider;
 
                 setValues(newValues);
                 setRenderValues(newRenderValues);
@@ -259,17 +234,17 @@ const RecordScreen = ({ navigation }) => {
                 children: (
                   <View style={{ alignItems: "center", gap: 5 }}>
                     <Text style={{ fontSize: 35 }}>
-                      {habit.levels[values[index]].icon}
+                      {habit.criteria[values[index]].icon}
                     </Text>
                     <Text
                       style={{
                         width: 100,
                         textAlign: "center",
                         fontWeight: 800,
-                        color: color(values[index], habit.levels.length - 1),
+                        color: color(values[index], habit.criteria.length - 1),
                       }}
                     >
-                      {habit.levels[values[index]].label}
+                      {habit.criteria[values[index]].name}
                     </Text>
                   </View>
                 ),
@@ -292,106 +267,80 @@ const RecordScreen = ({ navigation }) => {
         toggle={toggleDelHabitModal}
         deleteHabit={deleteHabit}
       />
-    </View>
-  );
-};
+      </View>
+      );
+    };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FBF5E5",
-  },
-  header: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 20,
-  },
-  date: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#474838",
-  },
-  recordContent: {
-    marginTop: 35,
-    padding: 20,
-    paddingTop: 15,
-    paddingBottom: 40,
-    height: "auto",
-    backgroundColor: "#FFFFFF",
-    marginHorizontal: 20,
-    marginVertical: 15,
-    borderRadius: 20,
-    position: "relative",
-  },
-  habitIconBox: {
-    // padding: 5,
-    // backgroundColor: "#FBF5E5",
-    backgroundColor: "#fff",
-    borderRadius: 999,
-  },
-  habitIcon: {
-    width: 65,
-    height: 65,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 999,
-    // backgroundColor: "#F9FDB8",
-    backgroundColor: "#fff",
-    backgroundColor: "#50AA7555",
-    borderColor: "#3B6C78",
-    // padding: 8,
-    // borderWidth: 2,
-    // borderBottomWidth: 2,
-    // borderStyle: "dashed",
-    // elevation: 1,
-    // shadowColor: "#000000",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 3,
-    // },
-    // shadowRadius: 5,
-    // shadowOpacity: 1.0,
-  },
-  actionIconBox: {
-    right: 15,
-    top: -15,
-    // top: 10,
-    flexDirection: "row",
-    gap: 8,
-    position: "absolute",
-  },
-  actionIcon: {
-    backgroundColor: "#3B6C78",
-    borderRadius: 999,
-    padding: 8,
-  },
-  sliderThumpStyle: {
-    height: 60,
-    width: 60,
-    backgroundColor: "#F9FDB8",
-    borderRadius: 999,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  statusContent: {
-    padding: 10,
-    borderRadius: 999,
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 10,
-  },
-  submitButton: {
-    backgroundColor: "#50AA75",
-    alignItems: "center",
-    padding: 20,
-  },
-  submitText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#fff",
-  },
+container: {
+  flex: 1,
+  backgroundColor: "#FBF5E5",
+},
+header: {
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  padding: 20,
+},
+date: {
+  fontSize: 20,
+  fontWeight: "bold",
+  color: "#474838",
+},
+recordContent: {
+  marginTop: 35,
+  padding: 20,
+  paddingTop: 15,
+  paddingBottom: 40,
+  height: "auto",
+  backgroundColor: "#FFFFFF",
+  marginHorizontal: 20,
+  marginVertical: 15,
+  borderRadius: 20,
+  position: "relative",
+},
+habitIconBox: {
+  backgroundColor: "#fff",
+  borderRadius: 999,
+},
+habitIcon: {
+  width: 65,
+  height: 65,
+  alignItems: "center",
+  justifyContent: "center",
+  borderRadius: 999,
+  backgroundColor: "#50AA7555",
+  borderColor: "#3B6C78",
+},
+actionIconBox: {
+  right: 15,
+  top: -15,
+  flexDirection: "row",
+  gap: 8,
+  position: "absolute",
+},
+actionIcon: {
+  backgroundColor: "#3B6C78",
+  borderRadius: 999,
+  padding: 8,
+},
+statusContent: {
+  padding: 10,
+  borderRadius: 999,
+  color: "#fff",
+  fontWeight: "bold",
+  fontSize: 10,
+},
+submitButton: {
+  backgroundColor: "#50AA75",
+  alignItems: "center",
+  padding: 20,
+},
+submitText: {
+  fontSize: 18,
+  fontWeight: "bold",
+  color: "#fff",
+},
 });
 
 export default RecordScreen;

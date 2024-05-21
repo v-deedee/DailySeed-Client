@@ -8,24 +8,27 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { login } from "../services/user.service";
+import { getUserByToken, login } from "../services/user.service";
 import { UserContext } from "../contexts/user.context";
+import { SeedContext } from "../contexts/seed.context";
 
 const LoginScreen = ({ navigation, signIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); // Thêm state cho hiệu ứng loading
-
   const { setUser } = useContext(UserContext);
+  const { fetchSeeds } = useContext(SeedContext);
 
   const handleLogin = async () => {
     setLoading(true); // Bắt đầu hiển thị hiệu ứng loading
     try {
-      const { user } = await login(username, password);
-      if (user) {
+      await login(username, password);
+      const data = await getUserByToken();
+      if (data) {
+        setUser(data);
+        fetchSeeds();
         console.log("Login successful!");
         signIn();
-        setUser(user);
       } else {
         console.error("Login failed!");
       }

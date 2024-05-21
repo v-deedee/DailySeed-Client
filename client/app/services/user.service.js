@@ -13,7 +13,7 @@ export const login = async (username, password) => {
     if (ok) {
       const { token, payload } = data;
       await saveTokenToLocalStorage(token);
-      return { user: new User(payload.id, payload.username ) };
+      return { user: new User(payload.id, payload.username) };
     } else {
       throw new Error('Login failed');
     }
@@ -27,29 +27,60 @@ export const getUserByToken = async () => {
     const response = await authApi.get('/api/user');
     const { ok, data } = response.data;
     if (ok) {
-      return { user: new User(data.user.id, data.user.username, new Profile(data.profile.id, data.profile.email, data.profile.picture, data.profile.money))};
+      return data;
+    } else {
+      return '';
     }
-    throw new Error('Failed to get user by token');
   } catch (error) {
-    throw error;
+    console.log(error);
   }
 };
 
-export const register = async (username, password, email) => {
+export const register = async (data) => {
   try {
-    const response = await publicApi.post('/api/user', { username, password, email });
+    const response = await publicApi.post('/api/user', data);
     return response.data;
   } catch (error) {
-    throw error;
+    return error.response.data;
   }
 };
 
 export const logout = async () => {
-    try {
-      await deleteTokenFromLocalStorage();
-  
-      return true;
-    } catch (error) {
-      throw error;
+  try {
+    await deleteTokenFromLocalStorage();
+
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const createPaymentIntent = async (amount) => {
+  try {
+    const response = await authApi.post('/api/user/create-payment-intent', { amount: amount })
+    const data = response.data
+    if (data.ok) {
+      return data.clientSecret;
+    } else {
+      throw new Error('Failed to create payment intent');
     }
-  };
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+export const handlePaymentSuccess = async (amount) => {
+  try {
+    const response = await authApi.post('/api/user/handle-payment-success', { amount: amount })
+    const data = response.data
+    if (data.ok) {
+      return data.data.profile;
+    } else {
+      throw new Error('Failed to create payment intent');
+    }
+  } catch (error) {
+    throw error;
+  }
+}

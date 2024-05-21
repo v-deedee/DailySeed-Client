@@ -4,6 +4,7 @@ import { HttpError } from "../utils/http.error.js";
 import errorCode from "../constants/error.code.js";
 import { Op } from "sequelize";
 import _ from "lodash";
+import habitService from "../services/habit.service.js";
 
 export default class TreeController {
     constructor() {}
@@ -19,7 +20,10 @@ export default class TreeController {
                 status: 400,
             });
 
-        let tree = await TreeService.findOne({ UserId: user.id, date: new Date() });
+        let tree = await TreeService.findOne({
+            UserId: user.id,
+            date: new Date(),
+        });
         if (tree != null)
             throw new HttpError({
                 ...errorCode.TREE.ALREADY_CREATED,
@@ -56,9 +60,22 @@ export default class TreeController {
                 status: 403,
             });
 
+        const selectedCriteria = _.keyBy(await tree.getCriteria(), "HabitId");
+        const habits = await habitService.findAll({
+            id: Object.keys(selectedCriteria),
+        });
+
         const payload = {
             tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
-            seed: _.pick(tree.Seed, ["id", "name", "asset"]),
+            seed: {
+                ..._.pick(tree.Seed, ["id", "name", "asset"]),
+                phase: tree.getPhase(),
+            },
+            habits: _.map(habits, (habit) => {
+                const habitData = _.pick(habit, ["id", "name", "icon"]);
+                habitData.selected = _.pick(selectedCriteria[habit.id], ["id", "name", "icon", "score"]);
+                return habitData;
+            }),
         };
 
         res.status(200).json({
@@ -68,22 +85,61 @@ export default class TreeController {
     };
 
     #getDateQuery = (query) => {
-        let rangePattern = /\[\d{8},\d{8}\]/;
-        let pointPattern = /\d{8}/;
+        const { day, month, year } = query;
 
-        if (rangePattern.test(query.date)) {
-            const [start, end] = query.date
-                .substring(1, query.date.length - 1)
-                .split(",");
+        if (year && month && day) {
+            const date = `${year}${month.padStart(2, "0")}${day.padStart(
+                2,
+                "0"
+            )}`;
+            return date;
+        }
 
+        if (year && month) {
+            const start = `${year}${month.padStart(2, "0")}01`;
+            const end = `${year}${month.padStart(2, "0")}${new Date(
+                year,
+                month,
+                0
+            )
+                .getDate()
+                .toString()
+                .padStart(2, "0")}`;
             return { [Op.between]: [start, end] };
         }
 
-        if (pointPattern.test(query.date)) {
-            return query.date;
+        if (year) {
+            const start = `${year}0101`;
+            const end = `${year}1231`;
+            return { [Op.between]: [start, end] };
         }
 
         return null;
+    };
+
+    findTree = async (req, res) => {
+        const { user } = req;
+        const { params } = req;
+
+        const filter = { UserId: user.id };
+        const dateFilter = this.#getDateQuery(params);
+        if (dateFilter) filter.date = dateFilter;
+        const tree = await TreeService.findOne(filter);
+        if (!tree)
+            throw new HttpError({ ...errorCode.TREE.NOT_FOUND, status: 403 });
+
+        const payload = {
+            tree: _.pick(tree, ["id", "date", "score", "note", "picture"]),
+            seed: {
+                ..._.pick(tree.Seed, ["id", "asset"]),
+                phase: tree.getPhase(),
+            },
+        };
+
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
     };
 
     listTree = async (req, res) => {
@@ -93,23 +149,76 @@ export default class TreeController {
         const filter = { UserId: user.id };
         const dateFilter = this.#getDateQuery(query);
         if (dateFilter) filter.date = dateFilter;
-
         const trees = await TreeService.findAll(filter);
 
-        const treeSelectFields = ["id", "coordinate_x", "coordinate_y"];
+        const treeSelectFields = [
+            "id",
+            "coordinate_x",
+            "coordinate_y",
+            "score",
+        ];
         const seedSelectFields = ["id", "asset"];
         if (query.extend) {
-            treeSelectFields.push(...["date", "score", "note", "picture"]);
+            treeSelectFields.push(...["date", "note", "picture"]);
             seedSelectFields.push(...["name"]);
         }
-        const payload = _.map(trees, (tree) => ({
-            tree: _.pick(tree, treeSelectFields),
-            seed: _.pick(tree.Seed, seedSelectFields),
-        }));
+
+        let garden = [];
+        let inventory = {};
+        for (const tree of trees) {
+            const phase = tree.getPhase();
+            if (tree.isPlanted()) {
+                garden.push({
+                    tree: _.pick(tree, treeSelectFields),
+                    seed: {
+                        ..._.pick(tree.Seed, seedSelectFields),
+                        phase: phase,
+                    },
+                });
+            } else {
+                inventory[tree.Seed.name] ??= {};
+                inventory[tree.Seed.name][phase] ??= 0;
+                inventory[tree.Seed.name][phase] += 1;
+            }
+        }
+
+        const payload = {
+            garden: garden,
+            inventory: inventory,
+        };
 
         res.status(200).json({
             ok: true,
             data: payload,
+        });
+    };
+
+    updateTree = async (req, res) => {
+        const { body } = req;
+        const { user } = req;
+
+        for (const tree of body.trees) {
+            const targetTree = await TreeService.findOne({ id: tree.id });
+            if (!targetTree)
+                throw new HttpError({
+                    ...errorCode.TREE.NOT_FOUND,
+                    status: 403,
+                });
+
+            if (targetTree.UserId != user.id)
+                throw new HttpError({
+                    ...errorCode.AUTH.ROLE_INVALID,
+                    status: 403,
+                });
+
+            targetTree.coordinate_x = tree.coordinate_x;
+            targetTree.coordinate_y = tree.coordinate_y;
+
+            await targetTree.save();
+        }
+
+        res.status(200).json({
+            ok: true,
         });
     };
 }

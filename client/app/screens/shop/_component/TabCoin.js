@@ -5,9 +5,9 @@ export default function TabCoin() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Coins</Text>
-            <CoinCard value={'200'} vnd={"310.000đ"} />
-            <CoinCard value={'300'} vnd={"310.000đ"} />
-            <CoinCard value={'400'} vnd={"310.000đ"} />
+            <CoinCard value={'200'} vnd={"110000"} />
+            <CoinCard value={'300'} vnd={"210000"} />
+            <CoinCard value={'400'} vnd={"310000"} />
         </View>
     );
 }

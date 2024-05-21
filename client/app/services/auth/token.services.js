@@ -18,7 +18,6 @@ export const saveTokenToLocalStorage = async (token) => {
   try {
     const token = await AsyncStorage.getItem(TOKEN_KEY);
     if (token) {
-      console.log('Token retrieved from Local Storage:', token);
       return token;
     } else {
       console.log('No token found in Local Storage');
