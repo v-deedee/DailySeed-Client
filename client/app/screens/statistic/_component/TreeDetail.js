@@ -13,6 +13,7 @@ export default function TreeDetail({ treeID }) {
         const fetchData = async () => {
             try {
                 const info = await getTree(treeID);
+                console.log(info)
                 setTreeInfo(info);
                 const assetArray = info.seed.asset.split('|');
                 const phaseImage = assetArray[assetArray.length - info?.seed?.phase];

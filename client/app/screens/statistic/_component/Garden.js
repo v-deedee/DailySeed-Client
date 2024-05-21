@@ -305,6 +305,39 @@ const Garden = () => {
       </MyBottomSheet>
 
 
+      {/* <MyBottomSheet
+        open={isOpenMonthPicker}
+        onClose={() => {
+          setOpenMonthPicker(false)
+        }}
+        defaultHeight={280}
+        backgroundColor={"white"}
+      >
+        <View style={styles.bottomSheet}>
+          <ScrollView horizontal={false} contentContainerStyle={styles.centeredContent}>
+            <ScrollView horizontal contentContainerStyle={styles.pickerContainer} nestedScrollEnabled>
+              <View>
+                <WheelPicker
+                  containerStyle={styles.wheelPicker}
+                  selectedIndex={selectedMonth}
+                  options={['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']}
+                  onChange={setSelectedMonth}
+                />
+              </View>
+
+
+              <View>
+                <WheelPicker
+                  containerStyle={styles.wheelPicker}
+                  selectedIndex={selectedIndex}
+                  options={options}
+                  onChange={handleYearChange}
+                />
+              </View>
+            </ScrollView>
+          </ScrollView>
+        </View>
+      </MyBottomSheet> */}
       <BottomSheet isVisible={isOpenMonthPicker} onBackdropPress={toggleBottomSheet(setOpenMonthPicker)}>
         <View style={styles.bottomSheet}>
           <ScrollView horizontal={false} contentContainerStyle={styles.centeredContent}>
