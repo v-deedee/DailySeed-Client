@@ -117,8 +117,7 @@ export default function EditScreen({ navigation }) {
   const { habits, setHabits } = useContext(HabitContext);
   const route = useRoute();
   const [showIconModal, setShowIconModal] = useState(false);
-
-
+  const [habitIcon, setHabitIcon] = useState()
   const [currentHabit, setCurrentHabit] = useState({
     id: -1,
     icon: "☺️",
@@ -133,7 +132,7 @@ export default function EditScreen({ navigation }) {
       {
         name: "Sample 2",
         icon: "😀",
-        score: 1,
+        score: 100,
       },
     ],
   });
@@ -155,6 +154,7 @@ export default function EditScreen({ navigation }) {
       setCurrentHabit(habits[currentId]);
     }
   }, [habits, currentId]);
+
 
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
 
@@ -179,10 +179,24 @@ export default function EditScreen({ navigation }) {
   };
 
   const toggleConfirmModal = async () => {
+    const updatedCriteria = currentHabit.criteria.map((criterion, index) => ({
+      ...criterion,
+      score: Math.floor((index / (currentHabit.criteria.length - 1)) * 100)
+    }));
+  
+    // Cập nhật state với habit đã được tính lại score
+    setCurrentHabit({
+      ...currentHabit,
+      criteria: updatedCriteria
+    });
+    console.log(currentHabit)
+  
     if (currentHabit.id === -1) {
       // Create new habit
       const newHabit = await createHabit(currentHabit);
-      setHabits([...habits, currentHabit]);
+      console.log(newHabit)
+      console.log([...habits, {...currentHabit, id: newHabit.habit.id}], 1111)
+      setHabits([...habits, {...currentHabit, id: newHabit.habit.id}]);
     } else {
       // Update existing habit
       const updatedHabit = await updateHabit(currentHabit);
@@ -455,7 +469,7 @@ export default function EditScreen({ navigation }) {
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text style={{ fontWeight: 700 }}>Label: </Text>
-                  <Text>{currentHabit.criteria[value].label}</Text>
+                  <Text>{currentHabit.criteria[value].name}</Text>
                 </View>
               </View>
 

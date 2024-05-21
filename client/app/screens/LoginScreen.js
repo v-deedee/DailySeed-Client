@@ -10,12 +10,14 @@ import {
 } from "react-native";
 import { getUserByToken, login } from "../services/user.service";
 import { UserContext } from "../contexts/user.context";
+import { SeedContext } from "../contexts/seed.context";
 
 const LoginScreen = ({ navigation, signIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); // Thêm state cho hiệu ứng loading
   const { setUser } = useContext(UserContext);
+  const { fetchSeeds } = useContext(SeedContext);
 
   const handleLogin = async () => {
     setLoading(true); // Bắt đầu hiển thị hiệu ứng loading
@@ -24,6 +26,7 @@ const LoginScreen = ({ navigation, signIn }) => {
       const data = await getUserByToken();
       if (data) {
         setUser(data);
+        fetchSeeds();
         alert("Login successful!");
         signIn();
       } else {

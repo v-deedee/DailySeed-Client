@@ -6,7 +6,7 @@ import SelectTreeModal from "./_component/modals/SelectTreeModal";
 import { UserContext } from "../../contexts/user.context";
 import { SeedContext } from "../../contexts/seed.context";
 import { TreeContext } from "../../contexts/tree.context";
-import { listTrees } from "../../services/tree.service";
+import { findTree } from "../../services/tree.service";
 import { HabitContext } from "../../contexts/habit.context";
 import { listTrackingHabits } from "../../services/habit.service";
 import { getCurrentDate } from "../../utils/utils";
@@ -16,7 +16,6 @@ export default function HomeScreen({ navigation }) {
   const { user } = useContext(UserContext);
   const route = useRoute();
   const value = route.params?.progress;
-  const { seeds, fetchSeeds } = useContext(SeedContext);
   const { tree, setTree } = useContext(TreeContext);
   const { habits, fetchHabits } = useContext(HabitContext);
 
@@ -43,6 +42,7 @@ export default function HomeScreen({ navigation }) {
   }, [value]);
 
   useEffect(() => {
+    console.log(tree,1234132)
     if(tree) {
       setOpenSelectTreeModal(false);        
     }
@@ -50,30 +50,32 @@ export default function HomeScreen({ navigation }) {
   }, [tree])
 
   useEffect(() => {
-    async function fetchData() {
-        const today = new Date().toISOString().replace(/\//g, '');
-
-        // const today = new Date().toLocaleString('vi-VN', options).replace(/\//g, '');
-        // const formattedDate = `${today.slice(4, 8)}${today.slice(2, 4)}${today.slice(0, 2)}`;
-        const treeData = await listTrees(today, true);
-        if(treeData[0]) {
+    async function fetchDataTree() {
+        const today = new Date();
+        console.log(today);
+        
+        // Chuyển đổi đối tượng Date thành chuỗi định dạng ISO (YYYY-MM-DD)
+        const dateString = today.toISOString().split('T')[0];
+        
+        // Phân tích cú pháp chuỗi để lấy lại ngày, tháng và năm
+        const [year, month, day] = dateString.split('-').map(Number);
+        const treeData = await findTree(day, month, year);
+        if(treeData) {
 
             const modifiedSeed = {
-              ...treeData[0].seed,
-              asset: treeData[0].seed.asset.split('|'),
+              ...treeData.seed,
+              asset: treeData.seed.asset.split('|'),
             };
             const modifiedTree = {
-              ...treeData[0],
+              ...treeData,
               seed: modifiedSeed,
             };
+            console.log(modifiedTree)
             setTree(modifiedTree);
-        }
-        else {
-            fetchSeeds();
-        }           
+        }       
     }
 
-    fetchData();
+    fetchDataTree();
   }, [user])
 
   useEffect(() => {
@@ -106,7 +108,7 @@ export default function HomeScreen({ navigation }) {
             source={require("../../../assets/shop/coin.png")}
             style={{ width: 25, height: 25 }}
           />
-          <Text style={{ fontWeight: 700 }}>15</Text>
+          <Text style={{ fontWeight: 700 }}>{user.profile.money}</Text>
         </View>
       </View>
 
@@ -136,6 +138,7 @@ export default function HomeScreen({ navigation }) {
         toggle={toggleSelectTreeModal}
         treeType={treeType || 1}
         setTreeType={setTreeType}
+        openRecord={openRecord}
       />
     </View>
   );

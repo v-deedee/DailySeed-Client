@@ -1,8 +1,9 @@
 import { StyleSheet, Image, View, Text } from "react-native";
 import { Button } from "@rneui/themed";
 import ProgressCircle from "../_component/ProgressCircle";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { TreeContext } from "../../../contexts/tree.context";
+import { SeedContext } from "../../../contexts/seed.context";
 
 export default function TreeScreen({
   openRecord,
@@ -12,6 +13,7 @@ export default function TreeScreen({
 }) {
   const { tree } = useContext(TreeContext)
 
+  const { seeds } = useContext(SeedContext);
   return (
     <>
       {/* Main */}

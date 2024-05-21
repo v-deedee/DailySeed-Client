@@ -11,7 +11,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-export default function SettingScreen({ signOut }) {
+export default function SettingScreen({ signOut, navigation }) {
   const {setUser} = useContext(UserContext)
 
   const handleLogout = () => {
@@ -26,7 +26,7 @@ export default function SettingScreen({ signOut }) {
         <Text style={styles.title}>Setting</Text>
       </View>
 
-      <AccoutCard />
+      <AccoutCard navigation={navigation}/>
 
       <CustomCard />
 

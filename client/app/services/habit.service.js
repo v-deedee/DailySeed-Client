@@ -57,8 +57,9 @@ export const listTrackingHabits = async (treeId) => {
 
 export const trackHabit = async (treeId, habitData) => {
   try {
-    const response = await authApi.post(`/api/habit/tracking/${treeId}`, habitData);
+    const response = await authApi.post(`/api/habit/tracking/${treeId}`, {criteria: habitData});
     if (response.data.ok) {
+      console.log(response.data)
       return response.data.data;
     } else {
       throw new Error('Failed to track habit');

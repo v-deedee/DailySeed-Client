@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
 import { useContext, useEffect } from 'react';
 import { UserContext } from '../../../contexts/user.context';
 
-export default function AccoutCard() {
+export default function AccoutCard({ navigation }) {
     const {user} = useContext(UserContext)
     return (
         <View>
@@ -22,7 +22,7 @@ export default function AccoutCard() {
                     </View>
 
                     <View style={styles.row}>
-                        <TouchableWithoutFeedback onPress={() => { console.log("Hello") }}>
+                        <TouchableWithoutFeedback onPress={() => { navigation.navigate('Profile') }}>
                             <View>
                                 <Text style={{ color: 'green' }}>My info</Text>
                             </View>

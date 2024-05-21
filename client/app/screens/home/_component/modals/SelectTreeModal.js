@@ -7,7 +7,7 @@ import { createTree } from "../../../../services/tree.service";
 import { TreeContext } from "../../../../contexts/tree.context";
 import { HabitContext } from "../../../../contexts/habit.context";
 
-export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType, }) {
+export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType, openRecord}) {
   const { seeds } = useContext(SeedContext);
   const { setTree } = useContext(TreeContext);
   const { fetchHabits } = useContext(HabitContext);
@@ -37,11 +37,11 @@ export default function SelectTreeModal({ isOpen, toggle, treeType, setTreeType,
       if(newTree) {
         setTree(newTree.tree);
         fetchHabits(newTree.tree.id);  
+        openRecord();
       }
     } catch (error) {
       console.error("Error creating tree:", error);
     }
-    toggle();
   };
   
   

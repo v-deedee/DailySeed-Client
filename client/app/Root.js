@@ -24,7 +24,7 @@ export default function Root() {
   const [isSignedIn, setIsSignedIn] = useState(getLoginStatus());
   const { user, setUser } = useContext(UserContext); // Khởi tạo state user
   const { setTree } = useContext(TreeContext);
-
+  const { fetchSeeds } = useContext(SeedContext);
 
   useEffect(() => {
     async function fetchUserData() {
@@ -33,6 +33,7 @@ export default function Root() {
         if(userData) {
           setUser(userData);
           setIsSignedIn(true);  
+          fetchSeeds();
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
