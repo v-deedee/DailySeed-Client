@@ -175,7 +175,7 @@ export default class HabitController {
             if (selectedCriteria[habit.id]) {
                 habits[index].selected = selectedCriteria[habit.id].id;
             } else {
-                habits[index].selected = _.find(habit.Criteria, { score: 0});
+                habits[index].selected = _.pick(_.find(habit.Criteria, { score: 0}), ["id"]);
             }
         });
 
