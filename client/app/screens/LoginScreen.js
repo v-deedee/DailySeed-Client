@@ -27,7 +27,7 @@ const LoginScreen = ({ navigation, signIn }) => {
       if (data) {
         setUser(data);
         fetchSeeds();
-        alert("Login successful!");
+        console.log("Login successful!");
         signIn();
       } else {
         console.error("Login failed!");

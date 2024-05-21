@@ -38,12 +38,12 @@ export default function TreeScreen({
             source={require("../../../../assets/home/water.png")}
             style={{ width: 25, height: 25 }}
           />
-          <Text style={{ fontWeight: 700 }}>{progress}%</Text>
+          <Text style={{ fontWeight: 700 }}>{tree?.tree?.score | 0 }%</Text>
         </View>
 
         {/* Progress: Circle */}
         <ProgressCircle
-          progress={progress}
+          progress={tree?.tree?.score | 0 }
           treeType={treeType}
           selectTree={toggleSelectTreeModal}
         />
