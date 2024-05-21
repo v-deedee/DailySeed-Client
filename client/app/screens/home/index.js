@@ -100,7 +100,6 @@ export default function HomeScreen({ navigation }) {
           />
           <Text style={{ fontSize: 16, fontWeight: 700 }}>
             {`${user.user.username}'s diary`}
-            Diary
           </Text>
         </View>
         <View style={styles.coinContainer}>
