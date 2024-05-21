@@ -73,6 +73,6 @@ export const findTree = async (day, month, year) => {
     } 
   } catch (error) {
       console.log(error);
-      return response.data.data;
+      return error.response.data.data;
     }
   };

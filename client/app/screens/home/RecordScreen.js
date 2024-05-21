@@ -40,7 +40,7 @@ const RecordScreen = ({ navigation }) => {
         if(!habit.selected) return 0;
         const selectedId = habit.selected.id;
         const criteriaIds = habit.criteria.map(criteria => criteria.id);
-        return criteriaIds.includes(selectedId) ? criteriaIds.indexOf(selectedId) : -1;
+        return criteriaIds.includes(selectedId) ? criteriaIds.indexOf(selectedId) : 0;
       });
       console.log(initialValues)
       setValues((prevValues) => {
@@ -80,7 +80,7 @@ const RecordScreen = ({ navigation }) => {
     await trackHabit(tree.tree.id, habitData);
     const averageProgress = totalProgress / habits.length;
 
-    // navigation.navigate("Home", { progress: parseInt(averageProgress) });
+    navigation.navigate("Home");
   };
 
   const toggleDelHabitModal = () => {

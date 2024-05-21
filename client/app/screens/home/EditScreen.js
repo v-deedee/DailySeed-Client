@@ -190,18 +190,19 @@ export default function EditScreen({ navigation }) {
       criteria: updatedCriteria
     });
     console.log(currentHabit)
+    const newCurrentHabit = {...currentHabit, criteria: updatedCriteria}
   
     if (currentHabit.id === -1) {
       // Create new habit
-      const newHabit = await createHabit(currentHabit);
+      const newHabit = await createHabit(newCurrentHabit);
       console.log(newHabit)
-      console.log([...habits, {...currentHabit, id: newHabit.habit.id}], 1111)
-      setHabits([...habits, {...currentHabit, id: newHabit.habit.id}]);
+      console.log([...habits, {...newCurrentHabit, id: newHabit.habit.id}], 1111)
+      setHabits([...habits, {...newCurrentHabit, id: newHabit.habit.id}]);
     } else {
       // Update existing habit
-      const updatedHabit = await updateHabit(currentHabit);
+      const updatedHabit = await updateHabit(newCurrentHabit);
       const updatedHabits = habits.map((habit) =>
-        habit.id === currentHabit.id ? currentHabit : habit
+        habit.id === newCurrentHabit.id ? newCurrentHabit : habit
       );
       setHabits(updatedHabits);
     }
