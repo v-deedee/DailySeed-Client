@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from '@react-navigation/native';
-import { StyleSheet, View, Text, ScrollView, Button } from "react-native";
+import { StyleSheet, View, Text, ScrollView, Button, ActivityIndicator } from "react-native";
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
 import { BottomSheet } from "@rneui/themed";
 import { captureRef } from 'react-native-view-shot';
@@ -26,6 +26,9 @@ const Garden = () => {
   const options = ['2020', '2021', '2022', '2023', '2024'];
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const selectedIndex = options.indexOf(selectedYear.toString());
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const [inventory, setInventory] = useState();
+  const [loading, setLoading] = useState(false);
 
   const handleYearChange = (index) => {
     setSelectedYear(parseInt(options[index], 10));
@@ -55,10 +58,10 @@ const Garden = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const data = await listTrees();
-
-        const newMap = map.map((row) => row.slice());
+        const data = await listTrees(selectedMonth + 1, selectedYear);
+        const newMap = Array(numRows).fill().map(() => Array(numColumns).fill(0));
         const newTreeInfo = {};
         data.garden.forEach(({ tree, seed }) => {
           if (tree.coordinate_x !== null && tree.coordinate_y !== null && tree.coordinate_x !== -1 && tree.coordinate_y !== -1) {
@@ -67,17 +70,20 @@ const Garden = () => {
             newMap[tree.coordinate_y][tree.coordinate_x] = seed.phase;
             newTreeInfo[`${tree.coordinate_x}_${tree.coordinate_y}`] = { imageURL: phaseImage, id: tree.id };
             setTreeInfo(newTreeInfo);
+
           }
         });
         setMap(newMap);
-
+        setInventory(data.inventory);
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false)
       }
     };
 
     fetchData();
-  }, []);
+  }, [selectedMonth, selectedYear]);
 
   const [openSeedBox, setOpenSeedBox] = useState(false);
   const [isOpenBorder, setOpenBorder] = useState(false);
@@ -214,7 +220,7 @@ const Garden = () => {
           <ViewGarden handleCalendarPress={toggleBottomSheet(setOpenMonthPicker)} />
         </View>
         <View style={styles.monthTextContainer}>
-          <Text style={styles.monthText}>{selectedMonth + 1} </Text>
+          <Text style={styles.monthText}>{monthNames[selectedMonth]}-{selectedYear}</Text>
         </View>
         <View style={styles.row}>
           <TreeBox toggleBottomSheet={() => setOpenSeedBox(true)} setDisable={isRemoveTree || isViewTree} />
@@ -223,7 +229,7 @@ const Garden = () => {
         </View>
       </View>
 
-      {/* <Button title="Chịu" onPress={() => console.log(treeInfo)}/> */}
+      <Button title="Chiu" onPress={() => console.log(inventory)} />
 
       <ReactNativeZoomableView
         maxZoom={1.5}
@@ -236,7 +242,9 @@ const Garden = () => {
         doubleTapZoomToCenter
         ref={zoomableViewRef}
       >
-        {treeInfo && (
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
           <View ref={gardenShareRef} collapsable={false} style={styles.gardenBackground}>
             <View style={styles.mapContainer}>
               <View style={styles.assetContainer}>
@@ -269,7 +277,6 @@ const Garden = () => {
             </View>
           </View>
         )}
-
       </ReactNativeZoomableView>
 
       <MyBottomSheet
@@ -280,12 +287,12 @@ const Garden = () => {
         defaultHeight={150}
       >
         <View style={[styles.bottomSheet, styles.bottomSheetPlant]}>
-          {[1, 2, 3, 4].map(phase => (
+          {Object.keys(inventory).map((treeName, index) => (
             <TreeAvatar
-              key={phase}
-              treeStatus={`phase${phase}`}
-              value={10}
-              handleAvatarPress={() => handleAvatarPress(phase)}
+              key={index}
+              treeStatus={treeName}
+              value={inventory[treeName][1].count} // Assuming phase 1 is always available
+              handleAvatarPress={() => handleAvatarPress(treeName)}
             />
           ))}
         </View>
@@ -396,7 +403,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   monthText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "#787878",
   },
