@@ -1,13 +1,12 @@
-import {
-  StyleSheet,
-  Image,
-  ImageBackground,
-  TouchableOpacity,
-} from "react-native";
+import React, { useContext } from "react";
+import { StyleSheet, Image, ImageBackground } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
-import { trees } from "../../../utils/utils";
+import { TreeContext } from "../../../contexts/tree.context";
+import { CLOUDINARY_BASE_URL } from "../../../utils/constants/cloudinary.constants";
 
-export default function ProgressCircle({ progress, treeType, selectTree }) {
+export default function ProgressCircle({ progress }) {
+  const { tree } = useContext(TreeContext);
+
   return (
     <AnimatedCircularProgress
       size={200}
@@ -19,79 +18,65 @@ export default function ProgressCircle({ progress, treeType, selectTree }) {
       backgroundColor="#D8E1D0"
     >
       {() => {
-        if (!treeType) {
-          return (
-            <TouchableOpacity onPress={selectTree}>
-              <Image
-                source={require("../../../../assets/theme/background2.png")}
-                style={{
-                  width: 180,
-                  height: 170,
-                  borderRadius: 999,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              />
-            </TouchableOpacity>
-          );
-        } else {
+        if (tree) {
           return (
             <ImageBackground
               source={require("../../../../assets/theme/background2.png")}
-              style={{
-                width: 180,
-                height: 170,
-                borderRadius: 999,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={styles.imageBackground}
             >
-              {(function () {
-                if (progress <= 25)
+              {(() => {
+                 if (!tree.seed.asset || tree.seed.asset.length === 0) {
+                  return null; // Hoặc return <></>;
+                }
+                if (progress <= 25) {
                   return (
                     <Image
-                      source={trees[treeType - 1][0]}
-                      style={{ width: 85, height: 85, marginTop: 20 }}
+                      source={{ uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[0]}` }}
+                      style={styles.imageStyle}
                     />
                   );
-                else if (progress <= 50)
+                } else if (progress <= 50) {
                   return (
                     <Image
-                      source={trees[treeType - 1][1]}
-                      style={{ width: 80, height: 102 }}
+                      source={{ uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[1]}` }}
+                      style={styles.imageStyle}
                     />
                   );
-                else if (progress <= 75)
+                } else if (progress <= 75) {
                   return (
                     <Image
-                      source={trees[treeType - 1][2]}
-                      style={{ width: 110, height: 110 }}
+                      source={{ uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[2]}` }}
+                      style={styles.imageStyle}
                     />
                   );
-                else
+                } else {
                   return (
                     <Image
-                      source={trees[treeType - 1][3]}
-                      style={{ width: 120, height: 120 }}
+                      source={{ uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[3]}` }}
+                      style={styles.imageStyle}
                     />
                   );
+                }
               })()}
             </ImageBackground>
           );
         }
+        return null;
       }}
     </AnimatedCircularProgress>
   );
 }
 
 const styles = StyleSheet.create({
-  treeBox: {
-    display: "flex",
+  imageBackground: {
+    width: 180,
+    height: 170,
+    borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
-    width: 200,
-    height: 200,
-    backgroundColor: "#EDEBE4",
-    borderRadius: 9999,
+  },
+  imageStyle: {
+    width: 100,
+    height: 100,
   },
 });
