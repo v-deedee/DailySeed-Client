@@ -120,7 +120,7 @@ export default function EditScreen({ navigation }) {
   const [habitIcon, setHabitIcon] = useState()
   const [currentHabit, setCurrentHabit] = useState({
     id: -1,
-    icon: "☺️",
+    icon: "🏆",
     name: "Sample",
     duration: 1,
     criteria: [
@@ -184,28 +184,8 @@ export default function EditScreen({ navigation }) {
       score: Math.floor((index / (currentHabit.criteria.length - 1)) * 100)
     }));
   
-    // Cập nhật state với habit đã được tính lại score
-    setCurrentHabit({
-      ...currentHabit,
-      criteria: updatedCriteria
-    });
-    console.log(currentHabit)
     const newCurrentHabit = {...currentHabit, criteria: updatedCriteria}
-  
-    if (currentHabit.id === -1) {
-      // Create new habit
-      const newHabit = await createHabit(newCurrentHabit);
-      console.log(newHabit)
-      console.log([...habits, {...newCurrentHabit, id: newHabit.habit.id}], 1111)
-      setHabits([...habits, {...newCurrentHabit, id: newHabit.habit.id}]);
-    } else {
-      // Update existing habit
-      const updatedHabit = await updateHabit(newCurrentHabit);
-      const updatedHabits = habits.map((habit) =>
-        habit.id === newCurrentHabit.id ? newCurrentHabit : habit
-      );
-      setHabits(updatedHabits);
-    }
+    setCurrentHabit(newCurrentHabit);
     setOpenConfirmModal(!openConfirmModal);
   };
 
@@ -249,7 +229,33 @@ export default function EditScreen({ navigation }) {
     navigation.navigate("Record");
   };
 
-  const submit = () => {
+  const submit = async () => {
+    if (currentHabit.id === -1) {
+      // Create new habit
+      const newHabit = await createHabit(currentHabit);
+      const habit = {
+        criteria: newHabit.criteria,
+        id: newHabit.habit.id,
+        duration: newHabit.habit.duration,
+        icon: newHabit.habit.icon,
+        name: newHabit.habit.name,
+      };
+      setHabits([...habits, habit]);
+    } else {
+      // Update existing habit
+      const updatedHabit = await updateHabit(currentHabit);
+      const newHabit = {
+        criteria: updatedHabit.criteria,
+        id: updatedHabit.habit.id,
+        duration: updatedHabit.habit.duration,
+        icon: updatedHabit.habit.icon,
+        name: updatedHabit.habit.name,
+      };
+      const updatedHabits = habits.map((habit) =>
+        habit.id === newHabit.id ? newHabit : habit
+      );
+      setHabits(updatedHabits);
+    }
     navigation.navigate("Record");
   };
 
@@ -269,23 +275,6 @@ export default function EditScreen({ navigation }) {
         <View style={styles.recordContent}>
           {/* Habit icon + habit name */}
           <View style={{ gap: 10, marginBottom: 10 }}>
-            {/* Habit icon */}
-
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ width: "22%", fontWeight: 700 }}>Icon: </Text>
-              <View style={[styles.inputView, { flex: 1 }]}>
-                <TextInput
-                  style={{ height: 50 }}
-                  placeholder="Enter habit name"
-                  selectionColor="#ccc"
-                  value={currentHabit.icon}
-                  onChangeText={(text) => setCurrentHabit({...currentHabit, icon: text})}
-                />
-              </View>
-              <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={toggleIconModal}>
-                <Text style={{ fontWeight: 'bold' }}>Choose Icon</Text>
-              </TouchableOpacity>
-            </View>
             {/* Habit name */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ width: "22%", fontWeight: 700 }}>Name: </Text>
@@ -317,7 +306,7 @@ export default function EditScreen({ navigation }) {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 25 }}>{habitIcon}</Text>
+                <Text style={{ fontSize: 25 }}>{currentHabit.icon}</Text>
               </View>
               <TouchableOpacity
                 style={{ paddingHorizontal: 10, flexDirection: "row" }}
@@ -518,7 +507,7 @@ export default function EditScreen({ navigation }) {
           setOpenEmojiPicker(false);
         }}
         onEmojiSelected={(emoji) => {
-          setHabitIcon(emoji);
+          setCurrentHabit({...currentHabit, icon: emoji})
         }}
       />
 

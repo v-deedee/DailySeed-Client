@@ -4,6 +4,8 @@ import { HttpError } from "../utils/http.error.js";
 import errorCode from "../constants/error.code.js";
 import CloudHanlder from "../utils/cloud.handler.js";
 import userRole from "../constants/user.role.js";
+import ProfileService from "../services/profile.service.js";
+
 
 export default class SeedController {
     constructor() {}
@@ -121,6 +123,12 @@ export default class SeedController {
                 ...errorCode.SEED.NOT_ENOUGH_MONEY,
                 status: 403,
             });
+
+        const profile = await ProfileService.findOne({ UserId: user.id });
+
+        await ProfileService.update(profile, {
+            money: profile.money - seed.price,
+        });     
 
         await user.addSeed(seed);
 

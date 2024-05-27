@@ -8,6 +8,14 @@ import { Skeleton } from '@rneui/themed';
 export default function TabAll() {
     const [shopData, setShopData] = useState([]);
     const [isLoading, setLoading] = useState(true);
+    const handleUpdateOwned = (id, owned) => {
+        setShopData(prevData =>
+            prevData.map(item =>
+                item.id === id ? { ...item, owned: owned } : item
+            )
+        );
+    };
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -68,10 +76,12 @@ export default function TabAll() {
                     shopData.map(item => (
                         <ShopCard
                             key={item.id}
+                            id={item.id}
                             name={item.name}
                             price={item.price}
-                            owned={item.owned}
+                            initialOwned={item.owned}
                             assets={item.asset.split('|')}
+                            onUpdateOwned={handleUpdateOwned}
                         />
                     ))
                 )}

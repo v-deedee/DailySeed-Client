@@ -18,17 +18,18 @@ import { updateHabit } from "../../services/habit.service";
 import { color, getCurrentDate } from "../../utils/utils";
 import { trackHabit } from "../../services/habit.service";
 import { TreeContext } from "../../contexts/tree.context";
+import LoadingScreen from "../LoadingScreen"
 
 const RecordScreen = ({ navigation }) => {
   const [openDelHabitModal, setOpenDelHabitModal] = useState(false);
-  const { tree } = useContext(TreeContext)
+  const { tree, setTree } = useContext(TreeContext)
   const [currentHabitId, setCurrentHabitId] = useState(0);
 
   const currentDate = getCurrentDate();
 
-  const [values, setValues] = useState(new Array(10).fill(0));
+  const [values, setValues] = useState(new Array(20).fill(0));
 
-  const [renderValues, setRenderValues] = useState(new Array(10).fill(0));
+  const [renderValues, setRenderValues] = useState(new Array(20).fill(0));
   const [daysLeft, setDaysLeft] = useState([]);
   const { habits, setHabits } = useContext(HabitContext);
 
@@ -124,6 +125,12 @@ const RecordScreen = ({ navigation }) => {
   };
 
 
+  if (!habits) {
+    return (
+      <LoadingScreen/>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar />
@@ -213,9 +220,7 @@ const RecordScreen = ({ navigation }) => {
                 let newValues = [...values];
                 let newRenderValues = [...renderValues];
 
-                let divider = Math.floor(
-                  100 / (habits[index].criteria.length - 1)
-                );
+                let divider = Math.floor(100 / (habits[index].criteria.length - 1));
                 let shiftedValue = value + divider / 2;
 
                 newValues[index] = Math.floor(shiftedValue / divider);
@@ -227,22 +232,16 @@ const RecordScreen = ({ navigation }) => {
               maximumValue={100}
               minimumValue={0}
               step={2}
-              minimumTrackTintColor={color(
-                values[index],
-                habit.criteria.length - 1
-              )}
+              minimumTrackTintColor={color(values[index], habit.criteria.length - 1)}
               onSlidingComplete={(value) => {
                 let newValues = [...values];
                 let newRenderValues = [...renderValues];
 
-                let divider = Math.floor(
-                  100 / (habits[index].criteria.length - 1),
-                );
+                let divider = Math.floor(100 / (habits[index].criteria.length - 1));
                 let shiftedValue = value + divider / 2;
 
                 newValues[index] = Math.floor(shiftedValue / divider);
-                newRenderValues[index] =
-                Math.floor(shiftedValue / divider) * divider;
+                newRenderValues[index] = Math.floor(shiftedValue / divider) * divider;
 
                 setValues(newValues);
                 setRenderValues(newRenderValues);
@@ -351,11 +350,11 @@ actionIcon: {
   padding: 8,
 },
 statusContent: {
-  padding: 10,
-  borderRadius: 999,
-  color: "#fff",
-  fontWeight: "bold",
-  fontSize: 10,
+  // padding: 10,
+  // borderRadius: 999,
+  // color: "back",
+  // fontWeight: "bold",
+  // fontSize: 10,
 },
 submitButton: {
   backgroundColor: "#50AA75",

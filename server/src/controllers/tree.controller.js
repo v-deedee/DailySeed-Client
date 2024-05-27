@@ -176,9 +176,9 @@ export default class TreeController {
                     },
                 });
             } else {
-                inventory[tree.Seed.name] ??= {};
-                inventory[tree.Seed.name][phase] ??= { count: 0, asset: tree.Seed.asset };
-                inventory[tree.Seed.name][phase].count += 1;
+                inventory[tree.Seed.name] ??= { phase: {}, asset: tree.Seed.asset };
+                inventory[tree.Seed.name].phase[phase] ??= [];
+                inventory[tree.Seed.name].phase[phase].push(tree.id);
             }
         }
 

@@ -4,6 +4,7 @@ import ProgressCircle from "../_component/ProgressCircle";
 import { useContext, useEffect } from "react";
 import { TreeContext } from "../../../contexts/tree.context";
 import { SeedContext } from "../../../contexts/seed.context";
+import { CLOUDINARY_BASE_URL } from "../../../utils/constants/cloudinary.constants";
 
 export default function TreeScreen({
   openRecord,
@@ -14,6 +15,10 @@ export default function TreeScreen({
   const { tree } = useContext(TreeContext)
 
   const { seeds } = useContext(SeedContext);
+  useEffect(() => {
+    console.log(tree);
+
+  }, [tree])
   return (
     <>
       {/* Main */}

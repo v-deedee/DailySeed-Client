@@ -75,3 +75,15 @@ export const findTree = async (day, month, year) => {
     return error.response.data.data;
   }
 };
+
+export const buyTree = async (seedId) => {
+  try {
+    console.log(seedId)
+    const response = await authApi.post(`/api/seed/buy`, {id: seedId})
+    return response.data;
+  } catch (error) {
+    return error.response.data;
+    // console.error('Lỗi khi gửi yêu cầu mua cây:', error.response.data);
+  }
+};
+

@@ -10,30 +10,34 @@ import {
 } from "react-native";
 import { register } from "../services/user.service";
 import { UserContext } from "../contexts/user.context";
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import FormInput from "../components/FormInput/formInput";
 
 const formSchema = z
   .object({
-    email: z.string().email('Please enter a valid email'),
-    username: z.string().min(3, 'Username must be at least 3 characters'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirm: z.string().min(8, 'Password must be at least 8 characters')
+    email: z.string().email("Please enter a valid email"),
+    username: z.string().min(3, "Username must be at least 3 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirm: z.string().min(8, "Password must be at least 8 characters"),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Passwords don't match",
     path: ["confirm"],
-  });;
+  });
 
 const RegisterScreen = ({ navigation }) => {
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
-      email: '',
-      username: '',
-      password: '',
-      confirm: '',
+      email: "",
+      username: "",
+      password: "",
+      confirm: "",
     },
     resolver: zodResolver(formSchema),
   });
@@ -48,9 +52,9 @@ const RegisterScreen = ({ navigation }) => {
     if (response.ok) {
       setUser(data);
       navigation.navigate("Login");
-      Alert.alert('Success', 'Account registered successfully');
+      Alert.alert("Success", "Account registered successfully");
     } else {
-      Alert.alert('Error', response.message);
+      Alert.alert("Error", response.message);
     }
     setIsLoading(false);
   };
@@ -65,37 +69,34 @@ const RegisterScreen = ({ navigation }) => {
         style={styles.logo}
         source={require("../../assets/logo/logo-with-text.png")}
       />
-      <View style={styles.inputView}>
-        <FormInput
-          control={control}
-          name='email'
-          placeholder="Email"
-        />
+      <View style={{ gap: 20, width: "100%", alignItems: "center" }}>
+        <View style={styles.inputView}>
+          <FormInput control={control} name="email" placeholder="Email" />
+        </View>
+        <View style={styles.inputView}>
+          <FormInput control={control} name="username" placeholder="Username" />
+        </View>
+        <View style={styles.inputView}>
+          <FormInput
+            control={control}
+            name="password"
+            placeholder="Password"
+            secureTextEntry
+          />
+        </View>
+        <View style={styles.inputView}>
+          <FormInput
+            control={control}
+            name="confirm"
+            placeholder="Confirm Password"
+            secureTextEntry
+          />
+        </View>
       </View>
-      <View style={styles.inputView}>
-        <FormInput
-          control={control}
-          name='username'
-          placeholder="Username"
-        />
-      </View>
-      <View style={styles.inputView}>
-        <FormInput
-          control={control}
-          name='password'
-          placeholder="Password"
-          secureTextEntry
-        />
-      </View>
-      <View style={styles.inputView}>
-        <FormInput
-          control={control}
-          name='confirm'
-          placeholder="Confirm Password"
-          secureTextEntry
-        />
-      </View>
-      <TouchableOpacity style={styles.registerBtn} onPress={handleSubmit(onSubmit)}>
+      <TouchableOpacity
+        style={styles.registerBtn}
+        onPress={handleSubmit(onSubmit)}
+      >
         {isLoading ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
