@@ -169,24 +169,17 @@ export const ViewGarden = ({ handleCalendarPress }) => (
   </View>
 );
 
-export const TreeAvatar = ({ treeStatus, value, handleAvatarPress }) => {
-  const assets = {
-    phase1: require("../../../../assets/garden/Tree3/tree3-phase1.png"),
-    phase2: require("../../../../assets/garden/Tree3/tree3-phase2.png"),
-    phase3: require("../../../../assets/garden/Tree3/tree3-phase3.png"),
-    phase4: require("../../../../assets/garden/Tree3/tree3-phase4.png"),
-  };
-
+export const TreeAvatar = ({ imgURL, value, handleAvatarPress, queue, type }) => {
   return (
     <View>
       <Avatar
         size={60}
         rounded
-        source={assets[treeStatus]}
+        source={{ uri: `${CLOUDINARY_BASE_URL}${imgURL}` }}
         containerStyle={{ backgroundColor: "#fcf0be" }}
         onPress={handleAvatarPress}
       />
-      <Badge status="success" value={value} />
+      <Badge status="success" value={value} containerStyle={{ marginTop: 5 }} />
     </View>
   );
 };
