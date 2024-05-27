@@ -1,24 +1,33 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { UserContext } from '../../contexts/user.context';
+import React, { useContext, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { UserContext } from "../../contexts/user.context";
 
-const ProfileScreen = ({ navigation}) => {
-  const [name, setName] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+
+const ProfileScreen = ({ navigation }) => {
+  const [name, setName] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const { user } = useContext(UserContext);
   useEffect(() => {
     setName(user.user.username);
-    setProfileImage(user.profile.picture)
-  }, [user])
+    setProfileImage(user.profile.picture);
+  }, [user]);
   const handleNameChange = (text) => {
     setName(text);
   };
 
   const handlePasswordChange = (text, field) => {
-    if (field === 'old') {
+    if (field === "old") {
       setOldPassword(text);
     } else {
       setNewPassword(text);
@@ -34,14 +43,14 @@ const ProfileScreen = ({ navigation}) => {
     if (oldPassword === user.profile.password) {
       onUpdateProfile({ ...user.profile, password: newPassword });
     } else {
-      alert('Invalid old password');
+      alert("Invalid old password");
     }
   };
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to make this work!');
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
       return;
     }
 
@@ -65,6 +74,29 @@ const ProfileScreen = ({ navigation}) => {
 
   return (
     <View style={styles.container}>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: 20,
+          backgroundColor: "#fff",
+        }}
+      >
+        <TouchableOpacity onPress={() => navigation.navigate("Menu")}>
+          <FontAwesome6 name="arrow-left-long" color={"#333"} size={20} />
+        </TouchableOpacity>
+
+        <Text style={{ fontSize: 20, fontWeight: "bold", color: "#474838" }}>
+          My info
+        </Text>
+
+        <TouchableOpacity disabled>
+          <FontAwesome6 name="arrow-left-long" color={"#fff"} size={20} />
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.heading}>Profile</Text>
       <View style={styles.imageContainer}>
         {profileImage ? (
@@ -95,14 +127,14 @@ const ProfileScreen = ({ navigation}) => {
       <TextInput
         style={styles.input}
         value={oldPassword}
-        onChangeText={(text) => handlePasswordChange(text, 'old')}
+        onChangeText={(text) => handlePasswordChange(text, "old")}
         placeholder="Old Password"
         secureTextEntry
       />
       <TextInput
         style={styles.input}
         value={newPassword}
-        onChangeText={(text) => handlePasswordChange(text, 'new')}
+        onChangeText={(text) => handlePasswordChange(text, "new")}
         placeholder="New Password"
         secureTextEntry
       />
@@ -116,17 +148,15 @@ const ProfileScreen = ({ navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+    // padding: 20,
   },
   heading: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   imageContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   image: {
@@ -136,29 +166,29 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     fontSize: 16,
-    color: 'gray',
+    color: "gray",
   },
   imageButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 10,
   },
   input: {
-    width: '80%',
+    width: "80%",
     height: 40,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
     marginBottom: 10,
     paddingHorizontal: 10,
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
 });
 
