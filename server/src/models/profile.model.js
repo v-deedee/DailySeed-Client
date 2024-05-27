@@ -7,7 +7,6 @@ export default function (sequelize, DataTypes) {
         },
         email: {
             type: DataTypes.STRING,
-            unique: true,
             allowNull: false,
         },
         money: {
