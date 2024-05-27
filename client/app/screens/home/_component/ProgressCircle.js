@@ -25,34 +25,42 @@ export default function ProgressCircle({ progress }) {
               style={styles.imageBackground}
             >
               {(() => {
-                 if (!tree.seed.asset || tree.seed.asset.length === 0) {
+                if (!tree.seed?.asset || tree.seed?.asset.length === 0) {
                   return null; // Hoặc return <></>;
                 }
                 if (progress <= 25) {
                   return (
                     <Image
-                      source={{ uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[0]}` }}
+                      source={{
+                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[0]}`,
+                      }}
                       style={styles.imageStyle}
                     />
                   );
                 } else if (progress <= 50) {
                   return (
                     <Image
-                      source={{ uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[1]}` }}
+                      source={{
+                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[1]}`,
+                      }}
                       style={styles.imageStyle}
                     />
                   );
                 } else if (progress <= 75) {
                   return (
                     <Image
-                      source={{ uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[2]}` }}
+                      source={{
+                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[2]}`,
+                      }}
                       style={styles.imageStyle}
                     />
                   );
                 } else {
                   return (
                     <Image
-                      source={{ uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[3]}` }}
+                      source={{
+                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[3]}`,
+                      }}
                       style={styles.imageStyle}
                     />
                   );
