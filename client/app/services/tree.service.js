@@ -27,11 +27,10 @@ export const getTree = async (treeId) => {
   }
 };
 
-export const listTrees = async (day, month, year, extend = false) => {
+export const listTrees = async (month, year, extend = false) => {
   try {
     const params = {};
-    if (day && month && year) {
-      params.day = day;
+    if (month && year) {
       params.month = month;
       params.year = year;
     }
@@ -45,7 +44,7 @@ export const listTrees = async (day, month, year, extend = false) => {
       throw new Error('Failed to list trees');
     }
   } catch (error) {
-    throw error.response.data;
+    throw error.response ? error.response.data : error.message;
   }
 };
 
@@ -70,9 +69,9 @@ export const findTree = async (day, month, year) => {
       return response.data.data;
     } else {
       throw new Error('Failed to find Tree');
-    } 
-  } catch (error) {
-      console.log(error);
-      return error.response.data.data;
     }
-  };
+  } catch (error) {
+    console.log(error);
+    return error.response.data.data;
+  }
+};

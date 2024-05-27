@@ -2,15 +2,19 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import ShopCard from "./ShopCard";
 import { useEffect, useState } from "react";
 import { listShopSeeds } from "../../../services/seed.service";
+import { Skeleton } from '@rneui/themed';
+
 
 export default function TabAll() {
     const [shopData, setShopData] = useState([]);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await listShopSeeds();
                 setShopData(response);
+                setLoading(false)
             } catch (error) {
                 console.log(error);
             }
@@ -22,15 +26,55 @@ export default function TabAll() {
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Text style={styles.title}>Popular</Text>
-                {shopData.map(item => (
-                    <ShopCard
-                        key={item.id}
-                        name={item.name}
-                        price={item.price}
-                        owned={item.owned}
-                        assets={item.asset.split('|')}
-                    />
-                ))}
+                {isLoading ? (
+                    <>
+                        <Skeleton
+                            style={{ width: "100%", height: 150, borderRadius: 20, marginTop: 10 }}
+                            baseColor="#E0E0E0"
+                            highlightColor="#F0F0F0"
+                        />
+
+                        <Skeleton
+                            style={{ width: "50%", height: 20, borderRadius: 8, marginTop: 5 }}
+                            baseColor="#E0E0E0"
+                            highlightColor="#F0F0F0"
+                        />
+
+                        <Skeleton
+                            style={{ width: "100%", height: 150, borderRadius: 20, marginTop: 10 }}
+                            baseColor="#E0E0E0"
+                            highlightColor="#F0F0F0"
+                        />
+
+                        <Skeleton
+                            style={{ width: "50%", height: 20, borderRadius: 8, marginTop: 5 }}
+                            baseColor="#E0E0E0"
+                            highlightColor="#F0F0F0"
+                        />
+
+                        <Skeleton
+                            style={{ width: "100%", height: 150, borderRadius: 20, marginTop: 10 }}
+                            baseColor="#E0E0E0"
+                            highlightColor="#F0F0F0"
+                        />
+
+                        <Skeleton
+                            style={{ width: "50%", height: 20, borderRadius: 8, marginTop: 5 }}
+                            baseColor="#E0E0E0"
+                            highlightColor="#F0F0F0"
+                        />
+                    </>
+                ) : (
+                    shopData.map(item => (
+                        <ShopCard
+                            key={item.id}
+                            name={item.name}
+                            price={item.price}
+                            owned={item.owned}
+                            assets={item.asset.split('|')}
+                        />
+                    ))
+                )}
             </ScrollView>
         </View>
     );
