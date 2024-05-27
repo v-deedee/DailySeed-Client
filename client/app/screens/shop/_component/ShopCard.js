@@ -1,23 +1,29 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Card } from '@rneui/themed';
 import { View, Text, StyleSheet, Image, ImageBackground, Alert, ActivityIndicator } from "react-native";
 import { CLOUDINARY_BASE_URL } from '../../../utils/constants/cloudinary.constants';
 import { Icon } from '@rneui/themed';
 import Modal from 'react-native-modal';
 import { buyTree } from '../../../services/tree.service';
+import { UserContext } from '../../../contexts/user.context';
 
-export default function ShopCard({ id, name, price, initialOwned, assets }) {
+export default function ShopCard({ id, name, price, initialOwned, assets, onUpdateOwned }) {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [owned, setOwned] = useState(initialOwned);
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
+  const { user, setUser } = useContext(UserContext);
 
   const handleBuyTree = async () => {
+    console.log(user);
     setIsLoading(true); // Start loading
     const data = await buyTree(id);
     console.log(data);
     setIsLoading(false); // End loading
     if (data.ok) {
       Alert.alert("Mua cây thành công");
+      const newUser = {...user, profile: {...user.profile, money: user.profile.money - price}}
+      setUser(newUser)
+      onUpdateOwned(id, true);
       setOwned(true); // Update the state using setOwned
     } else {
       Alert.alert(data.message);
