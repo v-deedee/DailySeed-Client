@@ -68,9 +68,10 @@ export default function TabAll() {
                     shopData.map(item => (
                         <ShopCard
                             key={item.id}
+                            id={item.id}
                             name={item.name}
                             price={item.price}
-                            owned={item.owned}
+                            initialOwned={item.owned}
                             assets={item.asset.split('|')}
                         />
                     ))
