@@ -152,148 +152,178 @@ const RecordScreen = ({ navigation }) => {
       </View>
 
       {/* Record field */}
-      <ScrollView>
-        {habits.map((habit, index) => (
-          <View style={styles.recordContent} key={index}>
-            {/* Icon + title */}
-            <View style={{ position: "absolute", top: -27, left: 20 }}>
-              <View style={styles.habitIconBox}>
-                <View style={styles.habitIcon}>
-                  <Text style={{ fontSize: 35 }}>{habit.icon}</Text>
+      {habits.length > 0 ? (
+        <ScrollView>
+          {habits.map((habit, index) => (
+            <View style={styles.recordContent} key={index}>
+              {/* Icon + title */}
+              <View style={{ position: "absolute", top: -27, left: 20 }}>
+                <View style={styles.habitIconBox}>
+                  <View style={styles.habitIcon}>
+                    <Text style={{ fontSize: 35 }}>{habit.icon}</Text>
+                  </View>
                 </View>
               </View>
-            </View>
 
-            {/* Action */}
-            <View style={styles.actionIconBox}>
-              <TouchableOpacity
-                style={styles.actionIcon}
-                onPress={() => {
-                  editHabit(index);
+              {/* Action */}
+              <View style={styles.actionIconBox}>
+                <TouchableOpacity
+                  style={styles.actionIcon}
+                  onPress={() => {
+                    editHabit(index);
+                  }}
+                >
+                  <Feather name="edit" color="#fff" size={15} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.actionIcon}
+                  onPress={() => {
+                    setCurrentHabitId(index);
+                    toggleDelHabitModal();
+                  }}
+                >
+                  <MaterialIcons name="delete" color="#fff" size={15} />
+                </TouchableOpacity>
+              </View>
+
+              <View
+                style={{
+                  marginBottom: 30,
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <Feather name="edit" color="#fff" size={15} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.actionIcon}
-                onPress={() => {
-                  setCurrentHabitId(index);
-                  toggleDelHabitModal();
-                }}
-              >
-                <MaterialIcons name="delete" color="#fff" size={15} />
-              </TouchableOpacity>
-            </View>
-
-            <View
-              style={{
-                marginBottom: 30,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{ fontSize: 16, fontWeight: "700", marginBottom: 5 }}
-              >
-                {habit.name}
-              </Text>
-              {/* Value */}
-              {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text
+                  style={{ fontSize: 16, fontWeight: "700", marginBottom: 5 }}
+                >
+                  {habit.name}
+                </Text>
+                {/* Value */}
+                {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text>Value: </Text>
                 <Text style={styles.statusContent}>{renderValues[index]}</Text>
               </View> */}
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text
-                  style={{
-                    fontStyle: "italic",
-                    color: "#B3B3B3",
-                    fontWeight: 700,
-                  }}
-                >
-                  {daysLeft[index]} days left
-                </Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text
+                    style={{
+                      fontStyle: "italic",
+                      color: "#B3B3B3",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {daysLeft[index]} days left
+                  </Text>
+                </View>
               </View>
+
+              <Slider
+                value={renderValues[index]}
+                onValueChange={(value) => {
+                  let newValues = [...values];
+                  let newRenderValues = [...renderValues];
+
+                  let divider = Math.floor(
+                    100 / (habits[index].criteria.length - 1),
+                  );
+                  let shiftedValue = value + divider / 2;
+
+                  newValues[index] = Math.floor(shiftedValue / divider);
+                  newRenderValues[index] = value;
+
+                  setValues(newValues);
+                  setRenderValues(newRenderValues);
+                }}
+                maximumValue={100}
+                minimumValue={0}
+                step={2}
+                minimumTrackTintColor={color(
+                  values[index],
+                  habit.criteria.length - 1,
+                )}
+                onSlidingComplete={(value) => {
+                  let newValues = [...values];
+                  let newRenderValues = [...renderValues];
+
+                  let divider = Math.floor(
+                    100 / (habits[index].criteria.length - 1),
+                  );
+                  let shiftedValue = value + divider / 2;
+
+                  newValues[index] = Math.floor(shiftedValue / divider);
+                  newRenderValues[index] =
+                    Math.floor(shiftedValue / divider) * divider;
+
+                  setValues(newValues);
+                  setRenderValues(newRenderValues);
+                }}
+                allowTouchTrack
+                trackStyle={{ height: 25, borderRadius: 999 }}
+                thumbStyle={{
+                  height: 55,
+                  width: 55,
+                  borderRadius: 999,
+                  backgroundColor: "#F9FDB8",
+                  paddingTop: 2,
+                }}
+                thumbProps={{
+                  children: (
+                    <View style={{ alignItems: "center", gap: 5 }}>
+                      <Text style={{ fontSize: 35 }}>
+                        {habit.criteria[values[index]].icon}
+                      </Text>
+                      <Text
+                        style={{
+                          width: 100,
+                          textAlign: "center",
+                          fontWeight: 800,
+                          color: color(
+                            values[index],
+                            habit.criteria.length - 1,
+                          ),
+                        }}
+                      >
+                        {habit.criteria[values[index]].name}
+                      </Text>
+                    </View>
+                  ),
+                }}
+              />
             </View>
-
-            <Slider
-              value={renderValues[index]}
-              onValueChange={(value) => {
-                let newValues = [...values];
-                let newRenderValues = [...renderValues];
-
-                let divider = Math.floor(
-                  100 / (habits[index].criteria.length - 1),
-                );
-                let shiftedValue = value + divider / 2;
-
-                newValues[index] = Math.floor(shiftedValue / divider);
-                newRenderValues[index] = value;
-
-                setValues(newValues);
-                setRenderValues(newRenderValues);
-              }}
-              maximumValue={100}
-              minimumValue={0}
-              step={2}
-              minimumTrackTintColor={color(
-                values[index],
-                habit.criteria.length - 1,
-              )}
-              onSlidingComplete={(value) => {
-                let newValues = [...values];
-                let newRenderValues = [...renderValues];
-
-                let divider = Math.floor(
-                  100 / (habits[index].criteria.length - 1),
-                );
-                let shiftedValue = value + divider / 2;
-
-                newValues[index] = Math.floor(shiftedValue / divider);
-                newRenderValues[index] =
-                  Math.floor(shiftedValue / divider) * divider;
-
-                setValues(newValues);
-                setRenderValues(newRenderValues);
-              }}
-              allowTouchTrack
-              trackStyle={{ height: 25, borderRadius: 999 }}
-              thumbStyle={{
-                height: 55,
-                width: 55,
-                borderRadius: 999,
-                backgroundColor: "#F9FDB8",
-                paddingTop: 2,
-              }}
-              thumbProps={{
-                children: (
-                  <View style={{ alignItems: "center", gap: 5 }}>
-                    <Text style={{ fontSize: 35 }}>
-                      {habit.criteria[values[index]].icon}
-                    </Text>
-                    <Text
-                      style={{
-                        width: 100,
-                        textAlign: "center",
-                        fontWeight: 800,
-                        color: color(values[index], habit.criteria.length - 1),
-                      }}
-                    >
-                      {habit.criteria[values[index]].name}
-                    </Text>
-                  </View>
-                ),
-              }}
-            />
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            paddingHorizontal: 50,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 700,
+              color: "#888",
+              textAlign: "center",
+            }}
+          >
+            You don't have any habits. Go and create your own habits to keep
+            track!!!
+          </Text>
+        </View>
+      )}
 
       {/* Submit button */}
       <View style={styles.submitBox}>
         <TouchableOpacity
-          style={styles.submitButton}
+          style={
+            habits.length === 0
+              ? [styles.submitButton, { opacity: 0.5 }]
+              : styles.submitButton
+          }
           onPress={submitRecord}
-          disabled={isLoading}
+          disabled={isLoading || habits.length === 0}
         >
           {isLoading ? (
             <ActivityIndicator size="small" color="#ffffff" />

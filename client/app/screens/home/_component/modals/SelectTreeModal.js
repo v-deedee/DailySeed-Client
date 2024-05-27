@@ -108,6 +108,7 @@ export default function SelectTreeModal({
         <TouchableOpacity
           style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
           onPress={handleDone}
+          disabled={isLoading}
         >
           {isLoading ? (
             <ActivityIndicator size="small" color="#ffffff" />

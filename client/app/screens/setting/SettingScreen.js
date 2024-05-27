@@ -23,8 +23,8 @@ export default function SettingScreen({ signOut, navigation }) {
   const handleLogout = () => {
     logout();
     setUser(null);
-    setHabits(null);
-    setSeeds(null);
+    setHabits([]);
+    setSeeds([]);
     setTree(null);
     signOut();
   };

@@ -38,11 +38,11 @@ export default function NoteScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView style={{ width: "90%" }}>
         {!showPost ? (
           <View
             style={{
-              // width: "90%",
+              // width: "100%",
               padding: 20,
               backgroundColor: "#fff",
               borderRadius: 10,
