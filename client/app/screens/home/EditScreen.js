@@ -230,12 +230,9 @@ export default function EditScreen({ navigation }) {
   };
 
   const submit = async () => {
-    console.log(1)
     if (currentHabit.id === -1) {
-      console.log(3)
       // Create new habit
       const newHabit = await createHabit(currentHabit);
-      console.log(newHabit, 132412341234134);
       const habit = {
         criteria: newHabit.criteria,
         id: newHabit.habit.id,
@@ -243,25 +240,22 @@ export default function EditScreen({ navigation }) {
         icon: newHabit.habit.icon,
         name: newHabit.habit.name,
       };
-      console.log(habit);
-      console.log([...habits, habit]);
       setHabits([...habits, habit]);
     } else {
       // Update existing habit
       const updatedHabit = await updateHabit(currentHabit);
-      const habit = {
-        criteria: newHabit.criteria,
-        id: newHabit.habit.id,
-        duration: newHabit.habit.duration,
-        icon: newHabit.habit.icon,
-        name: newHabit.habit.name,
+      const newHabit = {
+        criteria: updatedHabit.criteria,
+        id: updatedHabit.habit.id,
+        duration: updatedHabit.habit.duration,
+        icon: updatedHabit.habit.icon,
+        name: updatedHabit.habit.name,
       };
       const updatedHabits = habits.map((habit) =>
         habit.id === newHabit.id ? newHabit : habit
       );
       setHabits(updatedHabits);
     }
-    console.log(2)
     navigation.navigate("Record");
   };
 
