@@ -19,6 +19,7 @@ export default function TreeDetail({ treeID }) {
                 const phaseImage = assetArray[assetArray.length - info?.seed?.phase];
                 setImgUrl(phaseImage);
                 setLoading(false);
+                console.log(info)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
