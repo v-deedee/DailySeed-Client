@@ -5,6 +5,7 @@ import {
   StatusBar,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { useState, useContext, useEffect } from "react";
 import { Slider } from "@rneui/themed";
@@ -18,11 +19,11 @@ import { updateHabit } from "../../services/habit.service";
 import { color, getCurrentDate } from "../../utils/utils";
 import { trackHabit } from "../../services/habit.service";
 import { TreeContext } from "../../contexts/tree.context";
-import LoadingScreen from "../LoadingScreen"
+import LoadingScreen from "../LoadingScreen";
 
 const RecordScreen = ({ navigation }) => {
   const [openDelHabitModal, setOpenDelHabitModal] = useState(false);
-  const { tree, setTree } = useContext(TreeContext)
+  const { tree, setTree } = useContext(TreeContext);
   const [currentHabitId, setCurrentHabitId] = useState(0);
 
   const currentDate = getCurrentDate();
@@ -33,26 +34,29 @@ const RecordScreen = ({ navigation }) => {
   const [daysLeft, setDaysLeft] = useState([]);
   const { habits, setHabits } = useContext(HabitContext);
 
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log(habits)
+    // console.log(habits)
     if (habits && habits.length) {
-      const initialValues = habits.map(habit => {
-        if(!habit.selected) return 0;
+      const initialValues = habits.map((habit) => {
+        if (!habit.selected) return 0;
         const selectedId = habit.selected;
-        const criteriaIds = habit.criteria.map(criteria => criteria.id);
-        return criteriaIds.includes(selectedId) ? criteriaIds.indexOf(selectedId) : 0;
+        const criteriaIds = habit.criteria.map((criteria) => criteria.id);
+        return criteriaIds.includes(selectedId)
+          ? criteriaIds.indexOf(selectedId)
+          : 0;
       });
-      console.log(initialValues)
+      // console.log(initialValues)
       setValues((prevValues) => {
         const updatedValues = [...prevValues];
         initialValues.forEach((value, index) => {
           updatedValues[index] = value;
         });
-    
+
         return updatedValues;
-      }); 
-      
+      });
+
       const initialRenderValues = habits.map((habit, index) => {
         return habit.criteria[initialValues[index]].score;
       });
@@ -61,17 +65,16 @@ const RecordScreen = ({ navigation }) => {
         initialRenderValues.forEach((value, index) => {
           updatedValues[index] = value;
         });
-    
+
         return updatedValues;
-      }); 
-      
+      });
+
       setDaysLeft(new Array(habits.length).fill(4)); // Số ngày còn lại mặc định là 4
     }
   }, [habits]);
 
   const closeRecord = () => {
     navigation.navigate("Home");
-  
   };
 
   const editHabit = (habitId) => {
@@ -79,6 +82,7 @@ const RecordScreen = ({ navigation }) => {
   };
 
   const submitRecord = async () => {
+    setIsLoading(true);
     let totalProgress = 0;
 
     habits.forEach((habit, index) => {
@@ -87,26 +91,28 @@ const RecordScreen = ({ navigation }) => {
       totalProgress += (value * 100) / (criteriaLength - 1);
     });
     const habitData = habits.map((habit, index) => {
-      return {id: habit.criteria[values[index]].id, score: habit.criteria[values[index]].score};
-    })
-    console.log(habitData);
+      return {
+        id: habit.criteria[values[index]].id,
+        score: habit.criteria[values[index]].score,
+      };
+    });
+    // console.log(habitData);
 
     const treeData = await trackHabit(tree.tree.id, habitData);
-    if(treeData) {
-
+    if (treeData) {
       const modifiedSeed = {
         ...treeData.seed,
-        asset: treeData.seed.asset.split('|'),
+        asset: treeData.seed.asset.split("|"),
       };
       const modifiedTree = {
         ...treeData,
         seed: modifiedSeed,
       };
-      console.log(modifiedTree)
+      // console.log(modifiedTree)
       setTree(modifiedTree);
-  }       
+    }
 
-
+    setIsLoading(false);
     navigation.navigate("Home");
   };
 
@@ -124,11 +130,8 @@ const RecordScreen = ({ navigation }) => {
     navigation.navigate("Edit", { id: habits.length });
   };
 
-
   if (!habits) {
-    return (
-      <LoadingScreen/>
-    );
+    return <LoadingScreen />;
   }
 
   return (
@@ -195,12 +198,10 @@ const RecordScreen = ({ navigation }) => {
                 {habit.name}
               </Text>
               {/* Value */}
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text>Value: </Text>
-                <Text style={styles.statusContent}>
-                  {renderValues[index]}
-                </Text>
-              </View>
+                <Text style={styles.statusContent}>{renderValues[index]}</Text>
+              </View> */}
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text
                   style={{
@@ -220,7 +221,9 @@ const RecordScreen = ({ navigation }) => {
                 let newValues = [...values];
                 let newRenderValues = [...renderValues];
 
-                let divider = Math.floor(100 / (habits[index].criteria.length - 1));
+                let divider = Math.floor(
+                  100 / (habits[index].criteria.length - 1),
+                );
                 let shiftedValue = value + divider / 2;
 
                 newValues[index] = Math.floor(shiftedValue / divider);
@@ -232,16 +235,22 @@ const RecordScreen = ({ navigation }) => {
               maximumValue={100}
               minimumValue={0}
               step={2}
-              minimumTrackTintColor={color(values[index], habit.criteria.length - 1)}
+              minimumTrackTintColor={color(
+                values[index],
+                habit.criteria.length - 1,
+              )}
               onSlidingComplete={(value) => {
                 let newValues = [...values];
                 let newRenderValues = [...renderValues];
 
-                let divider = Math.floor(100 / (habits[index].criteria.length - 1));
+                let divider = Math.floor(
+                  100 / (habits[index].criteria.length - 1),
+                );
                 let shiftedValue = value + divider / 2;
 
                 newValues[index] = Math.floor(shiftedValue / divider);
-                newRenderValues[index] = Math.floor(shiftedValue / divider) * divider;
+                newRenderValues[index] =
+                  Math.floor(shiftedValue / divider) * divider;
 
                 setValues(newValues);
                 setRenderValues(newRenderValues);
@@ -281,8 +290,16 @@ const RecordScreen = ({ navigation }) => {
 
       {/* Submit button */}
       <View style={styles.submitBox}>
-        <TouchableOpacity style={styles.submitButton} onPress={submitRecord}>
-          <Text style={styles.submitText}>Done</Text>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={submitRecord}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <Text style={styles.submitText}>Done</Text>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -292,80 +309,80 @@ const RecordScreen = ({ navigation }) => {
         toggle={toggleDelHabitModal}
         deleteHabit={deleteHabit}
       />
-      </View>
-      );
-    };
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-container: {
-  flex: 1,
-  backgroundColor: "#FBF5E5",
-},
-header: {
-  display: "flex",
-  flexDirection: "row",
-  justifyContent: "space-between",
-  padding: 20,
-},
-date: {
-  fontSize: 20,
-  fontWeight: "bold",
-  color: "#474838",
-},
-recordContent: {
-  marginTop: 35,
-  padding: 20,
-  paddingTop: 15,
-  paddingBottom: 40,
-  height: "auto",
-  backgroundColor: "#FFFFFF",
-  marginHorizontal: 20,
-  marginVertical: 15,
-  borderRadius: 20,
-  position: "relative",
-},
-habitIconBox: {
-  backgroundColor: "#fff",
-  borderRadius: 999,
-},
-habitIcon: {
-  width: 65,
-  height: 65,
-  alignItems: "center",
-  justifyContent: "center",
-  borderRadius: 999,
-  backgroundColor: "#50AA7555",
-  borderColor: "#3B6C78",
-},
-actionIconBox: {
-  right: 15,
-  top: -15,
-  flexDirection: "row",
-  gap: 8,
-  position: "absolute",
-},
-actionIcon: {
-  backgroundColor: "#3B6C78",
-  borderRadius: 999,
-  padding: 8,
-},
-statusContent: {
-  // padding: 10,
-  // borderRadius: 999,
-  // color: "back",
-  // fontWeight: "bold",
-  // fontSize: 10,
-},
-submitButton: {
-  backgroundColor: "#50AA75",
-  alignItems: "center",
-  padding: 20,
-},
-submitText: {
-  fontSize: 18,
-  fontWeight: "bold",
-  color: "#fff",
-},
+  container: {
+    flex: 1,
+    backgroundColor: "#FBF5E5",
+  },
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 20,
+  },
+  date: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#474838",
+  },
+  recordContent: {
+    marginTop: 35,
+    padding: 20,
+    paddingTop: 15,
+    paddingBottom: 40,
+    height: "auto",
+    backgroundColor: "#FFFFFF",
+    marginHorizontal: 20,
+    marginVertical: 15,
+    borderRadius: 20,
+    position: "relative",
+  },
+  habitIconBox: {
+    backgroundColor: "#fff",
+    borderRadius: 999,
+  },
+  habitIcon: {
+    width: 65,
+    height: 65,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 999,
+    backgroundColor: "#50AA7555",
+    borderColor: "#3B6C78",
+  },
+  actionIconBox: {
+    right: 15,
+    top: -15,
+    flexDirection: "row",
+    gap: 8,
+    position: "absolute",
+  },
+  actionIcon: {
+    backgroundColor: "#3B6C78",
+    borderRadius: 999,
+    padding: 8,
+  },
+  statusContent: {
+    // padding: 10,
+    // borderRadius: 999,
+    // color: "back",
+    // fontWeight: "bold",
+    // fontSize: 10,
+  },
+  submitButton: {
+    backgroundColor: "#50AA75",
+    alignItems: "center",
+    padding: 20,
+  },
+  submitText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+  },
 });
 
 export default RecordScreen;
