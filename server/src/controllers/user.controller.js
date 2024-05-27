@@ -60,7 +60,7 @@ export default class UserController {
 
         const user = await UserService.create(body);
 
-        const seed = await SeedService.findOne({ name: "tree0" });
+        const seed = await SeedService.findOne({ price: 0 });
         await user.addSeed(seed);
 
         const payload = {
