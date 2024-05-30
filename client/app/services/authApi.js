@@ -14,7 +14,7 @@ authApi.interceptors.request.use(
     const token = await getTokenFromLocalStorage();
     if (token) {
       config.headers.Authorization = `${token}`;
-      console.log(token)
+      // console.log(token)
     } else {
       config.headers.Authorization = ''
     }

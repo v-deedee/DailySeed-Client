@@ -83,7 +83,7 @@ const Garden = () => {
             const assetArray = seed.asset.split('|');
             const phaseImage = assetArray[assetArray.length - seed.phase];
             newMap[tree.coordinate_y][tree.coordinate_x] = seed.phase;
-            newTreeInfo[`${tree.coordinate_x}_${tree.coordinate_y}`] = { imageURL: phaseImage, id: tree.id };
+            newTreeInfo[`${tree.coordinate_x}_${tree.coordinate_y}`] = { imageURL: phaseImage, id: tree.id, phase: seed.phase };
             setTreeInfo(newTreeInfo);
           }
         });
@@ -140,7 +140,7 @@ const Garden = () => {
     if (treeInfo.phase[phase].length > 0) {
       id = treeInfo.phase[phase].pop();
       // console.log(treeInfo.phase[phase]);
-      const newTreeInfo = { imageURL: img, id: id };
+      const newTreeInfo = { imageURL: img, id: id, phase: phase };
       console.log(treeInfo.phase[phase].length)
       setSelectedTree(newTreeInfo);
     }
@@ -160,8 +160,9 @@ const Garden = () => {
 
   const handlePlantTree = (x, y) => {
     if (map[y][x] === 0) {
+      console.log("Phase", selectedTreePhase)
       const newMap = map.map((row, i) =>
-        row.map((cell, j) => (i === y && j === x ? selectedTreePhase : cell))
+        row.map((cell, j) => (i === y && j === x ? parseInt(selectedTreePhase) : cell))
       );
       const newTreeInfo = { ...treeInfo, [`${x}_${y}`]: selectedTree };
 
@@ -171,66 +172,67 @@ const Garden = () => {
         coordinate_y: y
       }];
 
+      console.log(treesToUpdate)
+
       const response = updateTree(treesToUpdate);
+      // console.log(response)
+
       setMap(newMap);
       setTreeInfo(newTreeInfo);
     }
   };
 
-  const updateInventory = (inventory, treeId, phase, id) => {
+  const updateInventory = (inventory, phase, id, asset) => {
     const newInventory = { ...inventory };
-    if (newInventory[treeId]) {
-      if (newInventory[treeId].phase[phase]) {
-        newInventory[treeId].phase[phase].push(id);
-      } else {
-        newInventory[treeId].phase[phase] = [id];
-      }
-    } else {
-      newInventory[treeId] = {
-        asset: `seeds/tree2/phase${phase}.png`,
-        phase: {
-          [phase]: [id]
+
+    for (const treeName in newInventory) {
+      const treeData = newInventory[treeName];
+      const assets = treeData.asset.split("|");
+
+      for (let i = 0; i < assets.length; i++) {
+        if (assets[i] === asset) {
+          treeData.phase[phase] = [...treeData.phase[phase], id];
+          break;
+        } else {
+
         }
-      };
+      }
     }
-    return newInventory;
+    setInventory(newInventory);
   };
 
+
   const handleRemoveTree = (x, y) => {
+    console.log("Hello")
     if ([1, 2, 3, 4].includes(map[y][x])) {
       const treeCoordinateKey = `${x}_${y}`;
       const treeId = treeInfo[treeCoordinateKey]?.id;
-      if (treeId) {
-        try {
-          const treesToUpdate = [{
-            id: treeId,
-            coordinate_x: null,
-            coordinate_y: null
-          }];
-          const newMap = map.map((row, i) => {
-            if (i === y) {
-              return row.map((cell, j) => (j === x ? 0 : cell));
-            }
-            return row;
-          });
-          setMap(newMap);
 
-          const newTreeInfo = { ...treeInfo };
-          if (newTreeInfo.hasOwnProperty(treeCoordinateKey)) {
-            delete newTreeInfo[treeCoordinateKey];
-          }
-          setTreeInfo(newTreeInfo);
+      const treesToUpdate = [{
+        id: treeId,
+        coordinate_x: null,
+        coordinate_y: null
+      }];
 
-          const updatedInventory = updateInventory(inventory, treeId, phase, treeId);
-          setInventory(updatedInventory);
-
-          const response = updateTree(treesToUpdate);
-        } catch (error) {
-          console.error('Error updating tree');
+      const newMap = map.map((row, i) => {
+        if (i === y) {
+          return row.map((cell, j) => (j === x ? 0 : cell));
         }
-      } else {
-        console.error('Could not find tree ID for the given coordinates');
+        return row;
+      });
+      setMap(newMap);
+
+      const newTreeInfo = { ...treeInfo };
+      if (newTreeInfo.hasOwnProperty(treeCoordinateKey)) {
+        updateInventory(inventory, treeInfo[treeCoordinateKey].phase, treeId, treeInfo[treeCoordinateKey].imageURL)
+        delete newTreeInfo[treeCoordinateKey];
       }
+
+      setTreeInfo(newTreeInfo);
+
+      const response = updateTree(treesToUpdate);
+      // console.log(response)
+
     }
   };
 
@@ -300,8 +302,8 @@ const Garden = () => {
         </View>
       </View>
 
-      <Button title="Chiu" onPress={() => console.log(treeInfo)} />
-      <Button title="Chiu" onPress={() => console.log(inventory)} />
+      <Button title="treeInfo" onPress={() => console.log(JSON.stringify(treeInfo))} />
+      <Button title="inventory" onPress={() => console.log(JSON.stringify(inventory))} />
 
 
       <ReactNativeZoomableView
