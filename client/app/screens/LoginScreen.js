@@ -66,7 +66,11 @@ const LoginScreen = ({ navigation, signIn }) => {
           onChangeText={(text) => setPassword(text)}
         />
       </View>
-      <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
+      <TouchableOpacity
+        style={styles.loginBtn}
+        onPress={handleLogin}
+        disabled={loading}
+      >
         {loading ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (

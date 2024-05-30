@@ -88,20 +88,13 @@ export default class TreeController {
         const { day, month, year } = query;
 
         if (year && month && day) {
-            const date = `${year}${month.padStart(2, "0")}${day.padStart(
-                2,
-                "0"
-            )}`;
+            const date = `${year}${month.padStart(2, "0")}${day.padStart(2, "0")}`;
             return date;
         }
 
         if (year && month) {
             const start = `${year}${month.padStart(2, "0")}01`;
-            const end = `${year}${month.padStart(2, "0")}${new Date(
-                year,
-                month,
-                0
-            )
+            const end = `${year}${month.padStart(2, "0")}${new Date(year, month, 0)
                 .getDate()
                 .toString()
                 .padStart(2, "0")}`;
@@ -166,6 +159,10 @@ export default class TreeController {
         let garden = [];
         let inventory = {};
         for (const tree of trees) {
+            if (new Date(tree.date).getDate() == new Date().getDate()) {
+                continue
+            }
+
             const phase = tree.getPhase();
             if (tree.isPlanted()) {
                 garden.push({

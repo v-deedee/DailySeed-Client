@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Card, Button } from "@rneui/themed";
 import AccoutCard from "./_component/AccoutCard";
 import CustomCard from "./_component/CustomCard";
@@ -12,6 +12,8 @@ import { HabitContext } from "../../contexts/habit.context";
 import { SeedContext } from "../../contexts/seed.context";
 import { TreeContext } from "../../contexts/tree.context";
 
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+
 const Stack = createNativeStackNavigator();
 
 export default function SettingScreen({ signOut, navigation }) {
@@ -23,8 +25,8 @@ export default function SettingScreen({ signOut, navigation }) {
   const handleLogout = () => {
     logout();
     setUser(null);
-    setHabits(null);
-    setSeeds(null);
+    setHabits([]);
+    setSeeds([]);
     setTree(null);
     signOut();
   };
@@ -39,13 +41,29 @@ export default function SettingScreen({ signOut, navigation }) {
 
       <CustomCard />
 
-      <View style={{ marginTop: 30 }}>
-        <Button
+      <View style={{ marginTop: 10 }}>
+        {/* <Button
           onPress={() => handleLogout()}
           title="Log out"
           color="red"
           accessibilityLabel="Log out button"
-        />
+        /> */}
+        <TouchableOpacity
+          style={{
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "center",
+            gap: 8,
+            backgroundColor: "#649B92",
+            marginTop: 30,
+            padding: 12,
+            borderRadius: 10,
+          }}
+          onPress={handleLogout}
+        >
+          <MaterialIcons name="logout" size={20} color="#fff" />
+          <Text style={{ color: "#fff", fontWeight: "600" }}>Log out</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

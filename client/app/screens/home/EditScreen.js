@@ -11,8 +11,8 @@ import { useContext, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { Slider } from "@rneui/themed";
 
-import IconModal from './_component/IconPicker';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import IconModal from "./_component/IconPicker";
+import Ionicons from "react-native-vector-icons/Ionicons";
 // import { EmojiModal } from "react-native-emojis-picker";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -26,98 +26,11 @@ import { HabitContext } from "../../contexts/habit.context";
 import { createHabit, updateHabit } from "../../services/habit.service";
 import { EmojiPicker } from "../../components/EmojiPicker/EmojiPicker";
 
-// const habits = [
-//   {
-//     icon: "😈",
-//     name: "Emotion",
-//     duration: 1,
-//     criteria: [
-//       {
-//         label: "Bad",
-//         icon: "☹️",
-//       },
-//       {
-//         label: "Normal",
-//         icon: "😐",
-//       },
-//       {
-//         label: "Good",
-//         icon: "😀",
-//       },
-//     ],
-//   },
-//   {
-//     icon: "🧹",
-//     name: "Housework",
-//     duration: 1,
-//     criteria: [
-//       {
-//         label: "Poor",
-//         icon: "👎",
-//       },
-//       {
-//         label: "Bad",
-//         icon: "👊",
-//       },
-//       {
-//         label: "Good",
-//         icon: "👍",
-//       },
-//       {
-//         label: "Excellent",
-//         icon: "👏",
-//       },
-//     ],
-//   },
-//   {
-//     icon: "💻",
-//     name: "OOP",
-//     duration: 1,
-//     criteria: [
-//       {
-//         label: "Basic",
-//         icon: "🤌",
-//       },
-//       {
-//         label: "Intermediate",
-//         icon: "💪",
-//       },
-//       {
-//         label: "Hard",
-//         icon: "🙏",
-//       },
-//       {
-//         label: "Expert",
-//         icon: "🏆",
-//       },
-//       {
-//         label: "God",
-//         icon: "👑",
-//       },
-//     ],
-//   },
-//   {
-//     icon: "☺️",
-//     name: "Sample",
-//     duration: 1,
-//     criteria: [
-//       {
-//         label: "Sample 1",
-//         icon: "😟",
-//       },
-//       {
-//         label: "Sample 2",
-//         icon: "😀",
-//       },
-//     ],
-//   },
-// ];
-
 export default function EditScreen({ navigation }) {
   const { habits, setHabits } = useContext(HabitContext);
   const route = useRoute();
   const [showIconModal, setShowIconModal] = useState(false);
-  const [habitIcon, setHabitIcon] = useState()
+  const [habitIcon, setHabitIcon] = useState();
   const [currentHabit, setCurrentHabit] = useState({
     id: -1,
     icon: "🏆",
@@ -142,19 +55,19 @@ export default function EditScreen({ navigation }) {
   };
 
   const handleIconSelect = (icon) => {
-    setCurrentHabit({...currentHabit, icon: icon})
+    setCurrentHabit({ ...currentHabit, icon: icon });
     toggleIconModal();
   };
 
   let currentId = route.params?.id;
 
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (currentId < habits.length) {
       setCurrentHabit(habits[currentId]);
     }
   }, [habits, currentId]);
-
 
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
 
@@ -181,10 +94,10 @@ export default function EditScreen({ navigation }) {
   const toggleConfirmModal = async () => {
     const updatedCriteria = currentHabit.criteria.map((criterion, index) => ({
       ...criterion,
-      score: Math.floor((index / (currentHabit.criteria.length - 1)) * 100)
+      score: Math.floor((index / (currentHabit.criteria.length - 1)) * 100),
     }));
-  
-    const newCurrentHabit = {...currentHabit, criteria: updatedCriteria}
+
+    const newCurrentHabit = { ...currentHabit, criteria: updatedCriteria };
     setCurrentHabit(newCurrentHabit);
     setOpenConfirmModal(!openConfirmModal);
   };
@@ -230,6 +143,7 @@ export default function EditScreen({ navigation }) {
   };
 
   const submit = async () => {
+    setIsLoading(true);
     if (currentHabit.id === -1) {
       // Create new habit
       const newHabit = await createHabit(currentHabit);
@@ -252,10 +166,11 @@ export default function EditScreen({ navigation }) {
         name: updatedHabit.habit.name,
       };
       const updatedHabits = habits.map((habit) =>
-        habit.id === newHabit.id ? newHabit : habit
+        habit.id === newHabit.id ? newHabit : habit,
       );
       setHabits(updatedHabits);
     }
+    setIsLoading(false);
     navigation.navigate("Record");
   };
 
@@ -284,7 +199,9 @@ export default function EditScreen({ navigation }) {
                   placeholder="Enter habit name"
                   selectionColor="#ccc"
                   value={currentHabit.name}
-                  onChangeText={(text) => setCurrentHabit({...currentHabit, name: text})}
+                  onChangeText={(text) =>
+                    setCurrentHabit({ ...currentHabit, name: text })
+                  }
                 />
               </View>
               <TouchableOpacity style={{ paddingHorizontal: 10 }}>
@@ -348,7 +265,9 @@ export default function EditScreen({ navigation }) {
                     style={{ height: 30, width: 50 }}
                     selectionColor="#aaa"
                     value={currentHabit.duration}
-                    onChangeText={(text) => setCurrentHabit({...currentHabit, duration: text})}
+                    onChangeText={(text) =>
+                      setCurrentHabit({ ...currentHabit, duration: text })
+                    }
                   />
                   <Text style={{}}>(days)</Text>
                 </View>
@@ -429,10 +348,7 @@ export default function EditScreen({ navigation }) {
                       <Text
                         style={{
                           fontWeight: 800,
-                          color: color(
-                            value,
-                            currentHabit.criteria.length - 1,
-                          ),
+                          color: color(value, currentHabit.criteria.length - 1),
                         }}
                       >
                         {Math.floor(
@@ -507,7 +423,7 @@ export default function EditScreen({ navigation }) {
           setOpenEmojiPicker(false);
         }}
         onEmojiSelected={(emoji) => {
-          setCurrentHabit({...currentHabit, icon: emoji})
+          setCurrentHabit({ ...currentHabit, icon: emoji });
         }}
       />
 
@@ -535,14 +451,15 @@ export default function EditScreen({ navigation }) {
       />
 
       <IconModal
-          visible={showIconModal}
-          onIconSelect={handleIconSelect}
-          onClose={toggleIconModal}
-        />
+        visible={showIconModal}
+        onIconSelect={handleIconSelect}
+        onClose={toggleIconModal}
+      />
 
       <ConfirmSaveHabitModal
         isOpen={openConfirmModal}
         toggle={toggleConfirmModal}
+        isLoading={isLoading}
         duration={parseInt(currentHabit.duration)}
         save={submit}
       />

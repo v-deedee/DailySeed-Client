@@ -1,11 +1,19 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Dialog } from "@rneui/themed";
+import { useState } from "react";
 
 export default function ConfirmSaveHabitModal({
   isOpen,
   toggle,
   duration,
   save,
+  isLoading,
 }) {
   return (
     <Dialog
@@ -40,18 +48,35 @@ export default function ConfirmSaveHabitModal({
       </View>
 
       <View style={styles.modalButtonGroup}>
-        <TouchableOpacity
-          style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-          onPress={save}
-        >
-          <Text style={{ fontWeight: "bold", color: "#474838" }}>Yes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-          onPress={toggle}
-        >
-          <Text style={{ fontWeight: "bold", color: "#fff" }}>No</Text>
-        </TouchableOpacity>
+        {isLoading ? (
+          <View
+            style={{
+              alignItems: "center",
+              flex: 1,
+              paddingVertical: 15,
+              height: "auto",
+              borderRadius: 10,
+              backgroundColor: "#ccc",
+            }}
+          >
+            <ActivityIndicator size="small" color="#ffffff" />
+          </View>
+        ) : (
+          <>
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
+              onPress={save}
+            >
+              <Text style={{ fontWeight: "bold", color: "#fff" }}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: "#ccc" }]}
+              onPress={toggle}
+            >
+              <Text style={{ fontWeight: "bold", color: "#474838" }}>No</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </Dialog>
   );
