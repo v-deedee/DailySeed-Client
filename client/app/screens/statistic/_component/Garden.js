@@ -185,6 +185,10 @@ const Garden = () => {
   const updateInventory = (inventory, phase, id, asset) => {
     const newInventory = { ...inventory };
 
+    console.log("Phase===", phase)
+    console.log("Idddd===", id)
+    console.log("Assset", asset)
+
     for (const treeName in newInventory) {
       const treeData = newInventory[treeName];
       const assets = treeData.asset.split("|");

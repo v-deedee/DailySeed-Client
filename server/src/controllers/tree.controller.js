@@ -157,7 +157,7 @@ export default class TreeController {
             "coordinate_y",
             "score",
         ];
-        const seedSelectFields = ["id", "asset"];
+        const seedSelectFields = ["id", "asset", "name"];
         if (query.extend) {
             treeSelectFields.push(...["date", "note", "picture"]);
             seedSelectFields.push(...["name"]);
