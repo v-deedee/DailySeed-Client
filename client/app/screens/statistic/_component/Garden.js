@@ -273,8 +273,8 @@ const Garden = () => {
         </View>
       </View>
 
-      <Button title="treeInfo" onPress={() => console.log(JSON.stringify(treeInfo))} />
-      <Button title="inventory" onPress={() => console.log(JSON.stringify(inventory))} />
+      {/* <Button title="treeInfo" onPress={() => console.log(JSON.stringify(treeInfo))} /> */}
+      {/* <Button title="inventory" onPress={() => console.log(JSON.stringify(inventory))} /> */}
 
 
       <ReactNativeZoomableView
