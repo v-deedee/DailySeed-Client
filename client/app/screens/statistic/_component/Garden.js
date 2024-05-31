@@ -58,18 +58,6 @@ const Garden = () => {
     [0, 0, 0, 0, 0, 0],
   ]);
 
-  // const [listUpdateTree, seListtUpdateTree] = useState([])
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     console.log("Hello")
-
-  //     return () => {
-  //       console.log("DM")
-  //     };
-  //   }, [listUpdateTree])
-  // );
-
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -83,24 +71,12 @@ const Garden = () => {
             const assetArray = seed.asset.split('|');
             const phaseImage = assetArray[assetArray.length - seed.phase];
             newMap[tree.coordinate_y][tree.coordinate_x] = seed.phase;
-            newTreeInfo[`${tree.coordinate_x}_${tree.coordinate_y}`] = { imageURL: phaseImage, id: tree.id, phase: seed.phase };
+            newTreeInfo[`${tree.coordinate_x}_${tree.coordinate_y}`] = { imageURL: phaseImage, id: tree.id, phase: seed.phase, name: seed.name };
             setTreeInfo(newTreeInfo);
           }
         });
 
         setMap(newMap);
-
-        // Convert inventory object to array
-        // const inventoryArray = Object.entries(data.inventory).map(([treeType, treeData]) => {
-        //   const treeId = Object.keys(treeData)[0]; // Assuming each treeType has only one key
-        //   return {
-        //     type: treeType,
-        //     id: treeId,
-        //     asset: treeData[treeId].asset,
-        //     count: treeData[treeId].count
-        //   };
-        // });
-
         setInventory(data.inventory);
 
       } catch (error) {
@@ -139,8 +115,7 @@ const Garden = () => {
 
     if (treeInfo.phase[phase].length > 0) {
       id = treeInfo.phase[phase].pop();
-      // console.log(treeInfo.phase[phase]);
-      const newTreeInfo = { imageURL: img, id: id, phase: phase };
+      const newTreeInfo = { imageURL: img, id: id, phase: phase, name: tree };
       console.log(treeInfo.phase[phase].length)
       setSelectedTree(newTreeInfo);
     }
@@ -172,42 +147,36 @@ const Garden = () => {
         coordinate_y: y
       }];
 
-      console.log(treesToUpdate)
-
-      const response = updateTree(treesToUpdate);
-      // console.log(response)
-
       setMap(newMap);
       setTreeInfo(newTreeInfo);
+
+      const response = updateTree(treesToUpdate);
     }
   };
 
-  const updateInventory = (inventory, phase, id, asset) => {
+  const updateInventory = (inventory, phase, id, asset, treeName) => {
     const newInventory = { ...inventory };
 
-    console.log("Phase===", phase)
-    console.log("Idddd===", id)
-    console.log("Assset", asset)
-
-    for (const treeName in newInventory) {
+    if (newInventory.hasOwnProperty(treeName)) {
       const treeData = newInventory[treeName];
-      const assets = treeData.asset.split("|");
 
-      for (let i = 0; i < assets.length; i++) {
-        if (assets[i] === asset) {
-          treeData.phase[phase] = [...treeData.phase[phase], id];
-          break;
-        } else {
-
-        }
+      if (treeData.phase.hasOwnProperty(phase)) {
+        treeData.phase[phase] = [...treeData.phase[phase], id];
+      } else {
+        treeData.phase[phase] = [id];
       }
+    } else {
+      newInventory[treeName] = {
+        phase: {
+          [phase]: [id]
+        },
+        asset: asset
+      };
     }
     setInventory(newInventory);
   };
 
-
   const handleRemoveTree = (x, y) => {
-    console.log("Hello")
     if ([1, 2, 3, 4].includes(map[y][x])) {
       const treeCoordinateKey = `${x}_${y}`;
       const treeId = treeInfo[treeCoordinateKey]?.id;
@@ -228,15 +197,13 @@ const Garden = () => {
 
       const newTreeInfo = { ...treeInfo };
       if (newTreeInfo.hasOwnProperty(treeCoordinateKey)) {
-        updateInventory(inventory, treeInfo[treeCoordinateKey].phase, treeId, treeInfo[treeCoordinateKey].imageURL)
+        updateInventory(inventory, treeInfo[treeCoordinateKey].phase, treeId, treeInfo[treeCoordinateKey].imageURL, treeInfo[treeCoordinateKey].name);
         delete newTreeInfo[treeCoordinateKey];
       }
 
       setTreeInfo(newTreeInfo);
 
       const response = updateTree(treesToUpdate);
-      // console.log(response)
-
     }
   };
 
@@ -369,24 +336,22 @@ const Garden = () => {
           {inventory && Object.entries(inventory).map(([treeId, treeInfo]) => (
             <View key={treeId}>
               {Object.entries(treeInfo.phase).map(([phase, items]) => {
-                // Check if the items array has elements before rendering TreeAvatar
                 if (items.length > 0) {
                   const assetURL = treeInfo.asset.split("|")[4 - parseInt(phase)];
                   return (
                     <View key={phase} style={{ marginBottom: 10 }}>
-                      <Text>{treeId}</Text>
                       <TreeAvatar
                         value={items.length}
                         imgURL={assetURL}
                         type={phase}
-                        handleAvatarPress={() => handleAvatarPress(treeId, phase, assetURL)}
+                        handleAvatarPress={() => handleAvatarPress(treeId, phase, assetURL,)}
                       />
                     </View>
                   );
                 } else {
 
                 }
-                return null; // Return null if items array is empty
+                return null;
               })}
             </View>
           ))}
