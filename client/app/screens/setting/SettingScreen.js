@@ -1,20 +1,14 @@
+import { useContext } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Card, Button } from "@rneui/themed";
 import AccoutCard from "./_component/AccoutCard";
 import CustomCard from "./_component/CustomCard";
 import { logout } from "../../services/user.service";
-import { useContext } from "react";
 import { UserContext } from "../../contexts/user.context";
-
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HabitContext } from "../../contexts/habit.context";
 import { SeedContext } from "../../contexts/seed.context";
 import { TreeContext } from "../../contexts/tree.context";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
-const Stack = createNativeStackNavigator();
 
 export default function SettingScreen({ signOut, navigation }) {
   const { setUser } = useContext(UserContext);
@@ -42,12 +36,6 @@ export default function SettingScreen({ signOut, navigation }) {
       <CustomCard />
 
       <View style={{ marginTop: 10 }}>
-        {/* <Button
-          onPress={() => handleLogout()}
-          title="Log out"
-          color="red"
-          accessibilityLabel="Log out button"
-        /> */}
         <TouchableOpacity
           style={{
             alignItems: "center",
