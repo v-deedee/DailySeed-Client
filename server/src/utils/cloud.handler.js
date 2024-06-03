@@ -4,6 +4,7 @@ class CloudHanlder {
     constructor() {}
 
     upload = async (file, folder, name) => {
+        console.log(name, 1111)
         const res = await cloudinary.uploader.upload(file, {
             resource_type: "auto",
             folder: folder,

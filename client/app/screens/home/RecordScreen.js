@@ -109,12 +109,22 @@ const RecordScreen = ({ navigation }) => {
         seed: modifiedSeed,
       };
       // console.log(modifiedTree)
-      setTree(modifiedTree);
+      await setTreeAsync(modifiedTree);
+      console.log(modifiedTree)
+
+  
     }
 
     setIsLoading(false);
+    
+    console.log(tree, 1234);
     navigation.navigate("Home");
   };
+
+  const setTreeAsync = async (modifiedTree) => {
+    await setTree(modifiedTree);
+  };
+  
 
   const toggleDelHabitModal = () => {
     setOpenDelHabitModal(!openDelHabitModal);

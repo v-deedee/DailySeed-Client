@@ -37,6 +37,14 @@ export default [
                 path: "/tree/:day/:month/:year",
                 method: "findTree",
                 roles: [userRole.USER],
+            },
+            {
+                httpMethod: "put",
+                path: "/tree/:id",
+                method: "updateNote",
+                roles: [userRole.USER],
+                files: [{ name: "picture", maxCount: 1 }],
+
             }
         ],
     },

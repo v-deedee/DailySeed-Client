@@ -69,7 +69,14 @@ export default function ProgressCircle({ progress }) {
             </ImageBackground>
           );
         }
-        return null;
+        else {
+          return (
+          <ImageBackground
+            source={require("../../../../assets/theme/background2.png")}
+            style={styles.imageBackground}
+          />
+          );
+        }
       }}
     </AnimatedCircularProgress>
   );

@@ -5,9 +5,31 @@ import errorCode from "../constants/error.code.js";
 import { Op } from "sequelize";
 import _ from "lodash";
 import habitService from "../services/habit.service.js";
+import CloudHanlder from "../utils/cloud.handler.js";
+
 
 export default class TreeController {
     constructor() { }
+
+    #removePicture = async (picture) => {
+        if(picture) {
+            const [public_id, extension] = picture.split(".");
+            await CloudHanlder.remove(public_id);
+        }
+    };
+
+    #uploadPicture = async (picture, folder, id) => {
+        const b64 = Buffer.from(picture.buffer).toString("base64");
+        let dataURI = "data:" + picture.mimetype + ";base64," + b64;
+        const uploadedPicture = await CloudHanlder.upload(
+            dataURI,
+            folder,
+            id 
+        );
+        const fileExt = picture.originalname.split('.').pop();
+
+        return uploadedPicture.public_id + "." + fileExt;
+    };
 
     createTree = async (req, res) => {
         const { user } = req;
@@ -222,6 +244,38 @@ export default class TreeController {
 
         res.status(200).json({
             ok: true,
+        });
+    };
+
+    updateNote = async (req, res) => {
+
+        const { params } = req;
+        const { files } = req;
+        const { body } = req;
+
+        const tree = await TreeService.findOne({ id: params.id });
+
+        if (files["picture"]) {
+            await this.#removePicture(tree.picture);
+            body.picture = await this.#uploadPicture(
+                files["picture"][0],
+                `trees`,
+                tree.id
+            );
+        }
+
+        const updateTree = await TreeService.update(tree, body);
+
+        const payload = {
+            tree: _.pick(updateTree, ["id", "date", "score", "note", "picture"]),
+            seed: {
+                ..._.pick(updateTree.Seed, ["id", "asset"]),
+                phase: updateTree.getPhase(),
+            },
+        };
+        res.status(200).json({
+            ok: true,
+            data: payload,
         });
     };
 }

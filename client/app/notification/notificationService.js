@@ -56,8 +56,8 @@ export async function schedulePushNotification(title, body, data) {
 export function scheduleNightlyNotification() {
     const triggerDate = new Date();
     
-    triggerDate.setHours(22);
-    triggerDate.setMinutes(47);
+    triggerDate.setHours(21);
+    triggerDate.setMinutes(0);
     if (triggerDate.getTime() < Date.now()) {
       triggerDate.setDate(triggerDate.getDate() + 1);
     }
