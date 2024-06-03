@@ -3,7 +3,7 @@ import db from "../models/index.js";
 const { Tree } = db;
 
 class TreeService {
-    constructor() {}
+    constructor() { }
 
     findOne = async (conditions, attributes) =>
         Tree.findOne({
@@ -17,6 +17,7 @@ class TreeService {
             attributes: attributes,
             where: conditions,
             include: [{ association: Tree.Seed }],
+            order: [['date', 'ASC']]
         });
 
     create = async (data) => Tree.create(data);
