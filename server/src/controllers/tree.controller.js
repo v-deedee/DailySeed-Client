@@ -242,7 +242,7 @@ export default class TreeController {
     };
 
     updateNote = async (req, res) => {
-
+        console.log(req)
         const { params } = req;
         const { files } = req;
         const { body } = req;
