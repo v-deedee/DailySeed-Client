@@ -42,7 +42,6 @@ export default function HomeScreen({ navigation }) {
   }, [value]);
 
   useEffect(() => {
-    console.log(tree,1234132)
     if(tree) {
       setOpenSelectTreeModal(false);        
     }

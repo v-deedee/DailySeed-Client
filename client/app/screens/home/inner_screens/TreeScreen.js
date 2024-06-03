@@ -15,10 +15,7 @@ export default function TreeScreen({
   const { tree } = useContext(TreeContext)
 
   const { seeds } = useContext(SeedContext);
-  useEffect(() => {
-    console.log(tree);
 
-  }, [tree])
   return (
     <>
       {/* Main */}
