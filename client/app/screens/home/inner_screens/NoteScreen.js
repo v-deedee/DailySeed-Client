@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -9,32 +9,79 @@ import {
   ScrollView,
 } from "react-native";
 import ImagePicker from "../_component/ImagePicker";
-
+import { CLOUDINARY_BASE_URL } from "../../../utils/constants/cloudinary.constants";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
 import Entypo from "react-native-vector-icons/Entypo";
-
+import { TreeContext } from "../../../contexts/tree.context";
+import { updateTree } from "../../../services/tree.service";
 export default function NoteScreen() {
+  const {tree, setTree} = useContext(TreeContext);
   const [note, setNote] = useState("");
 
   const [image, setImage] = useState(null);
 
+
   const [showPost, setShowPost] = useState(false);
 
   const [timestamp, setTimestamp] = useState(null);
+  useEffect(() => {
+    if(tree?.tree?.note) {
+      setNote(tree?.tree?.note || "");
+    }
+    if(tree?.tree?.picture) {
+      setImage(`${CLOUDINARY_BASE_URL}${tree.tree.picture}`);
+    }
+  }, [tree, setNote]);
 
-  const post = () => {
+  const post = async () => {
     if (note.length > 0 && image) {
       setShowPost(true);
+      setTimestamp(new Date());
+      const newTree = [{
+        ...tree,
+        tree: {
+          ...tree.tree,
+          note: note,
+          picture: image
+        }
+      }]
+  
+      console.log(newTree)
+  
+
+      // Cập nhật tree với note và image mới
+      // const updatedTree = await updateTree({
+      //   ...tree.tree,
+      //   note,
+      //   picture: image.replace(CLOUDINARY_BASE_URL, ""), // Trích xuất tên file ảnh từ URL
+      // });
+
+      // setTree({ ...tree, tree: updatedTree });
     }
-    setTimestamp(new Date());
   };
 
-  const deletePost = () => {
+  const deletePost = async () => {
     setShowPost(false);
     setNote("");
     setImage(null);
+    const newTree = [{
+      ...tree.tree,
+      note: null,
+      picture: null,
+    }]
+
+    console.log(newTree)
+    // Cập nhật tree với note và image mới (null)
+    const updatedTree = await updateTree({
+      ...tree.tree,
+      note: null,
+      picture: null,
+    });
+
+    setTree({ ...tree, tree: updatedTree });
   };
+
 
   return (
     <View style={styles.container}>
