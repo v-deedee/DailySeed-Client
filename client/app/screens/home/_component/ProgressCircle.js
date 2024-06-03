@@ -32,7 +32,7 @@ export default function ProgressCircle({ progress }) {
                   return (
                     <Image
                       source={{
-                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[0]}`,
+                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[3]}`,
                       }}
                       style={styles.imageStyle}
                     />
@@ -41,7 +41,7 @@ export default function ProgressCircle({ progress }) {
                   return (
                     <Image
                       source={{
-                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[1]}`,
+                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[2]}`,
                       }}
                       style={styles.imageStyle}
                     />
@@ -50,7 +50,7 @@ export default function ProgressCircle({ progress }) {
                   return (
                     <Image
                       source={{
-                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[2]}`,
+                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[1]}`,
                       }}
                       style={styles.imageStyle}
                     />
@@ -59,7 +59,7 @@ export default function ProgressCircle({ progress }) {
                   return (
                     <Image
                       source={{
-                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[3]}`,
+                        uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[0]}`,
                       }}
                       style={styles.imageStyle}
                     />
