@@ -1,69 +1,85 @@
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import { StyleSheet, View, Text, Dimensions, ActivityIndicator } from 'react-native';
 import { Card } from '@rneui/themed';
+import { LineChart } from "react-native-gifted-charts";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-export default function Chart() {
-    const chartConfig = {
-        backgroundColor: "#e26a00",
-        backgroundGradientFrom: "#fff",
-        backgroundGradientTo: "#fff",
-        color: (opacity = 1) => `rgba(18, 155, 18, ${opacity})`,
-        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        barPercentage: 0.5,
-        decimalPlaces: 0,
-    };
 
-    const data = {
-        labels: ["1/3", "6/3", "11/3", "16/3", "21/3", "26/3", "31/3"],
-        datasets: [
-            {
-                data: [20, 45, 28, 80, 99, 43, 20],
-                strokeWidth: 2
-            }
-        ],
-    };
+const customDataPoint = () => {
+    return (
+        <View
+            style={{
+                width: 13,
+                height: 13,
+                backgroundColor: 'white',
+                borderWidth: 4,
+                borderRadius: 10,
+                borderColor: '#50AA75',
+            }}
+        />
+    );
+};
 
+const data = [5, 90, 29, 72, 94, 45, 67, 51, 92, 5, 90, 29, 72, 94, 45, 67, 51, 92, 5, 90, 29, 72, 94, 45, 67, 51, 92, 5, 90, 29, 72, 94, 45, 67, 51, 92]
+
+export default function Chart({ chartData, loading }) {
     return (
         <View style={styles.container}>
             <Card containerStyle={styles.card}>
                 <Card.Title style={styles.title}>Status Flow</Card.Title>
-                <View style={styles.dividerContainer}>
-                    <Card.Divider style={styles.divider} />
-                </View>
-                <LineChart
-                    data={data}
-                    width={screenWidth - 35}
-                    height={screenHeight / 4}
-                    chartConfig={chartConfig}
-                    bezier
-                />
-            </Card>
-        </View>
+                {loading ? (
+                    <View style={{ width: screenWidth - 80, height: screenHeight / 4, justifyContent: 'center', alignItems: 'center' }}>
+                        <ActivityIndicator />
+                    </View>
+                ) : (
+                    <View>
+                        <LineChart
+                            areaChart
+                            onlyPositive
+                            curved
+                            // initialSpacing={10}
+                            maxValue={100}
+                            rulesType="solid"
+                            noOfSections={5}
+                            xAxisColor="#50AA75"
+                            yAxisColor="#50AA75"
+                            color="#0BA5A4"
+                            startFillColor="#50AA75"
+                            startOpacity={0.7}
+                            endFillColor="rgb(220, 239, 228)"
+                            endOpacity={0.3}
+                            data={chartData.data.map((item, index) => {
+                                const splittedDate = chartData.date[index].split('-');
+                                const day = splittedDate[2];
+                                return { value: item, label: day };
+                            })}
+                            xAxisLabelsHeight={20}
+                            width={screenWidth - 120}
+                            height={screenHeight / 4}
+                            customDataPoint={customDataPoint}
+                        />
+                    </View>
+                )
+                }
+            </Card >
+        </View >
+
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 2,
         marginTop: -100,
+        marginBottom: 10
     },
     card: {
-        paddingLeft: 0,
-        paddingRight: 0,
+        paddingLeft: 20,
+        paddingRight: 20,
         borderRadius: 20,
         paddingTop: 20,
         paddingBottom: 30
-    },
-    dividerContainer: {
-        width: "100%",
-        alignItems: 'center',
-    },
-    divider: {
-        width: "85%",
     },
     title: {
         fontSize: 16,
@@ -71,4 +87,3 @@ const styles = StyleSheet.create({
         color: "#474838",
     }
 });
-

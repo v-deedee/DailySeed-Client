@@ -8,7 +8,7 @@ export default function StatisticsScreen() {
   return (
     <View style={styles.container}>
       <Garden />
-      <Chart />
+      {/* <Chart /> */}
     </View>
   );
 }
