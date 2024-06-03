@@ -117,7 +117,6 @@ const RecordScreen = ({ navigation }) => {
 
     setIsLoading(false);
     
-    console.log(tree, 1234);
     navigation.navigate("Home");
   };
 
@@ -131,8 +130,9 @@ const RecordScreen = ({ navigation }) => {
   };
 
   const deleteHabit = async () => {
-    const data = updateHabit(habits[currentHabitId], false);
-    habits.splice(currentHabitId, 1);
+    const data = await updateHabit(habits[currentHabitId], false);
+    const newHabits = habits.filter((_, index) => index !== currentHabitId);
+    setHabits(newHabits);
     toggleDelHabitModal();
   };
 
