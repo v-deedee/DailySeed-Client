@@ -248,11 +248,10 @@ export default class TreeController {
     };
 
     updateNote = async (req, res) => {
-        console.log(req)
         const { params } = req;
         const { files } = req;
         const { body } = req;
-
+        console.log(files["picture"][0], 12345)
         const tree = await TreeService.findOne({ id: params.id });
 
         if (files["picture"]) {
