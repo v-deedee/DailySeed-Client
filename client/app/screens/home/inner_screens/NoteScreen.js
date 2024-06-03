@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import * as FileSystem from 'expo-file-system';
 import {
   Text,
   View,
@@ -14,11 +15,11 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
 import Entypo from "react-native-vector-icons/Entypo";
 import { TreeContext } from "../../../contexts/tree.context";
-import { updateTree } from "../../../services/tree.service";
+import { updateTreeNote } from "../../../services/tree.service";
 export default function NoteScreen() {
   const {tree, setTree} = useContext(TreeContext);
   const [note, setNote] = useState("");
-
+  const [imageFile, setImageFile] = useState(null);
   const [image, setImage] = useState(null);
 
 
@@ -38,28 +39,24 @@ export default function NoteScreen() {
     if (note.length > 0 && image) {
       setShowPost(true);
       setTimestamp(new Date());
-      const newTree = [{
-        ...tree,
-        tree: {
-          ...tree.tree,
-          note: note,
-          picture: image
-        }
-      }]
-  
-      console.log(newTree)
-  
+      try {
+        const formData = new FormData();
+        formData.append('note', note);
+        profile_image = { uri: imageFile.uri, name: imageFile.fileName, type: imageFile.type }
 
-      // Cập nhật tree với note và image mới
-      // const updatedTree = await updateTree({
-      //   ...tree.tree,
-      //   note,
-      //   picture: image.replace(CLOUDINARY_BASE_URL, ""), // Trích xuất tên file ảnh từ URL
-      // });
-
-      // setTree({ ...tree, tree: updatedTree });
+    
+        formData.append('picture', profile_image);
+    
+        // formData.append('picture', imageFile);
+    
+        const updatedTree = await updateTreeNote(tree.tree.id, formData);
+        // setTree({ ...tree, tree: updatedTree.tree });
+      } catch (error) {
+        console.error('Failed to update tree note:', error);
+      }
     }
-  };
+}
+
 
   const deletePost = async () => {
     setShowPost(false);
@@ -130,7 +127,7 @@ export default function NoteScreen() {
             >
               Today's picture
             </Text>
-            <ImagePicker image={image} setImage={setImage} />
+            <ImagePicker image={image} setImage={setImage} setImageFile={setImageFile} />
 
             <TouchableOpacity
               style={{

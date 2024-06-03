@@ -87,3 +87,21 @@ export const buyTree = async (seedId) => {
   }
 };
 
+export const updateTreeNote = async (treeId, formData) => {
+  try {
+    const response = await authApi.put(`/api/tree/${treeId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (response.data.ok) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to update tree note');
+    }
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+

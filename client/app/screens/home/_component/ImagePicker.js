@@ -4,7 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
-export default function CustomImagePicker({ image, setImage }) {
+export default function CustomImagePicker({ image, setImage, setImageFile }) {
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -17,7 +17,9 @@ export default function CustomImagePicker({ image, setImage }) {
     // console.log(result);
 
     if (!result.canceled) {
+      console.log(result.assets[0])
       setImage(result.assets[0].uri);
+      setImageFile(result.assets[0]);
     }
   };
 
