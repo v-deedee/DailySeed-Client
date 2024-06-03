@@ -251,7 +251,6 @@ export default class TreeController {
         const { params } = req;
         const { files } = req;
         const { body } = req;
-        console.log(files["picture"][0], 12345)
         const tree = await TreeService.findOne({ id: params.id });
 
         if (files["picture"]) {

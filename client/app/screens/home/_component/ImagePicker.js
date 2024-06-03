@@ -14,10 +14,8 @@ export default function CustomImagePicker({ image, setImage, setImageFile }) {
       quality: 1,
     });
 
-    // console.log(result);
 
     if (!result.canceled) {
-      console.log(result.assets[0])
       setImage(result.assets[0].uri);
       setImageFile(result.assets[0]);
     }

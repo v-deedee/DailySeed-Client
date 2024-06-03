@@ -42,15 +42,17 @@ export default function NoteScreen() {
       try {
         const formData = new FormData();
         formData.append('note', note);
-        profile_image = { uri: imageFile.uri, name: imageFile.fileName, type: imageFile.type }
+        
+        const file = {
+          uri: imageFile.uri,
+          type: imageFile.type,
+          name: imageFile.fileName || `filename.${imageFile.uri.split('.').pop()}`,
+        };
 
+        formData.append('picture', file);
     
-        formData.append('picture', profile_image);
-    
-        // formData.append('picture', imageFile);
     
         const updatedTree = await updateTreeNote(tree.tree.id, formData);
-        // setTree({ ...tree, tree: updatedTree.tree });
       } catch (error) {
         console.error('Failed to update tree note:', error);
       }

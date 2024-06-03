@@ -275,9 +275,9 @@ const Garden = () => {
           <ViewTree handleLoupePress={handleViewPress} setDisable={isPlantTree || isRemoveTree} />
         </View>
       </View>
-
+{/* 
       <Button title="treeInfo" onPress={() => console.log(JSON.stringify(treeInfo))} />
-      <Button title="inventory" onPress={() => console.log(JSON.stringify(inventory))} />
+      <Button title="inventory" onPress={() => console.log(JSON.stringify(inventory))} /> */}
 
 
       <ReactNativeZoomableView
