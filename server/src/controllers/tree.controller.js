@@ -180,10 +180,15 @@ export default class TreeController {
 
         let garden = [];
         let inventory = {};
+        let chart = { 'date': [], 'data': [] };
+
         for (const tree of trees) {
             if (new Date(tree.date).getDate() == new Date().getDate()) {
                 continue
             }
+
+            chart['date'].push(tree.date)
+            chart['data'].push(tree.score)
 
             const phase = tree.getPhase();
             if (tree.isPlanted()) {
@@ -204,6 +209,7 @@ export default class TreeController {
         const payload = {
             garden: garden,
             inventory: inventory,
+            chart: chart,
         };
 
         res.status(200).json({
