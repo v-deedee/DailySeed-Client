@@ -26,7 +26,7 @@ export default function SelectTreeModal({
   const { fetchHabits } = useContext(HabitContext);
   const [selectedSeed, setSelectedSeed] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [type, setType] = useState(0);
   if (!seeds) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -41,7 +41,9 @@ export default function SelectTreeModal({
     }
   }, [seeds]);
 
-  const handleSeedSelect = (seed) => {
+  const handleSeedSelect = (seed, index) => {
+    console.log(seed);
+    setType(index+1);
     setSelectedSeed(seed);
   };
 
@@ -52,7 +54,7 @@ export default function SelectTreeModal({
       console.log("Selected tree: ", newTree);
       if (newTree) {
         setTree(newTree);
-        fetchHabits(newTree.tree.id);
+        await fetchHabits(newTree.tree.id);
         // console.log(112341234)
         openRecord();
       }
@@ -86,18 +88,18 @@ export default function SelectTreeModal({
           <TouchableOpacity
             key={index}
             style={
-              treeType === index + 1
+              type === index + 1
                 ? styles.modalOptionActive
                 : styles.modalOption
             }
-            onPress={() => handleSeedSelect(seed)}
+            onPress={() => handleSeedSelect(seed, index)}
           >
             <Image
               source={{ uri: `${CLOUDINARY_BASE_URL}${seed.assets[0]}` }}
               style={{ width: 80, height: 80 }}
             />
             <CheckBox
-              checked={treeType === index + 1}
+              checked={type === index + 1}
               checkedIcon="dot-circle-o"
               uncheckedIcon="circle-o"
             />

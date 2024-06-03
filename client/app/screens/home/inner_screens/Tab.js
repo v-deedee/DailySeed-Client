@@ -16,7 +16,6 @@ import NoteScreen from "./NoteScreen";
 export default function Tab({
   openRecord,
   progress,
-  treeType,
   toggleSelectTreeModal,
 }) {
   const layout = useWindowDimensions();
@@ -32,7 +31,6 @@ export default function Tab({
       TreeScreen({
         openRecord: openRecord,
         progress: progress,
-        treeType: treeType,
         toggleSelectTreeModal: toggleSelectTreeModal,
       }),
     image: NoteScreen,

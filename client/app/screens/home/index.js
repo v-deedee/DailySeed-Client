@@ -21,7 +21,6 @@ export default function HomeScreen({ navigation }) {
 
   const [progress, setProgress] = useState(0);
 
-  const [treeType, setTreeType] = useState(null);
 
   const [openSelectTreeModal, setOpenSelectTreeModal] = useState(false);
 
@@ -127,7 +126,6 @@ export default function HomeScreen({ navigation }) {
       <Tab
         openRecord={openRecord}
         progress={progress}
-        treeType={treeType}
         toggleSelectTreeModal={toggleSelectTreeModal}
       />
 
@@ -135,8 +133,6 @@ export default function HomeScreen({ navigation }) {
       <SelectTreeModal
         isOpen={openSelectTreeModal}
         toggle={toggleSelectTreeModal}
-        treeType={treeType || 1}
-        setTreeType={setTreeType}
         openRecord={openRecord}
       />
     </View>

@@ -9,7 +9,6 @@ import { CLOUDINARY_BASE_URL } from "../../../utils/constants/cloudinary.constan
 export default function TreeScreen({
   openRecord,
   progress,
-  treeType,
   toggleSelectTreeModal,
 }) {
   const { tree } = useContext(TreeContext)
@@ -46,7 +45,6 @@ export default function TreeScreen({
         {/* Progress: Circle */}
         <ProgressCircle
           progress={tree?.tree?.score | 0 }
-          treeType={treeType}
           selectTree={toggleSelectTreeModal}
         />
 
