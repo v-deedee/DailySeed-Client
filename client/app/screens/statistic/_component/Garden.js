@@ -15,6 +15,7 @@ import TreeDetail from "./TreeDetail";
 import { MyBottomSheet } from "./BottomSheet/MyBottomSheet";
 import { listTrees, updateTree } from "../../../services/tree.service";
 import { Queue } from "./Queue";
+import Chart from "./Chart";
 
 
 const numRows = 6;
@@ -41,6 +42,7 @@ const Garden = () => {
   const selectedIndex = options.indexOf(selectedYear.toString());
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const [inventory, setInventory] = useState();
+  const [charData, setChartData] = useState();
   const [loading, setLoading] = useState(false);
   const [selectedTree, setSelectedTree] = useState();
 
@@ -78,6 +80,7 @@ const Garden = () => {
 
         setMap(newMap);
         setInventory(data.inventory);
+        setChartData(data.chart)
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -273,8 +276,8 @@ const Garden = () => {
         </View>
       </View>
 
-      {/* <Button title="treeInfo" onPress={() => console.log(JSON.stringify(treeInfo))} /> */}
-      {/* <Button title="inventory" onPress={() => console.log(JSON.stringify(inventory))} /> */}
+      <Button title="treeInfo" onPress={() => console.log(JSON.stringify(treeInfo))} />
+      <Button title="inventory" onPress={() => console.log(JSON.stringify(inventory))} />
 
 
       <ReactNativeZoomableView
@@ -398,13 +401,15 @@ const Garden = () => {
           </ScrollView>
         </View>
       </BottomSheet>
+
+      {charData && <Chart chartData={charData} loading={loading} />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   garden: {
-    flex: 3,
+    flex: 1,
     backgroundColor: "#fbf5e5",
     width: "100%",
     height: "100%",
