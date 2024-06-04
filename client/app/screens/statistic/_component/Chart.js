@@ -41,11 +41,13 @@ export default function Chart({ chartData, loading }) {
                             curved
                             // initialSpacing={10}
                             maxValue={100}
+                            xAxisThickness={2}
+                            yAxisThickness={2}
                             rulesType="solid"
                             noOfSections={5}
                             xAxisColor="#50AA75"
                             yAxisColor="#50AA75"
-                            color="#0BA5A4"
+                            color="#50AA75"
                             startFillColor="#50AA75"
                             startOpacity={0.7}
                             endFillColor="rgb(220, 239, 228)"
@@ -56,15 +58,15 @@ export default function Chart({ chartData, loading }) {
                                 return { value: item, label: day };
                             })}
                             xAxisLabelsHeight={20}
-                            width={screenWidth - 120}
+                            width={screenWidth - 130}
                             height={screenHeight / 4}
                             customDataPoint={customDataPoint}
                         />
                     </View>
                 )
                 }
-            </Card >
-        </View >
+            </Card>
+        </View>
 
     );
 }
