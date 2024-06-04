@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { getUserByToken, login } from "../services/user.service";
 import { UserContext } from "../contexts/user.context";
@@ -22,15 +23,21 @@ const LoginScreen = ({ navigation, signIn }) => {
   const handleLogin = async () => {
     setLoading(true); // Bắt đầu hiển thị hiệu ứng loading
     try {
-      await login(username, password);
-      const data = await getUserByToken();
-      if (data) {
-        setUser(data);
-        fetchSeeds();
-        console.log("Login successful!");
-        signIn();
+      const loginData = await login(username, password);
+      console.log(loginData, 123412);
+      if(loginData.ok) {
+        const data = await getUserByToken();
+        console.log(data);
+        if (data) {
+          setUser(data);
+          fetchSeeds();
+          console.log("Login successful!");
+          signIn();
+        } else {
+          console.log(data.message);
+        }  
       } else {
-        console.error("Login failed!");
+        Alert.alert(loginData.message);
       }
     } catch (error) {
       console.error("Login error:", error);

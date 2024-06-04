@@ -13,12 +13,12 @@ export const login = async (username, password) => {
     if (ok) {
       const { token, payload } = data;
       await saveTokenToLocalStorage(token);
-      return { user: new User(payload.id, payload.username) };
-    } else {
-      throw new Error('Login failed');
     }
+    return { ok, data };
   } catch (error) {
-    throw error;
+    console.log(error.response.data);
+    console.log(1234);
+    return {ok: error.response.data.ok, message: error.response.data.message};
   }
 };
 
