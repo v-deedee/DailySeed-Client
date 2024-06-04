@@ -1,20 +1,68 @@
 import { BottomSheet, Card, Switch } from "@rneui/themed";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
-import { useState } from "react";
+import { StyleSheet, Text, View, Modal, Pressable, ScrollView, Alert } from "react-native";
+import { useState, useEffect, useRef } from "react";
 import WheelPicker from "react-native-wheely";
-import { MyBottomSheet } from "../../statistic/_component/BottomSheet/MyBottomSheet";
+import { schedulePushNotification, 
+  cancelAllScheduledNotificationsAsync, 
+  handleNotificationResponse, 
+  setupNotificationHandlers, 
+  registerForPushNotificationsAsync } from '../../../notification/notificationService';
+
+import * as Notifications from 'expo-notifications';
 
 export default function CustomCard() {
-  const [checked, setChecked] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [selectedHour, setSelectedHour] = useState(0);
   const [selectedMinute, setSelectedMinute] = useState(0);
-  const [openBottomSheet, setOpenBottomSheet] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   const addLeadingZero = (num) => (num < 10 ? `0${num}` : `${num}`);
 
   const minuteOption = Array.from({ length: 61 }, (_, i) => addLeadingZero(i));
   const hourOption = Array.from({ length: 24 }, (_, i) => addLeadingZero(i));
+
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  useEffect(() => {
+    const responseListener = setupNotificationHandlers(handleNotificationResponse);
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener);
+    };
+  }, []);
+
+  const scheduleNotification = () => {
+    const selectedTime = new Date();
+    selectedTime.setHours(selectedHour);
+    selectedTime.setMinutes(selectedMinute);
+    selectedTime.setSeconds(0);
+    selectedTime.setMilliseconds(0);
+
+    const title = 'Nhắc nhở hàng ngày';
+    const body = 'Đừng quên thực hiện thói quen tốt của bạn!';
+    const data = { redirect: 'root' };
+
+    schedulePushNotification(title, body, data, selectedTime);
+    Alert.alert('Thông báo', 'Lập lịch thông báo thành công!');
+    setShowModal(false);
+  };
+
+  const handleCancel = () => {
+    setShowModal(false);
+  };
+
+  useEffect(() => {
+    if (!checked) {
+      cancelAllScheduledNotificationsAsync();
+    }
+  }, [checked]);
 
   return (
     <View>
@@ -42,37 +90,50 @@ export default function CustomCard() {
         {checked && (
           <>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-              <Pressable onPress={() => setOpenBottomSheet(true)}>
+              <Pressable onPress={() => setShowModal(true)}>
                 <View style={styles.selectTime}>
                   <Text>{addLeadingZero(selectedHour)} : {addLeadingZero(selectedMinute)}</Text>
                 </View>
               </Pressable>
             </View>
-            <BottomSheet isVisible={openBottomSheet} onBackdropPress={() => { setOpenBottomSheet(false) }}>
-              <View style={styles.bottomSheet}>
-                <ScrollView horizontal={false} contentContainerStyle={styles.centeredContent}>
-                  <ScrollView horizontal contentContainerStyle={styles.pickerContainer}>
-                    <View>
-                      <WheelPicker
-                        containerStyle={styles.wheelPicker}
-                        selectedIndex={selectedHour}
-                        options={hourOption}
-                        onChange={setSelectedHour}
-                      />
-                    </View>
-
-                    <View>
-                      <WheelPicker
-                        containerStyle={styles.wheelPicker}
-                        selectedIndex={selectedMinute}
-                        options={minuteOption}
-                        onChange={setSelectedMinute}
-                      />
-                    </View>
+            <Modal
+              visible={showModal}
+              animationType="slide"
+              transparent={true}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <ScrollView horizontal={false} contentContainerStyle={styles.centeredContent}>
+                    <ScrollView horizontal contentContainerStyle={styles.pickerContainer}>
+                      <View>
+                        <WheelPicker
+                          containerStyle={styles.wheelPicker}
+                          selectedIndex={selectedHour}
+                          options={hourOption}
+                          onChange={setSelectedHour}
+                        />
+                      </View>
+                      <View>
+                        <WheelPicker
+                          containerStyle={styles.wheelPicker}
+                          selectedIndex={selectedMinute}
+                          options={minuteOption}
+                          onChange={setSelectedMinute}
+                        />
+                      </View>
+                    </ScrollView>
                   </ScrollView>
-                </ScrollView>
+                  <View style={styles.modalButtons}>
+                    <Pressable style={styles.button} onPress={scheduleNotification}>
+                      <Text style={styles.buttonText}>OK</Text>
+                    </Pressable>
+                    <Pressable style={styles.button} onPress={handleCancel}>
+                      <Text style={styles.buttonText}>Cancel</Text>
+                    </Pressable>
+                  </View>
+                </View>
               </View>
-            </BottomSheet>
+            </Modal>
           </>
         )}
       </Card>
@@ -101,23 +162,11 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 0,
   },
-  innerCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 3,
-  },
-  divider: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: "transparent",
-    color: "green",
   },
   selectTime: {
     backgroundColor: "#eeeeee",
@@ -126,10 +175,17 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     borderRadius: 10
   },
-  bottomSheet: {
-    borderRadius: 30,
-    backgroundColor: "white",
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 10,
     padding: 20,
+    alignItems: 'center',
   },
   centeredContent: {
     alignItems: 'center',
@@ -144,5 +200,20 @@ const styles = StyleSheet.create({
   },
   wheelPicker: {
     width: '100%',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#50AA75',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });

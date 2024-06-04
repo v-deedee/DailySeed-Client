@@ -4,7 +4,6 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import * as Linking from 'expo-linking';
 
-
 export const setupNotificationHandlers = (handleNotificationResponse) => {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -42,45 +41,37 @@ export async function registerForPushNotificationsAsync() {
   return token;
 }
 
-export async function schedulePushNotification(title, body, data) {
+export async function schedulePushNotification(title, body, data, triggerDate) {
+  // Xóa tất cả các thông báo đã lên lịch
+  await Notifications.cancelAllScheduledNotificationsAsync();
+  console.log(triggerDate.getHours(), triggerDate.getMinutes());
   await Notifications.scheduleNotificationAsync({
     content: {
       title: title,
       body: body,
       data: data,
     },
-    trigger: null,
+    trigger: {
+      hour: triggerDate.getHours(),
+      minute: triggerDate.getMinutes(),
+      repeats: true,
+    },
   });
 }
 
-export function scheduleNightlyNotification() {
-    const triggerDate = new Date();
-    
-    triggerDate.setHours(21);
-    triggerDate.setMinutes(0);
-    if (triggerDate.getTime() < Date.now()) {
-      triggerDate.setDate(triggerDate.getDate() + 1);
-    }
-  
-    Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Nhắc nhở tối nay',
-        body: 'Đừng quên thực hiện thói quen tốt của bạn!',
-        data: { redirect: 'root' }, 
-      },
-      trigger: {
-        hour: triggerDate.getHours(),
-        minute: triggerDate.getMinutes(),
-        repeats: true,
-      },
-    });
-  }
-  
+export function handleNotificationResponse(response) {
+  const data = response.notification.request.content.data;
 
-  export function handleNotificationResponse(response) {
-    const data = response.notification.request.content.data;
-  
-    if (data && data.redirect === 'root') {
-      Linking.openURL('app://app/root'); 
-    }
+  if (data && data.redirect === 'root') {
+    Linking.openURL('app://app/root');
   }
+}
+
+export function scheduleNotificationWithSelectedTime(title, body, data, selectedTime) {
+  const triggerDate = new Date(selectedTime);
+  schedulePushNotification(title, body, data, triggerDate);
+}
+
+export async function cancelAllScheduledNotificationsAsync() {
+  await Notifications.cancelAllScheduledNotificationsAsync();
+}

@@ -24,10 +24,8 @@ const LoginScreen = ({ navigation, signIn }) => {
     setLoading(true); // Bắt đầu hiển thị hiệu ứng loading
     try {
       const loginData = await login(username, password);
-      console.log(loginData, 123412);
       if(loginData.ok) {
         const data = await getUserByToken();
-        console.log(data);
         if (data) {
           setUser(data);
           fetchSeeds();
