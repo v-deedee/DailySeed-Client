@@ -161,9 +161,9 @@ const Garden = () => {
     const newInventory = { ...inventory };
 
     const treeAssets = {
-      'Cây mùa thu': 'seeds/tree2/phase4.png|seeds/tree2/phase3.png|seeds/tree2/phase2.png|seeds/tree2/phase1.png',
-      'Cây mùa xuân': 'seeds/tree1/phase4.png|seeds/tree1/phase3.png|seeds/tree1/phase2.png|seeds/tree1/phase1.png',
-      'Cây mặc định': 'seeds/tree0/phase4.png|seeds/tree0/phase3.png|seeds/tree0/phase2.png|seeds/tree0/phase1.png'
+      'Autumn tree': 'seeds/tree2/phase4.png|seeds/tree2/phase3.png|seeds/tree2/phase2.png|seeds/tree2/phase1.png',
+      'Spring tree': 'seeds/tree1/phase4.png|seeds/tree1/phase3.png|seeds/tree1/phase2.png|seeds/tree1/phase1.png',
+      'Default tree': 'seeds/tree0/phase4.png|seeds/tree0/phase3.png|seeds/tree0/phase2.png|seeds/tree0/phase1.png'
     };
 
     if (newInventory.hasOwnProperty(treeName)) {
@@ -281,7 +281,7 @@ const Garden = () => {
           <ViewTree handleLoupePress={handleViewPress} setDisable={isPlantTree || isRemoveTree} />
         </View>
       </View>
-{/* 
+      {/* 
       <Button title="treeInfo" onPress={() => console.log(JSON.stringify(treeInfo))} />
       <Button title="inventory" onPress={() => console.log(JSON.stringify(inventory))} /> */}
 

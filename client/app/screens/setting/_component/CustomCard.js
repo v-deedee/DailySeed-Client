@@ -1,13 +1,15 @@
-import { BottomSheet, Card, Switch } from "@rneui/themed";
+import { BottomSheet, Card, Dialog, Switch } from "@rneui/themed";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { StyleSheet, Text, View, Modal, Pressable, ScrollView, Alert } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import WheelPicker from "react-native-wheely";
-import { schedulePushNotification, 
-  cancelAllScheduledNotificationsAsync, 
-  handleNotificationResponse, 
-  setupNotificationHandlers, 
-  registerForPushNotificationsAsync } from '../../../notification/notificationService';
+import {
+  schedulePushNotification,
+  cancelAllScheduledNotificationsAsync,
+  handleNotificationResponse,
+  setupNotificationHandlers,
+  registerForPushNotificationsAsync
+} from '../../../notification/notificationService';
 
 import * as Notifications from 'expo-notifications';
 
@@ -96,7 +98,16 @@ export default function CustomCard() {
                 </View>
               </Pressable>
             </View>
-            <Modal
+
+            {/* <Dialog
+              isVisible={showModal}
+              onBackdropPress={setShowModal(true)}
+            >
+              <Dialog.Title title="Dialog Title" />
+              <Text>Dialog body text. Add relevant information here.</Text>
+            </Dialog> */}
+
+            <Dialog
               visible={showModal}
               animationType="slide"
               transparent={true}
@@ -133,7 +144,7 @@ export default function CustomCard() {
                   </View>
                 </View>
               </View>
-            </Modal>
+            </Dialog>
           </>
         )}
       </Card>
