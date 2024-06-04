@@ -1,5 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { UserContext } from "../../contexts/user.context";
 
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
@@ -19,32 +26,8 @@ const ProfileScreen = ({ navigation }) => {
   }, [user]);
 
   return (
-    <View style={styles.container}>
-      {/* <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: 20,
-          paddingVertical: 10,
-          borderBottomWidth: 1.5,
-          borderBottomColor: "#efefef",
-        }}
-      >
-        <TouchableOpacity onPress={() => navigation.navigate("Menu")}>
-          <FontAwesome6 name="arrow-left-long" color={"#333"} size={20} />
-        </TouchableOpacity>
-
-        <Text style={{ fontSize: 16, fontWeight: "bold", color: "#474838" }}>
-          My info
-        </Text>
-
-        <TouchableOpacity disabled>
-          <FontAwesome6 name="arrow-left-long" color={"#fff"} size={20} />
-        </TouchableOpacity>
-      </View> */}
-
+    <ScrollView style={styles.container}>
+      {/* Login information */}
       <View style={{ padding: 20 }}>
         <Text style={{ fontSize: 16, fontWeight: 600, color: "#888" }}>
           Login information
@@ -130,6 +113,8 @@ const ProfileScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
+
+      {/* My records */}
       <View style={{ paddingHorizontal: 20 }}>
         <Text style={{ fontSize: 16, fontWeight: 600, color: "#888" }}>
           My records
@@ -175,6 +160,7 @@ const ProfileScreen = ({ navigation }) => {
         </View>
       </View>
 
+      {/* My purchases */}
       <View style={{ padding: 20 }}>
         <Text style={{ fontSize: 16, fontWeight: 600, color: "#888" }}>
           My purchases
@@ -231,7 +217,7 @@ const ProfileScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

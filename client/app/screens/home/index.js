@@ -21,7 +21,6 @@ export default function HomeScreen({ navigation }) {
 
   const [progress, setProgress] = useState(0);
 
-
   const [openSelectTreeModal, setOpenSelectTreeModal] = useState(false);
 
   const toggleSelectTreeModal = () => {
@@ -41,45 +40,43 @@ export default function HomeScreen({ navigation }) {
   }, [value]);
 
   useEffect(() => {
-    if(tree) {
-      setOpenSelectTreeModal(false);        
+    if (tree) {
+      setOpenSelectTreeModal(false);
     }
-
-  }, [tree])
+  }, [tree]);
 
   useEffect(() => {
     async function fetchDataTree() {
-        const today = new Date();
-        console.log(today);
-        
-        // Chuyển đổi đối tượng Date thành chuỗi định dạng ISO (YYYY-MM-DD)
-        const dateString = today.toISOString().split('T')[0];
-        
-        // Phân tích cú pháp chuỗi để lấy lại ngày, tháng và năm
-        const [year, month, day] = dateString.split('-').map(Number);
-        const treeData = await findTree(day, month, year);
-        if(treeData) {
+      const today = new Date();
+      console.log(today);
 
-            const modifiedSeed = {
-              ...treeData.seed,
-              asset: treeData.seed.asset.split('|'),
-            };
-            const modifiedTree = {
-              ...treeData,
-              seed: modifiedSeed,
-            };
-            console.log(modifiedTree)
-            setTree(modifiedTree);
-            console.log("index.js")
-        }       
+      // Chuyển đổi đối tượng Date thành chuỗi định dạng ISO (YYYY-MM-DD)
+      const dateString = today.toISOString().split("T")[0];
+
+      // Phân tích cú pháp chuỗi để lấy lại ngày, tháng và năm
+      const [year, month, day] = dateString.split("-").map(Number);
+      const treeData = await findTree(day, month, year);
+      if (treeData) {
+        const modifiedSeed = {
+          ...treeData.seed,
+          asset: treeData.seed.asset.split("|"),
+        };
+        const modifiedTree = {
+          ...treeData,
+          seed: modifiedSeed,
+        };
+        console.log(modifiedTree);
+        setTree(modifiedTree);
+        console.log("index.js");
+      }
     }
 
     fetchDataTree();
-  }, [user])
+  }, [user]);
 
   useEffect(() => {
     async function fetchData() {
-      if(tree) {
+      if (tree) {
         fetchHabits(tree.tree.id);
       }
     }
@@ -141,6 +138,7 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 20,
     flex: 1,
     backgroundColor: "#FBF5E5",
   },

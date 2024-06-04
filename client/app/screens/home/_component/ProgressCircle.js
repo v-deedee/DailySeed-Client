@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, Image, ImageBackground } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { TreeContext } from "../../../contexts/tree.context";
@@ -34,7 +34,7 @@ export default function ProgressCircle({ progress }) {
                       source={{
                         uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[3]}`,
                       }}
-                      style={styles.imageStyle}
+                      style={{ width: 85, height: 85, marginTop: 20 }}
                     />
                   );
                 } else if (progress <= 50) {
@@ -43,7 +43,7 @@ export default function ProgressCircle({ progress }) {
                       source={{
                         uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[2]}`,
                       }}
-                      style={styles.imageStyle}
+                      style={{ width: 80, height: 102 }}
                     />
                   );
                 } else if (progress <= 75) {
@@ -52,7 +52,7 @@ export default function ProgressCircle({ progress }) {
                       source={{
                         uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[1]}`,
                       }}
-                      style={styles.imageStyle}
+                      style={{ width: 110, height: 110 }}
                     />
                   );
                 } else {
@@ -61,20 +61,19 @@ export default function ProgressCircle({ progress }) {
                       source={{
                         uri: `${CLOUDINARY_BASE_URL}${tree.seed.asset[0]}`,
                       }}
-                      style={styles.imageStyle}
+                      style={{ width: 120, height: 120 }}
                     />
                   );
                 }
               })()}
             </ImageBackground>
           );
-        }
-        else {
+        } else {
           return (
-          <ImageBackground
-            source={require("../../../../assets/theme/background2.png")}
-            style={styles.imageBackground}
-          />
+            <ImageBackground
+              source={require("../../../../assets/theme/background2.png")}
+              style={styles.imageBackground}
+            />
           );
         }
       }}

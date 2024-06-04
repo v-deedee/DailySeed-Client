@@ -473,6 +473,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FBF5E5",
   },
   header: {
+    paddingTop: 20,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",

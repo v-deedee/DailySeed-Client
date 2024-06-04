@@ -110,20 +110,17 @@ const RecordScreen = ({ navigation }) => {
       };
       // console.log(modifiedTree)
       await setTreeAsync(modifiedTree);
-      console.log(modifiedTree)
-
-  
+      console.log(modifiedTree);
     }
 
     setIsLoading(false);
-    
+
     navigation.navigate("Home");
   };
 
   const setTreeAsync = async (modifiedTree) => {
     await setTree(modifiedTree);
   };
-  
 
   const toggleDelHabitModal = () => {
     setOpenDelHabitModal(!openDelHabitModal);
@@ -355,6 +352,7 @@ const RecordScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 20,
     flex: 1,
     backgroundColor: "#FBF5E5",
   },
