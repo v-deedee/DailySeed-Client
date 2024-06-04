@@ -33,7 +33,7 @@ export default function NoteScreen() {
     if(tree?.tree?.picture) {
       setImage(`${CLOUDINARY_BASE_URL}${tree.tree.picture}`);
     }
-    if(tree?.tree) {
+    if(tree?.tree?.picture) {
       setShowPost(true);
       setTimestamp(new Date());
   
