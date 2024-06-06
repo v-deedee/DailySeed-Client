@@ -1,10 +1,13 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import ShopScreen from "../screens/shop/ShopScreen";
-import StatisticsScreen from "../screens/statistic/StatisticsScreen";
+
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+
 import HomeStack from "./HomeStack";
 import SettingStack from "./SettingStack";
+
+import ShopScreen from "../screens/shop/ShopScreen";
+import StatisticsScreen from "../screens/statistic/StatisticsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -15,14 +18,15 @@ export default function UserTabs({ signOut }) {
         tabBarActiveTintColor: "#61AF72",
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: { height: 55 },
+        tabBarStyle: { height: 80 },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <FontAwesome6 name="house" color={color} size={20} />
           ),
         }}
@@ -31,7 +35,7 @@ export default function UserTabs({ signOut }) {
         name="Statistics"
         component={StatisticsScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <FontAwesome6 name="chart-simple" color={color} size={24} />
           ),
         }}
@@ -40,7 +44,7 @@ export default function UserTabs({ signOut }) {
         name="Shop"
         component={ShopScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <FontAwesome6 name="cart-shopping" color={color} size={20} />
           ),
         }}
@@ -48,7 +52,7 @@ export default function UserTabs({ signOut }) {
       <Tab.Screen
         name="Setting"
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="account-cog"
               color={color}

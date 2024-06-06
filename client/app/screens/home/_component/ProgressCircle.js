@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { StyleSheet, Image, ImageBackground } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { TreeContext } from "../../../contexts/tree.context";

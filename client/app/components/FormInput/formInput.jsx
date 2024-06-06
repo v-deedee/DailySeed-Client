@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TextInput } from "react-native";
 import { Controller } from "react-hook-form";
 
-const FormInput = ({ control, name, ...otherProps }) => {
+const FormInput = ({ control, name, errorStyle, ...otherProps }) => {
   return (
     <Controller
       control={control}
@@ -15,14 +15,18 @@ const FormInput = ({ control, name, ...otherProps }) => {
           <TextInput
             style={styles.inputText}
             value={value}
-            placeholderTextColor="#003f5c"
+            placeholderTextColor="#aaa"
+            selectionColor="#aaa"
             onChangeText={onChange}
             onBlur={onBlur}
             {...otherProps}
           />
           {error && (
             <Text
-              style={{ color: "red", zIndex: 1, fontSize: 12, paddingLeft: 10 }}
+              style={[
+                { color: "red", zIndex: 1, fontSize: 12, paddingLeft: 10 },
+                errorStyle,
+              ]}
             >
               {error.message}
             </Text>
