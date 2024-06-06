@@ -99,48 +99,62 @@ export default function CustomCard() {
               </Pressable>
             </View>
 
-            {/* <Dialog
-              isVisible={showModal}
-              onBackdropPress={setShowModal(true)}
-            >
-              <Dialog.Title title="Dialog Title" />
-              <Text>Dialog body text. Add relevant information here.</Text>
-            </Dialog> */}
-
             <Dialog
-              visible={showModal}
-              animationType="slide"
-              transparent={true}
+              isVisible={showModal}
+              onBackdropPress={() => { setShowModal(false) }}
+              overlayStyle={{
+                borderRadius: 30,
+              }}
             >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  <ScrollView horizontal={false} contentContainerStyle={styles.centeredContent}>
-                    <ScrollView horizontal contentContainerStyle={styles.pickerContainer}>
-                      <View>
-                        <WheelPicker
-                          containerStyle={styles.wheelPicker}
-                          selectedIndex={selectedHour}
-                          options={hourOption}
-                          onChange={setSelectedHour}
-                        />
-                      </View>
-                      <View>
-                        <WheelPicker
-                          containerStyle={styles.wheelPicker}
-                          selectedIndex={selectedMinute}
-                          options={minuteOption}
-                          onChange={setSelectedMinute}
-                        />
-                      </View>
+              <View
+                style={{
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  gap: 5,
+                }}
+              >
+                <View>
+                  <View style={styles.modalContent}>
+                    <ScrollView horizontal={false} contentContainerStyle={styles.centeredContent}>
+                      <ScrollView horizontal contentContainerStyle={styles.pickerContainer}>
+                        <View>
+                          <WheelPicker
+                            containerStyle={styles.wheelPicker}
+                            selectedIndex={selectedHour}
+                            options={hourOption}
+                            onChange={setSelectedHour}
+                          />
+                        </View>
+                        <View>
+                          <WheelPicker
+                            containerStyle={styles.wheelPicker}
+                            selectedIndex={selectedMinute}
+                            options={minuteOption}
+                            onChange={setSelectedMinute}
+                          />
+                        </View>
+                      </ScrollView>
                     </ScrollView>
-                  </ScrollView>
-                  <View style={styles.modalButtons}>
-                    <Pressable style={styles.button} onPress={scheduleNotification}>
-                      <Text style={styles.buttonText}>OK</Text>
-                    </Pressable>
-                    <Pressable style={styles.button} onPress={handleCancel}>
-                      <Text style={styles.buttonText}>Cancel</Text>
-                    </Pressable>
+                    <View
+                      style={{
+                        alignItems: "center",
+                        flex: 1,
+                        paddingVertical: 15,
+                        height: "auto",
+                        borderRadius: 10,
+                        backgroundColor: "#ccc",
+                      }}
+                    >
+                    </View>
+                    <View style={styles.modalButtonGroup}>
+                      <Pressable style={[styles.modalButton, { backgroundColor: "#50AA75" }]}>
+                        <Text style={{ fontWeight: "bold", color: "#fff" }} onPress={scheduleNotification}>Confirm</Text>
+                      </Pressable>
+                      <Pressable style={[styles.modalButton, { backgroundColor: "#ccc" }]}>
+                        <Text style={{ fontWeight: "bold", color: "#474838" }} onPress={handleCancel}>Cancel</Text>
+                      </Pressable>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -210,12 +224,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   wheelPicker: {
-    width: '100%',
+    width: 100,
   },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
+  modalButtonGroup: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+    paddingTop: 20,
+  },
+  modalButton: {
+    alignItems: "center",
+    flex: 1,
+    paddingVertical: 15,
+    height: "auto",
+    borderRadius: 10,
   },
   button: {
     backgroundColor: '#50AA75',

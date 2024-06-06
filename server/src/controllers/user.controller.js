@@ -8,12 +8,15 @@ import bcrypt from "bcrypt";
 import CloudHanlder from "../utils/cloud.handler.js";
 import _ from "lodash";
 import Stripe from 'stripe';
+import TreeService from "../services/tree.service.js";
+import { Op } from "sequelize";
+
 
 const stripe = new Stripe('sk_test_51P7bjf05CJZ8qs7kDcGSebDhXZPJ7VpPLceToyYQ7PQzfzYrwZqI8wuvfqBNDZeZ8wwlW07NFRO1CGza2softbc500Fz4T8jv6'); // Replace with your Stripe secret key
 
 
 export default class UserController {
-    constructor() {}
+    constructor() { }
 
     #removeProfilePic = async (picture) => {
         await CloudHanlder.remove(picture);
@@ -142,7 +145,7 @@ export default class UserController {
                 currency: 'vnd',
                 payment_method_types: ['card'],
             });
-    
+
             res.status(200).send({
                 ok: true,
                 clientSecret: paymentIntent.client_secret,
@@ -150,7 +153,7 @@ export default class UserController {
         } catch (error) {
             res.status(500).send({ error: error.message });
         }
-    
+
     }
 
 
@@ -181,5 +184,30 @@ export default class UserController {
             data: payload,
         });
     };
+
+    statistic = async (req, res) => {
+        const { user } = req;
+
+        const seeds = await user.getSeeds();
+        const profile = await ProfileService.findOne({ UserId: user.id });
+
+        const countTree = await TreeService.countTree({ UserId: user.id });
+        const countPicture = await TreeService.countTree({ UserId: user.id, picture: { [Op.ne]: null } });
+        const countTheme = seeds.map(seed => seed.asset);
+        const countMoney = profile.money
+
+        const payload = {
+            "countTree": countTree,
+            "countPicture": countPicture,
+            "countTheme": countTheme,
+            "countMoney": countMoney
+        }
+
+        res.status(200).json({
+            ok: true,
+            data: payload,
+        });
+
+    }
 
 }

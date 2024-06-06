@@ -17,7 +17,7 @@ export default function AccoutCard({ navigation }) {
             </View>
 
             <View style={{ marginLeft: 15 }}>
-              <Text style={{ fontSize: 16, color: "#888" }}>
+              <Text>
                 {user.user.username}
               </Text>
             </View>

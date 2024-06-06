@@ -48,7 +48,13 @@ export default [
                 path: "/user/handle-payment-success",
                 method: "handlePaymentSuccess",
                 roles: [userRole.USER]
-            }
+            },
+            {
+                httpMethod: "get",
+                path: "/user/statistic",
+                method: "statistic",
+                roles: [userRole.USER]
+            },
         ],
     },
 ];
