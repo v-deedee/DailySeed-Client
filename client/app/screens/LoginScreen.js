@@ -24,7 +24,7 @@ const LoginScreen = ({ navigation, signIn }) => {
     setLoading(true); // Bắt đầu hiển thị hiệu ứng loading
     try {
       const loginData = await login(username, password);
-      if(loginData.ok) {
+      if (loginData.ok) {
         const data = await getUserByToken();
         if (data) {
           setUser(data);
@@ -33,7 +33,7 @@ const LoginScreen = ({ navigation, signIn }) => {
           signIn();
         } else {
           console.log(data.message);
-        }  
+        }
       } else {
         Alert.alert(loginData.message);
       }
@@ -58,7 +58,7 @@ const LoginScreen = ({ navigation, signIn }) => {
         <TextInput
           style={styles.inputText}
           placeholder="Username"
-          placeholderTextColor="#003f5c"
+          placeholderTextColor="#aaa"
           onChangeText={(text) => setUsername(text)}
         />
       </View>
@@ -67,7 +67,7 @@ const LoginScreen = ({ navigation, signIn }) => {
           secureTextEntry
           style={styles.inputText}
           placeholder="Password"
-          placeholderTextColor="#003f5c"
+          placeholderTextColor="#aaa"
           onChangeText={(text) => setPassword(text)}
         />
       </View>

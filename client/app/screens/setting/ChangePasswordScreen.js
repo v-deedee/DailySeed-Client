@@ -2,28 +2,61 @@ import React, { useContext, useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
 import { UserContext } from "../../contexts/user.context";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import FormInput from "../../components/FormInput/formInput";
+
+const formSchema = z
+  .object({
+    oldPassword: z.string().min(1, "Please fill in this field"),
+    newPassword: z
+      .string()
+      .min(1, "Please fill in this field")
+      .min(8, "Password must be at least 8 characters"),
+    confirm: z.string().min(1, "Please fill in this field"),
+  })
+  .refine((data) => data.newPassword === data.confirm, {
+    message: "Passwords do not match",
+    path: ["confirm"],
+  });
 
 export default function ChangePasswordScreen() {
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      confirm: "",
+    },
+    resolver: zodResolver(formSchema),
+  });
 
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useContext(UserContext);
 
-  const handleUpdatePassword = () => {
+  const handleUpdatePassword = async (data) => {
+    setIsLoading(true);
+    const { confirm, ...registerData } = data;
+    console.log(registerData); // registerData in form: {"oldPassword": "abcdefghi", "password": "12345678"}
+
     // Perform password validation
-    if (oldPassword === user.profile.password) {
-      onUpdateProfile({ ...user.profile, password: newPassword });
-    } else {
-      alert("Invalid old password");
-    }
+    // if (oldPassword === user.profile.password) {
+    //   onUpdateProfile({ ...user.profile, password: newPassword });
+    // } else {
+    //   alert("Invalid old password");
+    // }
+
+    setIsLoading(false);
   };
 
   return (
@@ -43,13 +76,18 @@ export default function ChangePasswordScreen() {
           Old password
         </Text>
         <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
+          <FormInput
+            control={control}
+            name="oldPassword"
             placeholder="Current password"
-            selectionColor="#aaa"
-            placeholderTextColor="#ccc"
-            value={oldPassword}
-            onChange={(text) => setOldPassword(text)}
+            secureTextEntry
+            style={styles.inputText}
+            errorStyle={{
+              color: "red",
+              zIndex: 1,
+              fontSize: 14,
+              paddingLeft: 10,
+            }}
           />
         </View>
         <Text
@@ -58,20 +96,45 @@ export default function ChangePasswordScreen() {
           New password
         </Text>
         <View style={styles.inputView}>
-          <TextInput
+          <FormInput
+            control={control}
+            name="newPassword"
+            placeholder="New Password"
+            secureTextEntry
             style={styles.inputText}
-            placeholder="New password"
-            selectionColor="#aaa"
-            placeholderTextColor="#ccc"
-            value={newPassword}
-            onChange={(text) => setNewPassword(text)}
+            errorStyle={{
+              color: "red",
+              zIndex: 1,
+              fontSize: 14,
+              paddingLeft: 10,
+            }}
+          />
+        </View>
+        <Text
+          style={{ margin: 5, marginTop: 0, fontWeight: "600", color: "#666" }}
+        >
+          Confirm password
+        </Text>
+        <View style={styles.inputView}>
+          <FormInput
+            control={control}
+            name="confirm"
+            placeholder="Confirm Password"
+            secureTextEntry
+            style={styles.inputText}
+            errorStyle={{
+              color: "red",
+              zIndex: 1,
+              fontSize: 14,
+              paddingLeft: 10,
+            }}
           />
         </View>
       </View>
       <TouchableOpacity
         style={styles.confirmBtn}
         disabled={isLoading}
-        onPress={handleUpdatePassword}
+        onPress={handleSubmit(handleUpdatePassword)}
       >
         {isLoading ? (
           <ActivityIndicator size="small" color="#ffffff" />
@@ -98,19 +161,17 @@ const styles = StyleSheet.create({
     resizeMode: "center",
   },
   inputView: {
-    backgroundColor: "#ffffff",
+    marginBottom: 20,
+  },
+  inputText: {
+    padding: 15,
+    marginBottom: 5,
+    height: 60,
+    color: "#333",
+    fontSize: 16,
     borderWidth: 1.5,
     borderColor: "#bbb",
     borderRadius: 10,
-    height: 60,
-    marginBottom: 20,
-    justifyContent: "center",
-    padding: 15,
-  },
-  inputText: {
-    height: 50,
-    color: "#333",
-    fontSize: 16,
   },
   confirmBtn: {
     backgroundColor: "#50AA75",
