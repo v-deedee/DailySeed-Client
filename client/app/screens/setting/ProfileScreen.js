@@ -11,11 +11,14 @@ import { UserContext } from "../../contexts/user.context";
 
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { statistic } from "../../services/user.service";
+import { CLOUDINARY_BASE_URL } from "../../utils/constants/cloudinary.constants";
 
 const ProfileScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
+  const [statisticData, setStatisticData] = useState();
 
   const { user } = useContext(UserContext);
 
@@ -23,6 +26,15 @@ const ProfileScreen = ({ navigation }) => {
     setUsername(user.user.username);
     setEmail(user.profile.email);
     setUserId(user.profile.id);
+    try {
+      const fetchData = async () => {
+        const statisticData = await statistic();
+        setStatisticData(statisticData);
+      }
+      fetchData()
+    } catch (error) {
+      console.log(error)
+    }
   }, [user]);
 
   return (
@@ -131,7 +143,7 @@ const ProfileScreen = ({ navigation }) => {
             }}
           >
             <Text style={{ fontSize: 14, color: "#888" }}>Recorded days</Text>
-            <Text style={{ fontWeight: "bold" }}>5</Text>
+            {statisticData && <Text style={{ fontWeight: "bold" }}>{statisticData.countTree}</Text>}
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <Image
                 style={{ width: 50, height: 50 }}
@@ -149,7 +161,7 @@ const ProfileScreen = ({ navigation }) => {
             }}
           >
             <Text style={{ fontSize: 14, color: "#888" }}>Photos</Text>
-            <Text style={{ fontWeight: "bold" }}>2</Text>
+            {statisticData && <Text style={{ fontWeight: "bold" }}>{statisticData.countPicture}</Text>}
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <Image
                 style={{ width: 50, height: 50 }}
@@ -178,23 +190,19 @@ const ProfileScreen = ({ navigation }) => {
             }}
           >
             <Text style={{ fontSize: 14, color: "#888" }}>Themes</Text>
-            <Text style={{ fontWeight: "bold" }}>2</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                marginTop: 10,
-              }}
-            >
-              <Image
-                style={{ width: 50, height: 50 }}
-                source={require("../../../assets/garden/Tree3/tree3-phase4.png")}
-              />
-              <Image
-                style={{ width: 50, height: 50 }}
-                source={require("../../../assets/garden/Tree2/tree2-phase4.png")}
-              />
-            </View>
+            {statisticData && <Text style={{ fontWeight: "bold" }}>{statisticData.countTheme.length}</Text>}
+            {statisticData && statisticData.countTheme.length > 0 && (
+              <View style={{ flexDirection: "row", justifyContent: "flex-end", marginTop: 10 }}>
+                {statisticData.countTheme.map((theme, index) => (
+                  <Image
+                    key={index}
+                    style={{ width: 40, height: 40 }}
+                    source={{ uri: `${CLOUDINARY_BASE_URL}${theme.split("|")[0]}` }}
+
+                  />
+                ))}
+              </View>
+            )}
           </View>
           <View
             style={{
@@ -207,7 +215,7 @@ const ProfileScreen = ({ navigation }) => {
             }}
           >
             <Text style={{ fontSize: 14, color: "#888" }}>Coins</Text>
-            <Text style={{ fontWeight: "bold" }}>0</Text>
+            {statisticData && <Text style={{ fontWeight: "bold" }}>{statisticData.countMoney}</Text>}
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <Image
                 style={{ width: 50, height: 50 }}

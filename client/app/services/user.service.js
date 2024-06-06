@@ -18,7 +18,7 @@ export const login = async (username, password) => {
   } catch (error) {
     console.log(error.response.data);
     console.log(1234);
-    return {ok: error.response.data.ok, message: error.response.data.message};
+    return { ok: error.response.data.ok, message: error.response.data.message };
   }
 };
 
@@ -84,3 +84,17 @@ export const handlePaymentSuccess = async (amount) => {
     throw error;
   }
 }
+
+export const statistic = async () => {
+  try {
+    const response = await authApi.get('/api/user/statistic');
+    const { ok, data } = response.data;
+    if (ok) {
+      return data;
+    } else {
+      return '';
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
