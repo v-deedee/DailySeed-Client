@@ -107,7 +107,7 @@ export const updatePassword = async (currentPassword, newPassword) => {
     return response.data;
     
   } catch (error) {
-    throw error.response.data;
+    return error.response.data;
   }
 };
 
