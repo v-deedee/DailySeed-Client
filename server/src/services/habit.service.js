@@ -23,7 +23,7 @@ class HabitService {
         Habit.findAll({
             where: conditions,
             attributes: attributes,
-            include: [{ association: Habit.Criteria, where: { active: true } }],
+            include: [{ association: Habit.Criteria }],
         });
 }
 

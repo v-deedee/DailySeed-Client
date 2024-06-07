@@ -78,7 +78,7 @@ export default class TreeController {
             throw new HttpError({ ...errorCode.TREE.NOT_FOUND, status: 403 });
         if (tree.UserId != user.id)
             throw new HttpError({
-                ...errorCode.AUTH.ROLE_INVALID,
+                ...errorCode.TREE.INVALID_AUTHORIZATION,
                 status: 403,
             });
 

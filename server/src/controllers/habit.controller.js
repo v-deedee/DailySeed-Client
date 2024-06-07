@@ -169,9 +169,11 @@ export default class HabitController {
         });
         habits.forEach(async (habit, index) => {
             habits[index] = _.pick(habit, ["id", "name", "icon", "duration"]);
-            habits[index].criteria = _.map(habit.Criteria, (criterion) =>
-                _.pick(criterion, ["id", "name", "score", "icon"])
-            );
+            habits[index].criteria = _.compact(_.map(habit.Criteria, (criterion) => {
+                if (criterion.active)
+                    return _.pick(criterion, ["id", "name", "score", "icon"]);
+            }));
+
             if (selectedCriteria[habit.id]) {
                 habits[index].selected = selectedCriteria[habit.id].id;
             } else {
