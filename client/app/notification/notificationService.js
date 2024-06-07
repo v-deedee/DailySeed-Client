@@ -44,7 +44,6 @@ export async function registerForPushNotificationsAsync() {
 export async function schedulePushNotification(title, body, data, triggerDate) {
   // Xóa tất cả các thông báo đã lên lịch
   await Notifications.cancelAllScheduledNotificationsAsync();
-  console.log(triggerDate.getHours(), triggerDate.getMinutes());
   await Notifications.scheduleNotificationAsync({
     content: {
       title: title,

@@ -16,8 +16,6 @@ export const login = async (username, password) => {
     }
     return { ok, data };
   } catch (error) {
-    console.log(error.response.data);
-    console.log(1234);
     return { ok: error.response.data.ok, message: error.response.data.message };
   }
 };
@@ -98,3 +96,18 @@ export const statistic = async () => {
     console.log(error);
   }
 };
+
+
+export const updatePassword = async (currentPassword, newPassword) => {
+  try {
+    const response = await authApi.put('/api/user/password', {
+      password: currentPassword,
+      newPassword: newPassword
+    });
+    return response.data;
+    
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+

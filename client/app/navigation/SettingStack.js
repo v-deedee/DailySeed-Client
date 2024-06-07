@@ -23,7 +23,7 @@ export default function SettingStack({ signOut }) {
           <SettingScreen signOut={signOut} navigation={navigation.navigation} />
         )}
       </Stack.Screen>
-      <Stack.Screen
+      <Stack.Screen 
         name="Profile"
         component={ProfileScreen}
         options={{

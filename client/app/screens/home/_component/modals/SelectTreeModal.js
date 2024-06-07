@@ -17,8 +17,6 @@ import { HabitContext } from "../../../../contexts/habit.context";
 export default function SelectTreeModal({
   isOpen,
   toggle,
-  treeType,
-  setTreeType,
   openRecord,
 }) {
   const { seeds } = useContext(SeedContext);

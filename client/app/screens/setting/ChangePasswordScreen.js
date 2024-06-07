@@ -5,12 +5,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { UserContext } from "../../contexts/user.context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import FormInput from "../../components/FormInput/formInput";
+import { updatePassword } from "../../services/user.service";
+
 
 const formSchema = z
   .object({
@@ -26,7 +29,7 @@ const formSchema = z
     path: ["confirm"],
   });
 
-export default function ChangePasswordScreen() {
+export default function ChangePasswordScreen({navigate}) {
   const {
     control,
     handleSubmit,
@@ -46,17 +49,25 @@ export default function ChangePasswordScreen() {
 
   const handleUpdatePassword = async (data) => {
     setIsLoading(true);
-    const { confirm, ...registerData } = data;
-    console.log(registerData); // registerData in form: {"oldPassword": "abcdefghi", "password": "12345678"}
-
-    // Perform password validation
-    // if (oldPassword === user.profile.password) {
-    //   onUpdateProfile({ ...user.profile, password: newPassword });
-    // } else {
-    //   alert("Invalid old password");
-    // }
-
+    const { oldPassword, newPassword } = data;
+    const response = await updatePassword(oldPassword, newPassword);
     setIsLoading(false);
+    // từ chối hiểu cách chia màn hình của m luôn :v nên t ko chuyển sang màn hình của setting được nếu VA thấy dòng này thì thay console.log bằng chuyển màn hình đi nhé.
+    if (response.ok) {
+      Alert.alert(
+        'Success',
+        'Update password successfully!!',
+        [
+          {
+            text: 'OK',
+            onPress: () => console.log(123)
+          },
+        ],
+        { cancelable: false }
+      );
+    } else {
+      Alert.alert('Error', response.message);
+    }  
   };
 
   return (
