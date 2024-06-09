@@ -33,7 +33,7 @@ export default function TabAll() {
     return (
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <Text style={styles.title}>Popular</Text>
+                {/* <Text style={styles.title}>Popular</Text> */}
                 {isLoading ? (
                     <>
                         <Skeleton
