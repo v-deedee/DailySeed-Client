@@ -55,7 +55,6 @@ export default function ShopScreen() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fbf5e5",
-    paddingTop: 20,
     flex: 1,
   },
   titleContainer: {

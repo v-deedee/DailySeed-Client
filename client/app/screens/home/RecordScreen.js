@@ -352,7 +352,6 @@ const RecordScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 20,
     flex: 1,
     backgroundColor: "#FBF5E5",
   },

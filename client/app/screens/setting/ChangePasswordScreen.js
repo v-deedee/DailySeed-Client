@@ -14,7 +14,6 @@ import { z } from "zod";
 import FormInput from "../../components/FormInput/formInput";
 import { updatePassword } from "../../services/user.service";
 
-
 const formSchema = z
   .object({
     oldPassword: z.string().min(1, "Please fill in this field"),
@@ -29,7 +28,7 @@ const formSchema = z
     path: ["confirm"],
   });
 
-export default function ChangePasswordScreen({navigate}) {
+export default function ChangePasswordScreen({ navigation }) {
   const {
     control,
     handleSubmit,
@@ -52,22 +51,21 @@ export default function ChangePasswordScreen({navigate}) {
     const { oldPassword, newPassword } = data;
     const response = await updatePassword(oldPassword, newPassword);
     setIsLoading(false);
-    // từ chối hiểu cách chia màn hình của m luôn :v nên t ko chuyển sang màn hình của setting được nếu VA thấy dòng này thì thay console.log bằng chuyển màn hình đi nhé.
     if (response.ok) {
       Alert.alert(
-        'Success',
-        'Update password successfully!!',
+        "Success",
+        "Update password successfully!!",
         [
           {
-            text: 'OK',
-            onPress: () => console.log(123)
+            text: "OK",
+            onPress: () => navigation.navigate("Menu"),
           },
         ],
-        { cancelable: false }
+        { cancelable: false },
       );
     } else {
-      Alert.alert('Error', response.message);
-    }  
+      Alert.alert("Error", response.message);
+    }
   };
 
   return (

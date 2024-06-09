@@ -34,8 +34,6 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     if (value != undefined) {
       setProgress(value);
-    } else {
-      console.log("Value is undefined");
     }
   }, [value]);
 
@@ -48,7 +46,6 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     async function fetchDataTree() {
       const today = new Date();
-      console.log(today);
 
       // Chuyển đổi đối tượng Date thành chuỗi định dạng ISO (YYYY-MM-DD)
       const dateString = today.toISOString().split("T")[0];
@@ -138,7 +135,6 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 20,
     flex: 1,
     backgroundColor: "#FBF5E5",
   },

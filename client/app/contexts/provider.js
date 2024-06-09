@@ -6,10 +6,9 @@ import { HabitProvider } from "./habit.context";
 import { StripeProvider } from "@stripe/stripe-react-native";
 const AllProviders = ({ children }) => (
   <StripeProvider
-  publishableKey="pk_test_51P7bjf05CJZ8qs7ku8lY5rTRdZsePMf3PvSpBDzFHLWfcSfpt2MMBiQ8PfwhvMffMQ19LvnXca8cDJaD5uunpSUl00qNAJjG5R"
-  // merchantIdentifier="merchant.com.DailySeed-Client" // required for Apple Pay
->
-
+    publishableKey="pk_test_51P7bjf05CJZ8qs7ku8lY5rTRdZsePMf3PvSpBDzFHLWfcSfpt2MMBiQ8PfwhvMffMQ19LvnXca8cDJaD5uunpSUl00qNAJjG5R"
+    // merchantIdentifier="merchant.com.DailySeed-Client" // required for Apple Pay
+  >
     <UserProvider>
       <SeedProvider>
         <TreeProvider>

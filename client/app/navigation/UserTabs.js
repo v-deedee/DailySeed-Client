@@ -18,7 +18,7 @@ export default function UserTabs({ signOut }) {
         tabBarActiveTintColor: "#61AF72",
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: { height: 80 },
+        tabBarStyle: { height: 60 },
         tabBarHideOnKeyboard: true,
       }}
     >
