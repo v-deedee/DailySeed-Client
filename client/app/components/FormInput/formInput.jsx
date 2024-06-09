@@ -24,7 +24,13 @@ const FormInput = ({ control, name, errorStyle, ...otherProps }) => {
           {error && (
             <Text
               style={[
-                { color: "red", zIndex: 1, fontSize: 12, paddingLeft: 10 },
+                {
+                  color: "red",
+                  zIndex: 1,
+                  fontSize: 13,
+                  paddingLeft: 20,
+                  paddingTop: 5,
+                },
                 errorStyle,
               ]}
             >

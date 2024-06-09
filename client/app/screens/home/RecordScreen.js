@@ -21,7 +21,7 @@ import { trackHabit } from "../../services/habit.service";
 import { TreeContext } from "../../contexts/tree.context";
 import LoadingScreen from "../LoadingScreen";
 
-const RecordScreen = ({ navigation }) => {
+export default function RecordScreen({ navigation }) {
   const [openDelHabitModal, setOpenDelHabitModal] = useState(false);
   const { tree, setTree } = useContext(TreeContext);
   const [currentHabitId, setCurrentHabitId] = useState(0);
@@ -348,7 +348,7 @@ const RecordScreen = ({ navigation }) => {
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -421,5 +421,3 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 });
-
-export default RecordScreen;

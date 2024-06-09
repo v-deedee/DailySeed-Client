@@ -9,30 +9,55 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { getUserByToken, login } from "../services/user.service";
-import { UserContext } from "../contexts/user.context";
-import { SeedContext } from "../contexts/seed.context";
+import { getUserByToken, login } from "../../services/user.service";
+import { UserContext } from "../../contexts/user.context";
+import { SeedContext } from "../../contexts/seed.context";
 
-const LoginScreen = ({ navigation, signIn }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import FormInput from "../../components/FormInput/formInput";
+
+const formSchema = z.object({
+  username: z.string().min(1, "Please fill in this field"),
+  password: z.string().min(1, "Please fill in this field"),
+});
+
+const LoginScreen = ({ navigation }) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+    resolver: zodResolver(formSchema),
+  });
+
   const [loading, setLoading] = useState(false); // Thêm state cho hiệu ứng loading
-  const { setUser } = useContext(UserContext);
+  const { setUser, setRole } = useContext(UserContext);
   const { fetchSeeds } = useContext(SeedContext);
 
-  const handleLogin = async () => {
+  const handleLogin = async (formData) => {
     setLoading(true); // Bắt đầu hiển thị hiệu ứng loading
     try {
-      const loginData = await login(username, password);
+      const loginData = await login(formData);
+      console.log("Login data: ", loginData);
       if (loginData.ok) {
-        const data = await getUserByToken();
-        if (data) {
-          setUser(data);
-          fetchSeeds();
-          console.log("Login successful!");
-          signIn();
+        if (loginData.data.payload.role === "admin") {
+          setRole("admin");
         } else {
-          console.log(data.message);
+          setRole("user");
+          const data = await getUserByToken();
+          if (data) {
+            // console.log("login data: ", data);
+            setUser(data);
+            fetchSeeds();
+          } else {
+            console.log(data.message);
+          }
         }
       } else {
         Alert.alert(loginData.message);
@@ -52,28 +77,24 @@ const LoginScreen = ({ navigation, signIn }) => {
     <View style={styles.container}>
       <Image
         style={styles.logo}
-        source={require("../../assets/logo/logo-with-text.png")}
+        source={require("../../../assets/logo/logo-with-text.png")}
       />
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
-          placeholder="Username"
-          placeholderTextColor="#aaa"
-          onChangeText={(text) => setUsername(text)}
-        />
-      </View>
-      <View style={styles.inputView}>
-        <TextInput
-          secureTextEntry
-          style={styles.inputText}
-          placeholder="Password"
-          placeholderTextColor="#aaa"
-          onChangeText={(text) => setPassword(text)}
-        />
+      <View style={{ gap: 20, width: "100%", alignItems: "center" }}>
+        <View style={styles.inputView}>
+          <FormInput control={control} name="username" placeholder="Username" />
+        </View>
+        <View style={styles.inputView}>
+          <FormInput
+            control={control}
+            name="password"
+            placeholder="Password"
+            secureTextEntry
+          />
+        </View>
       </View>
       <TouchableOpacity
         style={styles.loginBtn}
-        onPress={handleLogin}
+        onPress={handleSubmit(handleLogin)}
         disabled={loading}
       >
         {loading ? (
@@ -106,14 +127,6 @@ const styles = StyleSheet.create({
   },
   inputView: {
     width: "80%",
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#EAEAEA",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 20,
-    justifyContent: "center",
-    padding: 20,
   },
   inputText: {
     height: 50,
@@ -136,6 +149,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     gap: 5,
+    marginBottom: 20,
   },
   registerText: {
     color: "#008D6A",

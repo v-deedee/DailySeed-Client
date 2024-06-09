@@ -8,12 +8,12 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { register } from "../services/user.service";
-import { UserContext } from "../contexts/user.context";
+import { register } from "../../services/user.service";
+import { UserContext } from "../../contexts/user.context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import FormInput from "../components/FormInput/formInput";
+import FormInput from "../../components/FormInput/formInput";
 
 const formSchema = z
   .object({
@@ -67,7 +67,7 @@ const RegisterScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Image
         style={styles.logo}
-        source={require("../../assets/logo/logo-with-text.png")}
+        source={require("../../../assets/logo/logo-with-text.png")}
       />
       <View style={{ gap: 20, width: "100%", alignItems: "center" }}>
         <View style={styles.inputView}>
@@ -128,13 +128,6 @@ const styles = StyleSheet.create({
   },
   inputView: {
     width: "80%",
-    //backgroundColor: "#ffffff",
-    // borderWidth: 1,
-    // borderColor: "#EAEAEA",
-    // borderRadius: 25,
-    // height: 50,
-    // marginBottom: 30,
-    // justifyContent: "center",
   },
   inputText: {
     height: 50,

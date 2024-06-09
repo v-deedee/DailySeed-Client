@@ -64,7 +64,7 @@ export const updateTree = async (trees) => {
 export const findTree = async (day, month, year) => {
   try {
     const response = await authApi.get(`/api/tree/${day}/${month}/${year}`)
-    console.log(response.data, 2452345)
+    // console.log(response.data, 2452345)
     if (response.data.ok) {
       return response.data.data;
     } else {

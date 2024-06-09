@@ -1,22 +1,19 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ProfileScreen from "../screens/setting/ProfileScreen";
-import SettingScreen from "../screens/setting/SettingScreen";
-import ChangePasswordScreen from "../screens/setting/ChangePasswordScreen";
+import ProfileScreen from "../ProfileScreen";
+import SettingScreen from "../SettingScreen";
+import ChangePasswordScreen from "../ChangePasswordScreen";
 const Stack = createNativeStackNavigator();
 
-export default function SettingStack({ signOut }) {
+export default function SettingStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="Menu"
+        component={SettingScreen}
         options={{
           headerShown: false,
         }}
-      >
-        {(navigation) => (
-          <SettingScreen signOut={signOut} navigation={navigation.navigation} />
-        )}
-      </Stack.Screen>
+      />
       <Stack.Screen
         name="Profile"
         component={ProfileScreen}

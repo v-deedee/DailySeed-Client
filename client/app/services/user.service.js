@@ -1,14 +1,16 @@
-import authApi from './authApi';
-import publicApi from './publicApi';
-import { saveTokenToLocalStorage, deleteTokenFromLocalStorage } from '../services/auth/token.services';
-import User from '../models/User';
-import Profile from '../models/Profile';
-import { setUser } from '../contexts/user.context';
+import authApi from "./authApi";
+import publicApi from "./publicApi";
+import {
+  saveTokenToLocalStorage,
+  deleteTokenFromLocalStorage,
+} from "../services/auth/token.services";
+import User from "../models/User";
+import Profile from "../models/Profile";
+import { setUser } from "../contexts/user.context";
 
-
-export const login = async (username, password) => {
+export const login = async (reqData) => {
   try {
-    const response = await publicApi.post('/api/auth/login', { username, password });
+    const response = await publicApi.post("/api/auth/login", reqData);
     const { ok, data } = response.data;
     if (ok) {
       const { token, payload } = data;
@@ -22,12 +24,12 @@ export const login = async (username, password) => {
 
 export const getUserByToken = async () => {
   try {
-    const response = await authApi.get('/api/user');
+    const response = await authApi.get("/api/user");
     const { ok, data } = response.data;
     if (ok) {
       return data;
     } else {
-      return '';
+      return "";
     }
   } catch (error) {
     console.log(error);
@@ -36,7 +38,7 @@ export const getUserByToken = async () => {
 
 export const register = async (data) => {
   try {
-    const response = await publicApi.post('/api/user', data);
+    const response = await publicApi.post("/api/user", data);
     return response.data;
   } catch (error) {
     return error.response.data;
@@ -53,61 +55,60 @@ export const logout = async () => {
   }
 };
 
-
 export const createPaymentIntent = async (amount) => {
   try {
-    const response = await authApi.post('/api/user/create-payment-intent', { amount: amount })
-    const data = response.data
+    const response = await authApi.post("/api/user/create-payment-intent", {
+      amount: amount,
+    });
+    const data = response.data;
     if (data.ok) {
       return data.clientSecret;
     } else {
-      throw new Error('Failed to create payment intent');
+      throw new Error("Failed to create payment intent");
     }
   } catch (error) {
     throw error;
   }
-}
-
+};
 
 export const handlePaymentSuccess = async (amount) => {
   try {
-    const response = await authApi.post('/api/user/handle-payment-success', { amount: amount })
-    const data = response.data
+    const response = await authApi.post("/api/user/handle-payment-success", {
+      amount: amount,
+    });
+    const data = response.data;
     if (data.ok) {
       return data.data.profile;
     } else {
-      throw new Error('Failed to create payment intent');
+      throw new Error("Failed to create payment intent");
     }
   } catch (error) {
     throw error;
   }
-}
+};
 
 export const statistic = async () => {
   try {
-    const response = await authApi.get('/api/user/statistic');
+    const response = await authApi.get("/api/user/statistic");
     const { ok, data } = response.data;
     if (ok) {
       return data;
     } else {
-      return '';
+      return "";
     }
   } catch (error) {
     console.log(error);
   }
 };
 
-
 export const updatePassword = async (currentPassword, newPassword) => {
   try {
-    const response = await authApi.put('/api/user/password', {
+    const response = await authApi.put("/api/user/password", {
       password: currentPassword,
-      newPassword: newPassword
+      newPassword: newPassword,
     });
     return response.data;
-    
   } catch (error) {
     return error.response.data;
   }
 };
-

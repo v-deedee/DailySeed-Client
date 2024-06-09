@@ -10,7 +10,7 @@ import { TreeContext } from "../../contexts/tree.context";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-export default function SettingScreen({ signOut, navigation }) {
+export default function SettingScreen({ navigation }) {
   const { setUser } = useContext(UserContext);
   const { setHabits } = useContext(HabitContext);
   const { setSeeds } = useContext(SeedContext);
@@ -22,7 +22,6 @@ export default function SettingScreen({ signOut, navigation }) {
     setHabits([]);
     setSeeds([]);
     setTree(null);
-    signOut();
   };
 
   return (

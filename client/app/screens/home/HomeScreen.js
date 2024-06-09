@@ -64,7 +64,7 @@ export default function HomeScreen({ navigation }) {
         };
         console.log(modifiedTree);
         setTree(modifiedTree);
-        console.log("index.js");
+        // console.log("index.js");
       }
     }
 
