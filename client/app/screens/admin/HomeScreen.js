@@ -1,10 +1,17 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput } from "react-native";
-import TabAll from "../shop/_component/TabAll";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
+
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import { useContext, useState } from "react";
 import { UserContext } from "../../contexts/user.context";
 import { Dialog } from "@rneui/base";
 import CustomImagePicker from "./_component/ImagePicker";
+import TabAll from "../user/shop/_component/TabAll";
 
 export default function HomeScreen() {
   const { role } = useContext(UserContext);
@@ -28,7 +35,9 @@ export default function HomeScreen() {
           onPress={() => setShowModal(true)}
         >
           <FontAwesome6 name="plus" size={18} color="#fff" />
-          <Text style={{ color: "#fff", fontWeight: "600", marginLeft: 5 }}>Add</Text>
+          <Text style={{ color: "#fff", fontWeight: "600", marginLeft: 5 }}>
+            Add
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -37,11 +46,13 @@ export default function HomeScreen() {
         onBackdropPress={() => setShowModal(false)}
         overlayStyle={{
           borderRadius: 30,
-          backgroundColor: 'white'
+          backgroundColor: "white",
         }}
       >
-        <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontWeight: "bold", marginBottom: 5, fontSize: 18 }}>Add Seed</Text>
+        <View style={{ alignItems: "center" }}>
+          <Text style={{ fontWeight: "bold", marginBottom: 5, fontSize: 18 }}>
+            Add Seed
+          </Text>
         </View>
         <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Seed Name</Text>
         <View style={styles.modalInputView}>
@@ -60,17 +71,31 @@ export default function HomeScreen() {
         </View>
 
         <View style={{ marginTop: 20 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 20,
+            }}
+          >
             <CustomImagePicker phase={"Phase 1"} />
             <CustomImagePicker phase={"Phase 2"} />
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 20, marginTop: 20 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 20,
+              marginTop: 20,
+            }}
+          >
             <CustomImagePicker phase={"Phase 3"} />
             <CustomImagePicker phase={"Phase 4"} />
           </View>
         </View>
-
 
         <TouchableOpacity
           style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
@@ -96,10 +121,10 @@ const styles = StyleSheet.create({
     color: "#474838",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   inputView: {
     backgroundColor: "#ffffff",
@@ -119,7 +144,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     padding: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   modalInputText: {
     height: 50,
@@ -130,6 +155,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     height: "auto",
     borderRadius: 10,
-    marginTop: 20
+    marginTop: 20,
   },
 });

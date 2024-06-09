@@ -1,15 +1,14 @@
 import { useState, useEffect, useContext } from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 
 import { getUserByToken } from "./services/user.service";
 import { UserContext } from "./contexts/user.context";
 import { SeedContext } from "./contexts/seed.context";
 
-import LoadingScreen from "./screens/LoadingScreen";
 import AuthStack from "./screens/authentication/navigation/AuthStack";
-import UserTabs from "./navigation/UserTabs";
-import AdminTabs from "./navigation/AdminTabs";
+import UserTabs from "./screens/user/navigation/UserTabs";
+import AdminTabs from "./screens/admin/navigation/AdminTabs";
 
 export default function Root() {
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +35,11 @@ export default function Root() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {isLoading ? (
-        <LoadingScreen />
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
       ) : (
         <NavigationContainer>
           {role === "admin" ? (
