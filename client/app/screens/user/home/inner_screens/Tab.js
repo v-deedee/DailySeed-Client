@@ -13,11 +13,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import TreeScreen from "./TreeScreen";
 import NoteScreen from "./NoteScreen";
 
-export default function Tab({
-  openRecord,
-  progress,
-  toggleSelectTreeModal,
-}) {
+export default function Tab({ openRecord, progress, toggleSelectTreeModal }) {
   const layout = useWindowDimensions();
 
   const [index, setIndex] = useState(0);
@@ -53,7 +49,7 @@ export default function Tab({
             alignItems: "center",
             backgroundColor: "#fff",
             borderRadius: 90,
-            margin: 5,
+            // margin: 5,
             paddingHorizontal: 10,
             paddingVertical: 10,
           }}

@@ -2,21 +2,21 @@ import React, { useContext, useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   Image,
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { getUserByToken, login } from "../../services/user.service";
-import { UserContext } from "../../contexts/user.context";
-import { SeedContext } from "../../contexts/seed.context";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import FormInput from "../../components/FormInput/formInput";
+
+import { getUserByToken, login } from "../../services/user.service";
+import { UserContext } from "../../contexts/user.context";
+import { SeedContext } from "../../contexts/seed.context";
 
 const formSchema = z.object({
   username: z.string().min(1, "Please fill in this field"),
@@ -44,7 +44,6 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true); // Bắt đầu hiển thị hiệu ứng loading
     try {
       const loginData = await login(formData);
-      console.log("Login data: ", loginData);
       if (loginData.ok) {
         if (loginData.data.payload.role === "admin") {
           setRole("admin");
@@ -52,7 +51,6 @@ const LoginScreen = ({ navigation }) => {
           setRole("user");
           const data = await getUserByToken();
           if (data) {
-            // console.log("login data: ", data);
             setUser(data);
             fetchSeeds();
           } else {

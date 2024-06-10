@@ -1,16 +1,17 @@
-import { BottomSheet, Card, Dialog, Switch } from "@rneui/themed";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  Modal,
   Pressable,
   ScrollView,
   Alert,
 } from "react-native";
-import { useState, useEffect, useRef } from "react";
+import { Card, Dialog, Switch } from "@rneui/themed";
 import WheelPicker from "react-native-wheely";
+
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+
 import {
   schedulePushNotification,
   cancelAllScheduledNotificationsAsync,

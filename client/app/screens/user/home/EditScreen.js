@@ -1,3 +1,4 @@
+import { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -7,30 +8,23 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import { useContext, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { Slider } from "@rneui/themed";
-
-import IconModal from "./_component/IconPicker";
-import Ionicons from "react-native-vector-icons/Ionicons";
-// import { EmojiModal } from "react-native-emojis-picker";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
 
-import { color } from "../../../utils/utils";
 import LevelModal from "./_component/modals/LevelModal";
 import ConfirmSaveHabitModal from "./_component/modals/ConfirmSaveHabitModal";
 import { HabitContext } from "../../../contexts/habit.context";
-import { createHabit, updateHabit } from "../../../services/habit.service";
 import { EmojiPicker } from "../../../components/EmojiPicker/EmojiPicker";
+import { createHabit, updateHabit } from "../../../services/habit.service";
+import { color } from "../../../utils/utils";
 
 export default function EditScreen({ navigation }) {
   const { habits, setHabits } = useContext(HabitContext);
   const route = useRoute();
-  const [showIconModal, setShowIconModal] = useState(false);
-  const [habitIcon, setHabitIcon] = useState();
   const [currentHabit, setCurrentHabit] = useState({
     id: -1,
     icon: "🏆",
@@ -49,15 +43,6 @@ export default function EditScreen({ navigation }) {
       },
     ],
   });
-
-  const toggleIconModal = () => {
-    setShowIconModal(!showIconModal);
-  };
-
-  const handleIconSelect = (icon) => {
-    setCurrentHabit({ ...currentHabit, icon: icon });
-    toggleIconModal();
-  };
 
   let currentId = route.params?.id;
 
@@ -231,18 +216,6 @@ export default function EditScreen({ navigation }) {
               >
                 <Entypo name="emoji-happy" size={25} color="#aaa" />
               </TouchableOpacity>
-              {/* {openEmojiPicker && (
-                <EmojiModal
-                  intensityBlur={1000}
-                  columns={9}
-                  darkMode={true}
-                  onPressOutside={() => setOpenEmojiPicker(false)}
-                  onEmojiSelected={(emoji) => {
-                    setOpenEmojiPicker(false);
-                    setHabitIcon(emoji);
-                  }}
-                />
-              )} */}
             </View>
 
             {/* Habit duration */}
@@ -448,12 +421,6 @@ export default function EditScreen({ navigation }) {
         setLabelInput={setLabelInput}
         addNewLevel={addNewLevel}
         editLevel={editLevel}
-      />
-
-      <IconModal
-        visible={showIconModal}
-        onIconSelect={handleIconSelect}
-        onClose={toggleIconModal}
       />
 
       <ConfirmSaveHabitModal

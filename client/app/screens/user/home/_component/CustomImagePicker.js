@@ -14,7 +14,6 @@ export default function CustomImagePicker({ image, setImage, setImageFile }) {
       quality: 1,
     });
 
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
       setImageFile(result.assets[0]);
@@ -23,22 +22,22 @@ export default function CustomImagePicker({ image, setImage, setImageFile }) {
 
   return (
     <View style={styles.container}>
-      {/* <Button title="Pick an image from camera roll" onPress={pickImage} /> */}
       {image ? (
-        <View style={{ position: "relative" }}>
+        <View style={{ position: "relative", width: "100%" }}>
           <Image source={{ uri: image }} style={styles.image} />
           <TouchableOpacity
-            style={{ position: "absolute", right: 10, top: 10 }}
+            style={{
+              position: "absolute",
+              right: 10,
+              top: 10,
+              backgroundColor: "#fff",
+              borderRadius: 999,
+            }}
             onPress={() => {
               setImage(null);
             }}
           >
-            <AntDesign
-              name="closecircle"
-              size={25}
-              color="#888"
-              style={{ backgroundColor: "#fff", borderRadius: 999 }}
-            />
+            <AntDesign name="closecircle" size={25} color="#888" />
           </TouchableOpacity>
         </View>
       ) : (
@@ -46,13 +45,12 @@ export default function CustomImagePicker({ image, setImage, setImageFile }) {
           style={{
             justifyContent: "center",
             alignItems: "center",
-            width: 300,
-            height: 300,
+            width: "100%",
+            aspectRatio: "1/1",
             backgroundColor: "#f9f9f9",
             borderWidth: 2,
             borderColor: "#eee",
             borderRadius: 10,
-            position: "relative",
           }}
           onPress={pickImage}
         >
@@ -74,8 +72,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   image: {
-    width: 300,
-    height: 300,
+    width: "100%",
+    aspectRatio: "1/1",
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "#eee",

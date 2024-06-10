@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import * as FileSystem from "expo-file-system";
+// import * as FileSystem from "expo-file-system";
 import {
   Text,
   View,
@@ -9,13 +9,16 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import ImagePicker from "../_component/ImagePicker";
-import { CLOUDINARY_BASE_URL } from ".../../../../utils/constants/cloudinary.constants";
+
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
-import Entypo from "react-native-vector-icons/Entypo";
+
+import CustomImagePicker from "../_component/CustomImagePicker";
+import { CLOUDINARY_BASE_URL } from ".../../../../utils/constants/cloudinary.constants";
 import { TreeContext } from ".../../../../contexts/tree.context";
 import { updateTreeNote } from ".../../../../services/tree.service";
+import { UserContext } from "../../../../contexts/user.context";
+
 export default function NoteScreen() {
   const { tree, setTree } = useContext(TreeContext);
   const [note, setNote] = useState("");
@@ -25,6 +28,9 @@ export default function NoteScreen() {
   const [showPost, setShowPost] = useState(false);
 
   const [timestamp, setTimestamp] = useState(null);
+
+  const { user } = useContext(UserContext);
+
   useEffect(() => {
     if (tree?.tree?.note) {
       setNote(tree?.tree?.note || "");
@@ -76,7 +82,7 @@ export default function NoteScreen() {
 
     console.log(newTree);
     // Cập nhật tree với note và image mới (null)
-    const updatedTree = await updateTree({
+    const updatedTree = await updateTreeNote({
       ...tree.tree,
       note: null,
       picture: null,
@@ -91,8 +97,8 @@ export default function NoteScreen() {
         {!showPost ? (
           <View
             style={{
-              // width: "100%",
-              padding: 20,
+              padding: 30,
+              paddingHorizontal: 30,
               backgroundColor: "#fff",
               borderRadius: 10,
             }}
@@ -113,13 +119,13 @@ export default function NoteScreen() {
                 justifyContent: "flex-start",
                 // padding: 20,
                 paddingHorizontal: 15,
-                marginBottom: 30,
+                marginBottom: 15,
               }}
             >
               <TextInput
                 multiline={true}
-                numberOfLines={8}
-                style={{ height: 150, fontWeight: "600" }}
+                numberOfLines={5}
+                style={{ height: 100, fontWeight: "600", paddingVertical: 15 }}
                 placeholder="Write here..."
                 selectionColor="#aaa"
                 value={note}
@@ -132,7 +138,7 @@ export default function NoteScreen() {
             >
               Today's picture
             </Text>
-            <ImagePicker
+            <CustomImagePicker
               image={image}
               setImage={setImage}
               setImageFile={setImageFile}
@@ -173,28 +179,61 @@ export default function NoteScreen() {
                 <MaterialIcons name="delete-outline" color="#aaa" size={25} />
               </TouchableOpacity>
             </View>
+
             <View
               style={{
                 width: "100%",
                 padding: 20,
                 backgroundColor: "#fff",
                 borderRadius: 10,
+                padding: 30,
               }}
             >
-              <View>
-                {/* {timestamp && (
-                  <Text style={{ padding: 10 }}>
-                    {timestamp.getHours()}:{timestamp.getMinutes()}
+              <View
+                style={{
+                  flexDirection: "row",
+                  // alignItems: "center",
+                  gap: 10,
+                  marginBottom: 10,
+                }}
+              >
+                <Image
+                  source={{ uri: "https://picsum.photos/200" }}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 999,
+                    borderWidth: 2,
+                    borderColor: "#ccc",
+                  }}
+                />
+                <View
+                  style={{
+                    // height: "50",
+                    justifyContent: "space-evenly",
+                    gap: 5,
+                  }}
+                >
+                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
+                    {user.user.username}
                   </Text>
-                )} */}
+                  <Text style={{ color: "#888" }}>
+                    {timestamp.getHours().toString().padStart(2, "0") +
+                      ":" +
+                      timestamp.getMinutes().toString().padStart(2, "0")}
+                  </Text>
+                </View>
+              </View>
+              <View>
                 <Text
                   style={{
-                    fontWeight: "600",
+                    fontWeight: "400",
                     marginBottom: 10,
                     color: "#333",
-                    paddingBottom: 5,
+                    // paddingBottom: 5,
                     borderBottomWidth: 1,
                     borderColor: "#ddd",
+                    fontSize: 16,
                   }}
                 >
                   {note}
@@ -217,8 +256,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 300,
-    height: 300,
+    width: "100%",
+    aspectRatio: "1/1",
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "#eee",

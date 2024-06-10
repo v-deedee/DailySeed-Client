@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -5,7 +6,6 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { useState } from "react";
 import { Dialog } from "@rneui/themed";
 
 import Entypo from "react-native-vector-icons/Entypo";
@@ -88,6 +88,12 @@ export default function LevelModal({
       </View>
       <View style={styles.modalButtonGroup}>
         <TouchableOpacity
+          style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
+          onPress={type === "add" ? addNewLevel : editLevel}
+        >
+          <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           style={[styles.modalButton, { backgroundColor: "#ccc" }]}
           onPress={() => {
             setIconInput("");
@@ -96,12 +102,6 @@ export default function LevelModal({
           }}
         >
           <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-          onPress={type === "add" ? addNewLevel : editLevel}
-        >
-          <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
         </TouchableOpacity>
       </View>
     </Dialog>

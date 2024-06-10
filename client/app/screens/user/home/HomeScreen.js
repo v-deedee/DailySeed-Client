@@ -109,7 +109,7 @@ export default function HomeScreen({ navigation }) {
         style={{
           alignItems: "center",
           justifyContent: "center",
-          margin: 20,
+          margin: 15,
         }}
       >
         <Text style={{ color: "#787878", fontWeight: 700 }}>
@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
   header: {
     padding: 20,
     paddingBottom: 0,
+    paddingTop: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -152,6 +153,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: "row",
     gap: 5,
+    alignItems: "center",
   },
   coinContainer: {
     paddingHorizontal: 10,

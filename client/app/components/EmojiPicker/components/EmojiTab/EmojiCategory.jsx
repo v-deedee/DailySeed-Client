@@ -21,6 +21,9 @@ const EmojiCategory = ({ category }) => {
       )}
       keyExtractor={(item) => item}
       numColumns={6}
+      columnWrapperStyle={{
+        justifyContent: "space-evenly",
+      }}
     />
   );
 };

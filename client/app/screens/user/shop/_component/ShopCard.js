@@ -1,29 +1,50 @@
-import React, { useContext, useState } from 'react';
-import { Button, Card } from '@rneui/themed';
-import { View, Text, StyleSheet, Image, ImageBackground, Alert, ActivityIndicator, TextInput, TouchableOpacity } from "react-native";
-import { CLOUDINARY_BASE_URL } from '../../../../utils/constants/cloudinary.constants';
-import { Icon } from '@rneui/themed';
-import Modal from 'react-native-modal';
-import { buyTree } from '../../../../services/tree.service';
-import { UserContext } from '../../../../contexts/user.context';
-import { Dialog } from '@rneui/base';
+import { useContext, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ImageBackground,
+  Alert,
+  ActivityIndicator,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import { Button, Card, Icon } from "@rneui/themed";
+import { Dialog } from "@rneui/base";
+import Modal from "react-native-modal";
 
-export default function ShopCard({ id, name, price, initialOwned, assets, onUpdateOwned, edit }) {
+import { CLOUDINARY_BASE_URL } from "../../../../utils/constants/cloudinary.constants";
+import { buyTree } from "../../../../services/tree.service";
+import { UserContext } from "../../../../contexts/user.context";
+
+export default function ShopCard({
+  id,
+  name,
+  price,
+  initialOwned,
+  assets,
+  onUpdateOwned,
+  edit,
+}) {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [owned, setOwned] = useState(initialOwned);
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
   const { user, setUser } = useContext(UserContext);
 
   const handleBuyTree = async () => {
-    console.log(user);
+    // console.log(user);
     setIsLoading(true); // Start loading
     const data = await buyTree(id);
-    console.log(data);
+    // console.log(data);
     setIsLoading(false); // End loading
     if (data.ok) {
-      Alert.alert("Mua cây thành công");
-      const newUser = { ...user, profile: { ...user.profile, money: user.profile.money - price } }
-      setUser(newUser)
+      Alert.alert("Your purchase was successful.");
+      const newUser = {
+        ...user,
+        profile: { ...user.profile, money: user.profile.money - price },
+      };
+      setUser(newUser);
       onUpdateOwned(id, true);
       setOwned(true); // Update the state using setOwned
     } else {
@@ -42,13 +63,22 @@ export default function ShopCard({ id, name, price, initialOwned, assets, onUpda
 
   return (
     <Card containerStyle={styles.cardContainer}>
-      <Card.Image source={require("../../../../../assets/theme/background.png")} style={styles.image}>
+      <Card.Image
+        source={require("../../../../../assets/theme/background.png")}
+        style={styles.image}
+      >
         <View style={styles.treeImgContainer}>
-          {assets.slice().reverse().map((asset, index) => (
-            <View key={index} style={{ justifyContent: 'flex-end' }}>
-              <Image source={{ uri: `${CLOUDINARY_BASE_URL}${asset}` }} style={{ width: 60 + index * 10, height: 60 + index * 10 }} />
-            </View>
-          ))}
+          {assets
+            .slice()
+            .reverse()
+            .map((asset, index) => (
+              <View key={index} style={{ justifyContent: "flex-end" }}>
+                <Image
+                  source={{ uri: `${CLOUDINARY_BASE_URL}${asset}` }}
+                  style={{ width: 60 + index * 10, height: 60 + index * 10 }}
+                />
+              </View>
+            ))}
         </View>
       </Card.Image>
       <View style={styles.infoContainer}>
@@ -64,11 +94,14 @@ export default function ShopCard({ id, name, price, initialOwned, assets, onUpda
           {isLoading ? (
             <ActivityIndicator size="small" color="#0000ff" /> // Show loading indicator
           ) : owned ? (
-            <Icon name='check' type='material' color='#41B06E' size={30} />
+            <Icon name="check" type="material" color="#41B06E" size={30} />
           ) : (
             <View style={styles.coinContainer}>
-              <ImageBackground source={require('../../../../../assets/shop/coin.png')} style={{ width: 30, height: 30 }} />
-              <Text style={{ fontWeight: '700' }}>{price}</Text>
+              <ImageBackground
+                source={require("../../../../../assets/shop/coin.png")}
+                style={{ width: 30, height: 30 }}
+              />
+              <Text style={{ fontWeight: "700" }}>{price}</Text>
             </View>
           )}
         </Button>
@@ -79,8 +112,9 @@ export default function ShopCard({ id, name, price, initialOwned, assets, onUpda
           visible={showConfirmModal}
           onConfirm={handleBuyTree}
           onCancel={hideConfirmModal}
-          title="Confirm buy seed"
-          message={`Confirm buy this seed for the price ${price}?`}
+          title="Confirm payment"
+          message={`Do you want to buy this seed with the price ${price}?`}
+          isLoading={isLoading}
         />
       )}
 
@@ -90,13 +124,17 @@ export default function ShopCard({ id, name, price, initialOwned, assets, onUpda
           onBackdropPress={() => setShowConfirmModal(false)}
           overlayStyle={{
             borderRadius: 30,
-            backgroundColor: 'white'
+            backgroundColor: "white",
           }}
         >
-          <View style={{ alignItems: 'center' }}>
-            <Text style={{ fontWeight: "bold", marginBottom: 5, fontSize: 18 }}>Change Seed</Text>
+          <View style={{ alignItems: "center" }}>
+            <Text style={{ fontWeight: "bold", marginBottom: 5, fontSize: 18 }}>
+              Change Seed
+            </Text>
           </View>
-          <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Change seed name</Text>
+          <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+            Change seed name
+          </Text>
           <View style={styles.modalInputView}>
             <TextInput
               style={styles.modalInputText}
@@ -105,7 +143,9 @@ export default function ShopCard({ id, name, price, initialOwned, assets, onUpda
               value={name}
             />
           </View>
-          <Text style={{ fontWeight: "bold", marginBottom: 5, marginTop: 10 }}>Change seed price</Text>
+          <Text style={{ fontWeight: "bold", marginBottom: 5, marginTop: 10 }}>
+            Change seed price
+          </Text>
           <View style={styles.modalInputView}>
             <TextInput
               style={styles.modalInputText}
@@ -115,7 +155,13 @@ export default function ShopCard({ id, name, price, initialOwned, assets, onUpda
             />
           </View>
 
-          <View style={{ flexDirection: 'row', gap: 5, justifyContent: 'space-between' }}>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 5,
+              justifyContent: "space-between",
+            }}
+          >
             <TouchableOpacity
               style={[styles.newModalButton, { backgroundColor: "#50AA75" }]}
             >
@@ -130,12 +176,18 @@ export default function ShopCard({ id, name, price, initialOwned, assets, onUpda
           </View>
         </Dialog>
       )}
-
     </Card>
   );
 }
 
-const ConfirmModal = ({ visible, onConfirm, onCancel, title, message }) => (
+const ConfirmModal = ({
+  visible,
+  onConfirm,
+  onCancel,
+  title,
+  message,
+  isLoading,
+}) => (
   <Modal
     isVisible={visible}
     onBackdropPress={onCancel}
@@ -144,20 +196,38 @@ const ConfirmModal = ({ visible, onConfirm, onCancel, title, message }) => (
     <View style={styles.modalContainer}>
       <Text style={styles.modalTitle}>{title}</Text>
       <Text style={styles.modalMessage}>{message}</Text>
-      <View style={styles.modalButtonContainer}>
-        <Button
-          title="Cancel"
-          onPress={onCancel}
-          buttonStyle={[styles.modalButton, , { backgroundColor: '#ccc' }]}
-          titleStyle={styles.modalButtonText}
-        />
-        <Button
-          title="Confirm"
-          onPress={onConfirm}
-          buttonStyle={[styles.modalButton, styles.confirmButton]}
-          titleStyle={styles.modalButtonText}
-        />
-      </View>
+
+      {isLoading ? (
+        <View style={[styles.modalButtonContainer, { width: "90%" }]}>
+          <View
+            style={{
+              alignItems: "center",
+              flex: 1,
+              paddingVertical: 15,
+              height: "auto",
+              borderRadius: 10,
+              backgroundColor: "#ccc",
+            }}
+          >
+            <ActivityIndicator size="small" color="#ffffff" />
+          </View>
+        </View>
+      ) : (
+        <View style={styles.modalButtonContainer}>
+          <Button
+            title="Yes"
+            onPress={onConfirm}
+            buttonStyle={[styles.modalButton, styles.confirmButton]}
+            titleStyle={styles.modalButtonText}
+          />
+          <Button
+            title="No"
+            onPress={onCancel}
+            buttonStyle={[styles.modalButton, { backgroundColor: "#ccc" }]}
+            titleStyle={[styles.modalButtonText, { color: "#333" }]}
+          />
+        </View>
+      )}
     </View>
   </Modal>
 );
@@ -167,29 +237,29 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
     marginTop: 20,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 0,
-    shadowColor: 'rgba(0,0,0, 0.0)',
+    shadowColor: "rgba(0,0,0, 0.0)",
     shadowOffset: { height: 0, width: 0 },
     shadowOpacity: 0,
     shadowRadius: 0,
-    elevation: 0
+    elevation: 0,
   },
   image: {
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   treeImgContainer: {
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-evenly',
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-evenly",
   },
   infoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingTop: 10,
-    alignItems: 'center'
+    alignItems: "center",
   },
   title: {
     fontSize: 15,
@@ -200,50 +270,51 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     borderWidth: 2,
     borderWidth: 0,
-    shadowColor: 'rgba(0,0,0, 0.0)',
+    shadowColor: "rgba(0,0,0, 0.0)",
     shadowOffset: { height: 0, width: 0 },
     shadowOpacity: 0,
     shadowRadius: 0,
     elevation: 0,
   },
   coinContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: "row",
+    alignItems: "center",
   },
   modalContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
   modalMessage: {
+    width: "80%",
     fontSize: 16,
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   modalButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
   },
   modalButton: {
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    width: 150
+    width: 150,
   },
   confirmButton: {
-    backgroundColor: '#41B06E',
+    backgroundColor: "#41B06E",
   },
   modalButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "600",
   },
   modalInputView: {
     width: "100%",
@@ -254,7 +325,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     padding: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   modalInputText: {
     height: 50,
@@ -267,6 +338,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
     padding: 20,
-    width: 125
+    width: 125,
   },
 });

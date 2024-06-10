@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Dialog } from "@rneui/themed";
-import { useState } from "react";
 
 export default function ConfirmSaveHabitModal({
   isOpen,
@@ -99,15 +98,13 @@ const styles = StyleSheet.create({
 });
 
 function getNextNDays(n) {
-  var currentDate = new Date(); // Get current date
-  currentDate.setDate(currentDate.getDate() + n); // Add n days
+  var currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() + n);
 
-  // Get day, month, and year
   var day = currentDate.getDate();
-  var month = currentDate.getMonth() + 1; // January is 0
+  var month = currentDate.getMonth() + 1;
   var year = currentDate.getFullYear();
 
-  // Add leading zeros if needed
   if (day < 10) {
     day = "0" + day;
   }
@@ -115,7 +112,6 @@ function getNextNDays(n) {
     month = "0" + month;
   }
 
-  // Format the date
   var formattedDate = day + "/" + month + "/" + year;
 
   return formattedDate;

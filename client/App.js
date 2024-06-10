@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { LogBox } from "react-native";
 import AllProviders from "./app/contexts/provider";
 import Root from "./app/Root";
 // import * as dotenv from 'react-native-dotenv';
@@ -11,6 +11,10 @@ console.error = (...args) => {
   if (/defaultProps/.test(args[0])) return;
   error(...args);
 };
+
+// Đoạn này ẩn warning Notification
+LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 export default function App() {
   return (
