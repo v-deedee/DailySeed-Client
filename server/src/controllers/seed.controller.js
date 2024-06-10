@@ -13,12 +13,13 @@ export default class SeedController {
     #uploadAssets = async (assets, folder) => {
         let URLs = [];
         for (const asset of assets) {
+            console.log(asset);
             const b64 = Buffer.from(asset.buffer).toString("base64");
             let dataURI = "data:" + asset.mimetype + ";base64," + b64;
             const picture = await CloudHanlder.upload(
                 dataURI,
                 folder,
-                asset.originalname
+                asset.originalname.replace(/\.[^/.]+$/, "")
             );
             URLs.push(picture.public_id);
         }
