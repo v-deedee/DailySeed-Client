@@ -32,7 +32,7 @@ export const getUserByToken = async () => {
       return "";
     }
   } catch (error) {
-    console.log(error);
+    console.log("Error in getUserByToken: ", error);
   }
 };
 

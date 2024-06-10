@@ -93,7 +93,7 @@ export default function NoteScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={{ width: "90%" }}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ width: "90%" }}>
         {!showPost ? (
           <View
             style={{
@@ -230,9 +230,6 @@ export default function NoteScreen() {
                     fontWeight: "400",
                     marginBottom: 10,
                     color: "#333",
-                    // paddingBottom: 5,
-                    borderBottomWidth: 1,
-                    borderColor: "#ddd",
                     fontSize: 16,
                   }}
                 >

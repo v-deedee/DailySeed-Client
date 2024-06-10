@@ -17,7 +17,7 @@ export default function UserTabs() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: { height: 60 },
-        tabBarHideOnKeyboard: true,
+        // tabBarHideOnKeyboard: true,
       }}
     >
       <Tab.Screen
