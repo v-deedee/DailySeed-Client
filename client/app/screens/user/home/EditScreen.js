@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Platform,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Slider } from "@rneui/themed";
@@ -314,8 +315,10 @@ export default function EditScreen({ navigation }) {
                 thumbStyle={styles.sliderThumbStyle}
                 thumbProps={{
                   children: (
-                    <View style={{ alignItems: "center", gap: 10 }}>
-                      <Text style={{ fontSize: 35 }}>
+                    <View style={{ alignItems: "center", gap: 5 }}>
+                      <Text
+                        style={{ fontSize: Platform.OS === "ios" ? 42 : 35 }}
+                      >
                         {currentHabit.criteria[value].icon}
                       </Text>
                       <Text
@@ -497,6 +500,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: "#F9FDB8",
     paddingTop: 2,
+    paddingLeft: Platform.OS === "ios" ? 3 : 0,
   },
   levelInfo: {
     flexDirection: "column",

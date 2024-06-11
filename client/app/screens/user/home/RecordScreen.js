@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { useState, useContext, useEffect } from "react";
 import { Slider } from "@rneui/themed";
@@ -170,7 +171,9 @@ export default function RecordScreen({ navigation }) {
               <View style={{ position: "absolute", top: -27, left: 20 }}>
                 <View style={styles.habitIconBox}>
                   <View style={styles.habitIcon}>
-                    <Text style={{ fontSize: 35 }}>{habit.icon}</Text>
+                    <Text style={{ fontSize: Platform.OS === "ios" ? 40 : 35 }}>
+                      {habit.icon}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -208,11 +211,6 @@ export default function RecordScreen({ navigation }) {
                 >
                   {habit.name}
                 </Text>
-                {/* Value */}
-                {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text>Value: </Text>
-                <Text style={styles.statusContent}>{renderValues[index]}</Text>
-              </View> */}
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text
                     style={{
@@ -274,11 +272,14 @@ export default function RecordScreen({ navigation }) {
                   borderRadius: 999,
                   backgroundColor: "#F9FDB8",
                   paddingTop: 2,
+                  paddingLeft: Platform.OS === "ios" ? 3 : 0,
                 }}
                 thumbProps={{
                   children: (
                     <View style={{ alignItems: "center", gap: 5 }}>
-                      <Text style={{ fontSize: 35 }}>
+                      <Text
+                        style={{ fontSize: Platform.OS === "ios" ? 42 : 35 }}
+                      >
                         {habit.criteria[values[index]].icon}
                       </Text>
                       <Text
