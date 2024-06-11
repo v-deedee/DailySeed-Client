@@ -33,7 +33,7 @@ const ProfileScreen = ({ navigation }) => {
       };
       fetchData();
     } catch (error) {
-      console.log(error);
+      console.log("Error in ProfileScreen: ", error);
     }
   }, [user]);
 

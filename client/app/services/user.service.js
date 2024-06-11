@@ -97,7 +97,7 @@ export const statistic = async () => {
       return "";
     }
   } catch (error) {
-    console.log(error);
+    console.log("Error when get statistic: ", error);
   }
 };
 

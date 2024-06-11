@@ -1,37 +1,35 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import ShopCard from "./ShopCard";
 import { useEffect, useState } from "react";
-import { Skeleton } from '@rneui/themed';
+import { Skeleton } from "@rneui/themed";
 import { listShopSeeds } from "../../../../services/seed.service";
-
 
 export default function TabAll({ role }) {
   const [shopData, setShopData] = useState([]);
   const [isLoading, setLoading] = useState(true);
-  const [canEdit, setEdit] = useState(false)
+  const [canEdit, setEdit] = useState(false);
 
   const handleUpdateOwned = (id, owned) => {
-    setShopData(prevData =>
-      prevData.map(item =>
-        item.id === id ? { ...item, owned: owned } : item
-      )
+    setShopData((prevData) =>
+      prevData.map((item) =>
+        item.id === id ? { ...item, owned: owned } : item,
+      ),
     );
   };
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await listShopSeeds();
         setShopData(response);
-        setLoading(false)
+        setLoading(false);
       } catch (error) {
-        console.log(error);
+        console.log("Error in listShopSeeds: ", error);
       }
-    }
+    };
     fetchData();
     if (role === "admin") {
-      setEdit(true)
+      setEdit(true);
     }
   }, []);
 
@@ -42,50 +40,80 @@ export default function TabAll({ role }) {
         {isLoading ? (
           <>
             <Skeleton
-              style={{ width: "100%", height: 150, borderRadius: 20, marginTop: 10 }}
+              style={{
+                width: "100%",
+                height: 150,
+                borderRadius: 20,
+                marginTop: 10,
+              }}
               baseColor="#E0E0E0"
               highlightColor="#F0F0F0"
             />
 
             <Skeleton
-              style={{ width: "50%", height: 20, borderRadius: 8, marginTop: 5 }}
+              style={{
+                width: "50%",
+                height: 20,
+                borderRadius: 8,
+                marginTop: 5,
+              }}
               baseColor="#E0E0E0"
               highlightColor="#F0F0F0"
             />
 
             <Skeleton
-              style={{ width: "100%", height: 150, borderRadius: 20, marginTop: 10 }}
+              style={{
+                width: "100%",
+                height: 150,
+                borderRadius: 20,
+                marginTop: 10,
+              }}
               baseColor="#E0E0E0"
               highlightColor="#F0F0F0"
             />
 
             <Skeleton
-              style={{ width: "50%", height: 20, borderRadius: 8, marginTop: 5 }}
+              style={{
+                width: "50%",
+                height: 20,
+                borderRadius: 8,
+                marginTop: 5,
+              }}
               baseColor="#E0E0E0"
               highlightColor="#F0F0F0"
             />
 
             <Skeleton
-              style={{ width: "100%", height: 150, borderRadius: 20, marginTop: 10 }}
+              style={{
+                width: "100%",
+                height: 150,
+                borderRadius: 20,
+                marginTop: 10,
+              }}
               baseColor="#E0E0E0"
               highlightColor="#F0F0F0"
             />
 
             <Skeleton
-              style={{ width: "50%", height: 20, borderRadius: 8, marginTop: 5 }}
+              style={{
+                width: "50%",
+                height: 20,
+                borderRadius: 8,
+                marginTop: 5,
+              }}
               baseColor="#E0E0E0"
               highlightColor="#F0F0F0"
             />
           </>
         ) : (
-          shopData.map(item => (
+          shopData.map((item) => (
             <ShopCard
               key={item.id}
               id={item.id}
               name={item.name}
               price={item.price}
               initialOwned={item.owned}
-              assets={item.asset.split('|')}
+              assets={item.asset.split("|")}
               onUpdateOwned={handleUpdateOwned}
               edit={canEdit}
             />
@@ -106,6 +134,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#474838",
-    paddingTop: 10
+    paddingTop: 10,
   },
 });

@@ -1,18 +1,17 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   View,
   Text,
   ScrollView,
-  Button,
   ActivityIndicator,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
 import { BottomSheet } from "@rneui/themed";
 import { captureRef } from "react-native-view-shot";
-import * as Sharing from "expo-sharing";
 import WheelPicker from "react-native-wheely";
+import * as Sharing from "expo-sharing";
 
 import {
   Shovel,
@@ -311,7 +310,7 @@ const Garden = () => {
       });
       await Sharing.shareAsync(sharedImageUri);
     } catch (error) {
-      console.log(error);
+      console.log("Error in shareGarden: ", error);
     }
   };
 

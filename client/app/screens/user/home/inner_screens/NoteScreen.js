@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-// import * as FileSystem from "expo-file-system";
+import { useContext, useEffect, useRef, useState } from "react";
+import * as FileSystem from "expo-file-system";
 import {
   Text,
   View,
@@ -8,16 +8,21 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
+
+import * as Sharing from "expo-sharing";
+import { captureRef } from "react-native-view-shot";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
 
 import CustomImagePicker from "../_component/CustomImagePicker";
 import { CLOUDINARY_BASE_URL } from ".../../../../utils/constants/cloudinary.constants";
-import { TreeContext } from ".../../../../contexts/tree.context";
 import { updateTreeNote } from ".../../../../services/tree.service";
 import { UserContext } from "../../../../contexts/user.context";
+import { TreeContext } from "../../../../contexts/tree.context";
 
 export default function NoteScreen() {
   const { tree, setTree } = useContext(TreeContext);
@@ -30,6 +35,10 @@ export default function NoteScreen() {
   const [timestamp, setTimestamp] = useState(null);
 
   const { user } = useContext(UserContext);
+
+  const postShareRef = useRef();
+
+  const [isLoading, setIsLoading] = useState();
 
   useEffect(() => {
     if (tree?.tree?.note) {
@@ -46,8 +55,7 @@ export default function NoteScreen() {
 
   const post = async () => {
     if (note.length > 0 && image) {
-      setShowPost(true);
-      setTimestamp(new Date());
+      setIsLoading(true);
       try {
         const formData = new FormData();
         formData.append("note", note);
@@ -58,13 +66,19 @@ export default function NoteScreen() {
           name:
             imageFile.fileName || `filename.${imageFile.uri.split(".").pop()}`,
         };
-
         formData.append("picture", file);
-
         const updatedTree = await updateTreeNote(tree.tree.id, formData);
+        console.log("Updated tree: ", updatedTree);
+
+        setTimestamp(new Date());
+        setShowPost(true);
       } catch (error) {
+        Alert.alert("Failed to update tree note");
         console.error("Failed to update tree note:", error);
       }
+      setIsLoading(false);
+    } else {
+      Alert.alert("Please fill in all the fields.");
     }
   };
 
@@ -80,15 +94,26 @@ export default function NoteScreen() {
       },
     ];
 
-    console.log(newTree);
     // Cập nhật tree với note và image mới (null)
-    const updatedTree = await updateTreeNote({
-      ...tree.tree,
-      note: null,
-      picture: null,
-    });
+    // const updatedTree = await updateTree({
+    //   ...tree.tree,
+    //   note: null,
+    //   picture: null,
+    // });
 
     setTree({ ...tree, tree: updatedTree });
+  };
+
+  const sharePost = async () => {
+    try {
+      const sharedImageUri = await captureRef(postShareRef, {
+        format: "png",
+        quality: 1,
+      });
+      await Sharing.shareAsync(sharedImageUri);
+    } catch (error) {
+      console.log("Error in sharePost: ", error);
+    }
   };
 
   return (
@@ -153,8 +178,13 @@ export default function NoteScreen() {
                 borderRadius: 10,
               }}
               onPress={post}
+              disabled={isLoading}
             >
-              <Text style={{ color: "#fff", fontWeight: "600" }}>Post</Text>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#ffffff" />
+              ) : (
+                <Text style={{ color: "#fff", fontWeight: "600" }}>Post</Text>
+              )}
             </TouchableOpacity>
           </View>
         ) : (
@@ -169,7 +199,7 @@ export default function NoteScreen() {
                 paddingVertical: 2,
               }}
             >
-              <TouchableOpacity>
+              <TouchableOpacity onPress={sharePost}>
                 <MaterialIcons name="share" color="#aaa" size={20} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setShowPost(false)}>
@@ -181,6 +211,7 @@ export default function NoteScreen() {
             </View>
 
             <View
+              ref={postShareRef}
               style={{
                 width: "100%",
                 padding: 20,
