@@ -26,3 +26,18 @@ export const listShopSeeds = async () => {
     return error.response.data;
   }
 };
+
+export const createSeed = async (formData) => {
+  try {
+    console.log(124433);
+    const response = await authApi.post("/api/seed", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error)
+    return error.response.data;
+  }
+}
