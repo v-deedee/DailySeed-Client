@@ -108,9 +108,8 @@ export default function RecordScreen({ navigation }) {
         ...treeData,
         seed: modifiedSeed,
       };
-      // console.log(modifiedTree)
+
       await setTreeAsync(modifiedTree);
-      console.log(modifiedTree);
     }
 
     setIsLoading(false);

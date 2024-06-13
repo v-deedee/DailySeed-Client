@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { StyleSheet, Image, ImageBackground } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
+
 import { TreeContext } from ".../../../../contexts/tree.context";
 import { CLOUDINARY_BASE_URL } from ".../../../../utils/constants/cloudinary.constants";
 
@@ -88,9 +89,5 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
-  },
-  imageStyle: {
-    width: 100,
-    height: 100,
   },
 });
