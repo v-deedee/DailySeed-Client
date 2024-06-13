@@ -34,7 +34,7 @@ export default function ShopScreen() {
             onChange={(e) => setIndex(e)}
             indicatorStyle={styles.tabUnderline}
           >
-            <Tab.Item title="All" titleStyle={styles.tabItem} />
+            <Tab.Item title="Seed" titleStyle={styles.tabItem} />
             <Tab.Item title="Coin" titleStyle={styles.tabItem} />
           </Tab>
         </View>

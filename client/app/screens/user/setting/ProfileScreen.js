@@ -39,6 +39,45 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Profile picture */}
+      <View style={{ paddingTop: 20, alignItems: "center" }}>
+        <View
+          style={{
+            width: 165,
+            height: 165,
+            borderRadius: 999,
+            borderWidth: 4,
+            borderColor: "#649B92",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Image
+            source={{ uri: "https://picsum.photos/200" }}
+            style={{
+              width: 150,
+              height: 150,
+              borderRadius: 999,
+              // borderWidth: 4,
+              // borderColor: "#649B92",
+            }}
+          />
+        </View>
+        <TouchableOpacity
+          style={{
+            marginVertical: 10,
+            padding: 15,
+            paddingVertical: 10,
+            backgroundColor: "#ddd",
+            borderRadius: 10,
+          }}
+        >
+          <Text style={{ fontWeight: "600", fontSize: 15, color: "#000" }}>
+            Change picture
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Login information */}
       <View style={{ padding: 20 }}>
         <Text style={{ fontSize: 16, fontWeight: 600, color: "#888" }}>
