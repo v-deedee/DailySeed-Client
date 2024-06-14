@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "@rneui/themed";
 import { listShopSeeds } from "../../../../services/seed.service";
 
-export default function TabAll({ role }) {
+export default function TabAll({ role, onRefresh }) {
   const [shopData, setShopData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [canEdit, setEdit] = useState(false);
@@ -31,7 +31,7 @@ export default function TabAll({ role }) {
     if (role === "admin") {
       setEdit(true);
     }
-  }, []);
+  }, [role, onRefresh]);
 
   return (
     <View style={styles.container}>

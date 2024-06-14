@@ -1,10 +1,12 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   TextInput,
+  ScrollView,
+  RefreshControl,
 } from "react-native";
 import { Dialog } from "@rneui/base";
 import { TabView } from "@rneui/themed";
@@ -27,6 +29,17 @@ export default function HomeScreen() {
   const [phase2Image, setPhase2Image] = useState(null);
   const [phase3Image, setPhase3Image] = useState(null);
   const [phase4Image, setPhase4Image] = useState(null);
+
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
 
   const handleCreateSeed = async () => {
     const formData = new FormData();
@@ -65,137 +78,142 @@ export default function HomeScreen() {
     }
 
     const response = await createSeed(formData);
-    // console.log(response);
+    if (response?.data?.ok == 200) {
+      onRefresh();
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View>
-        <View style={{ alignItems: "center", width: "100%" }}>
-          <Text style={styles.title}>Admin Shop</Text>
+        <View>
+          <View style={{ alignItems: "center", width: "100%" }}>
+            <Text style={styles.title}>Admin Shop</Text>
+          </View>
+
+          <View style={{ padding: 10 }}>
+            <TouchableOpacity
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "center",
+                backgroundColor: "#649B92",
+                padding: 12,
+                borderRadius: 10,
+              }}
+              onPress={() => setShowModal(true)}
+            >
+              <FontAwesome6 name="plus" size={18} color="#fff" />
+              <Text style={{ color: "#fff", fontWeight: "600", marginLeft: 5 }}>
+                Add
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View style={{ padding: 10 }}>
-          <TouchableOpacity
-            style={{
-              alignItems: "center",
-              flexDirection: "row",
-              justifyContent: "center",
-              backgroundColor: "#649B92",
-              padding: 12,
-              borderRadius: 10,
-            }}
-            onPress={() => setShowModal(true)}
-          >
-            <FontAwesome6 name="plus" size={18} color="#fff" />
-            <Text style={{ color: "#fff", fontWeight: "600", marginLeft: 5 }}>
-              Add
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TabAll role={role} onRefresh={refreshing} />
+
+        <Dialog
+          isVisible={showModal}
+          onBackdropPress={() => setShowModal(false)}
+          overlayStyle={{
+            borderRadius: 10,
+            backgroundColor: "white",
+          }}
+        >
+          <View style={{ alignItems: "center", marginBottom: 30 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 18 }}>Add Seed</Text>
+          </View>
+
+          <Text style={{ fontWeight: "bold", marginLeft: 5 }}>Price</Text>
+          <View style={styles.modalInputView}>
+            <TextInput
+              keyboardType="numeric"
+              style={styles.modalInputText}
+              placeholder="Enter seed price"
+              selectionColor="#ccc"
+              value={seedPrice}
+              onChangeText={(number) => setSeedPrice(number)}
+            />
+          </View>
+          <Text style={{ fontWeight: "bold", marginLeft: 5, marginTop: 10 }}>
+            Name
+          </Text>
+          <View style={styles.modalInputView}>
+            <TextInput
+              style={styles.modalInputText}
+              placeholder="Enter seed name"
+              selectionColor="#ccc"
+              value={seedName}
+              onChangeText={(text) => setSeedName(text)}
+            />
+          </View>
+
+          <View style={{ marginTop: 20 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 20,
+              }}
+            >
+              <CustomImagePicker
+                image={phase1Image}
+                setImage={setPhase1Image}
+                phase={"Phase 1"}
+              />
+              <CustomImagePicker
+                image={phase2Image}
+                setImage={setPhase2Image}
+                phase={"Phase 2"}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 20,
+                marginTop: 20,
+              }}
+            >
+              <CustomImagePicker
+                image={phase3Image}
+                setImage={setPhase3Image}
+                phase={"Phase 3"}
+              />
+              <CustomImagePicker
+                image={phase4Image}
+                setImage={setPhase4Image}
+                phase={"Phase 4"}
+              />
+            </View>
+          </View>
+
+          <View style={styles.modalButtonGroup}>
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
+              onPress={() => handleCreateSeed()}
+            >
+              <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: "#ccc" }]}
+              onPress={() => setShowModal(false)}
+            >
+              <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </Dialog>
       </View>
+    </ScrollView>
 
-      <TabView disableTransition={true}>
-        <TabView.Item style={{ width: "100%" }}>
-          <TabAll role={role} />
-        </TabView.Item>
-      </TabView>
-
-      <Dialog
-        isVisible={showModal}
-        onBackdropPress={() => setShowModal(false)}
-        overlayStyle={{
-          borderRadius: 10,
-          backgroundColor: "white",
-        }}
-      >
-        <View style={{ alignItems: "center", marginBottom: 30 }}>
-          <Text style={{ fontWeight: "bold", fontSize: 18 }}>Add Seed</Text>
-        </View>
-
-        <Text style={{ fontWeight: "bold", marginLeft: 5 }}>Price</Text>
-        <View style={styles.modalInputView}>
-          <TextInput
-            keyboardType="numeric"
-            style={styles.modalInputText}
-            placeholder="Enter seed price"
-            selectionColor="#ccc"
-            value={seedPrice}
-            onChangeText={(number) => setSeedPrice(number)}
-          />
-        </View>
-        <Text style={{ fontWeight: "bold", marginLeft: 5, marginTop: 10 }}>
-          Name
-        </Text>
-        <View style={styles.modalInputView}>
-          <TextInput
-            style={styles.modalInputText}
-            placeholder="Enter seed name"
-            selectionColor="#ccc"
-            value={seedName}
-            onChangeText={(text) => setSeedName(text)}
-          />
-        </View>
-
-        <View style={{ marginTop: 20 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 20,
-            }}
-          >
-            <CustomImagePicker
-              image={phase1Image}
-              setImage={setPhase1Image}
-              phase={"Phase 1"}
-            />
-            <CustomImagePicker
-              image={phase2Image}
-              setImage={setPhase2Image}
-              phase={"Phase 2"}
-            />
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 20,
-              marginTop: 20,
-            }}
-          >
-            <CustomImagePicker
-              image={phase3Image}
-              setImage={setPhase3Image}
-              phase={"Phase 3"}
-            />
-            <CustomImagePicker
-              image={phase4Image}
-              setImage={setPhase4Image}
-              phase={"Phase 4"}
-            />
-          </View>
-        </View>
-
-        <View style={styles.modalButtonGroup}>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#50AA75" }]}
-            onPress={() => handleCreateSeed()}
-          >
-            <Text style={{ fontWeight: "bold", color: "#fff" }}>Done</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "#ccc" }]}
-            onPress={() => setShowModal(false)}
-          >
-            <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </Dialog>
-    </View>
   );
 }
 
