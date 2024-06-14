@@ -28,17 +28,17 @@ export default function EditScreen({ navigation }) {
   const route = useRoute();
   const [currentHabit, setCurrentHabit] = useState({
     id: -1,
-    icon: "🏆",
-    name: "Sample",
+    icon: "",
+    name: "",
     duration: 1,
     criteria: [
       {
-        name: "Sample 1",
+        name: "",
         icon: "😟",
         score: 0,
       },
       {
-        name: "Sample 2",
+        name: "",
         icon: "😀",
         score: 100,
       },
@@ -200,6 +200,8 @@ export default function EditScreen({ navigation }) {
               <Text style={{ width: "22%", fontWeight: 700 }}>Icon: </Text>
               <View
                 style={{
+                  minWidth: 40,
+                  minHeight: 40,
                   paddingHorizontal: 10,
                   paddingVertical: 5,
                   borderWidth: 1,
@@ -361,7 +363,7 @@ export default function EditScreen({ navigation }) {
                   onPress={() => {
                     setModalType("edit");
                     setIconInput(currentHabit.criteria[value].icon);
-                    setLabelInput(currentHabit.criteria[value].label);
+                    setLabelInput(currentHabit.criteria[value].name);
                     toggleLevelModal();
                   }}
                 >
