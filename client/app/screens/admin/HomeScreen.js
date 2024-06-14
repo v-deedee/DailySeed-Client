@@ -29,26 +29,25 @@ export default function HomeScreen() {
   const [phase4Image, setPhase4Image] = useState(null);
 
   const handleCreateSeed = async () => {
-    console.log(132);
     const formData = new FormData();
     formData.append("name", seedName);
     formData.append("price", seedPrice);
-  
+
     if (phase1Image) {
-      console.log(phase1Image)
+      // console.log(phase1Image);
       formData.append("assets", {
         uri: phase1Image.replace("file://", ""),
         name: "ph1",
       });
     }
-  
+
     if (phase2Image) {
       formData.append("assets", {
         uri: phase2Image.replace("file://", ""),
         name: "ph2",
       });
     }
-  
+
     if (phase3Image) {
       formData.append("assets", {
         uri: phase3Image.replace("file://", ""),
@@ -56,7 +55,7 @@ export default function HomeScreen() {
         name: "ph3",
       });
     }
-  
+
     if (phase4Image) {
       formData.append("assets", {
         uri: phase4Image.replace("file://", ""),
@@ -64,12 +63,9 @@ export default function HomeScreen() {
         name: "ph4",
       });
     }
-  
-    console.log(456);
-    console.log(123);
-  
+
     const response = await createSeed(formData);
-    console.log(response);
+    // console.log(response);
   };
 
   return (

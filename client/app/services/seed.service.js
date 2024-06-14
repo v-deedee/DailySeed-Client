@@ -29,7 +29,6 @@ export const listShopSeeds = async () => {
 
 export const createSeed = async (formData) => {
   try {
-    console.log(124433);
     const response = await authApi.post("/api/seed", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -37,7 +36,7 @@ export const createSeed = async (formData) => {
     });
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log("Error in createSeed: ", error);
     return error.response.data;
   }
-}
+};

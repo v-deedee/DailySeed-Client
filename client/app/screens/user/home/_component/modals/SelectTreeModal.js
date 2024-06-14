@@ -36,7 +36,7 @@ export default function SelectTreeModal({ isOpen, toggle, openRecord }) {
   }, [seeds]);
 
   const handleSeedSelect = (seed, index) => {
-    console.log(seed);
+    // console.log(seed);
     setType(index + 1);
     setSelectedSeed(seed);
   };
@@ -49,7 +49,6 @@ export default function SelectTreeModal({ isOpen, toggle, openRecord }) {
       if (newTree) {
         setTree(newTree);
         await fetchHabits(newTree.tree.id);
-        // console.log(112341234)
         openRecord();
       }
     } catch (error) {

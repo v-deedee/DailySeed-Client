@@ -1,41 +1,29 @@
+import { useCallback, useContext, useEffect, useState } from "react";
 import { StyleSheet, Image, View, Text, StatusBar } from "react-native";
-import { useContext, useEffect, useState } from "react";
-import { useRoute } from "@react-navigation/native";
 
-import SelectTreeModal from "./_component/modals/SelectTreeModal";
 import { UserContext } from ".../../../contexts/user.context";
-// import { SeedContext } from ".../../../contexts/seed.context";
 import { TreeContext } from ".../../../contexts/tree.context";
-import { findTree } from ".../../../services/tree.service";
 import { HabitContext } from ".../../../contexts/habit.context";
-// import { listTrackingHabits } from ".../../../services/habit.service";
+import { findTree } from ".../../../services/tree.service";
 import { getCurrentDate } from ".../../../utils/utils";
+
 import Tab from "./inner_screens/Tab";
+import SelectTreeModal from "./_component/modals/SelectTreeModal";
 
 export default function HomeScreen({ navigation }) {
   const { user } = useContext(UserContext);
-  const route = useRoute();
-  const value = route.params?.progress;
   const { tree, setTree } = useContext(TreeContext);
-  const { habits, fetchHabits } = useContext(HabitContext);
-
-  const [progress, setProgress] = useState(0);
+  const { fetchHabits } = useContext(HabitContext);
 
   const [openSelectTreeModal, setOpenSelectTreeModal] = useState(false);
 
-  const toggleSelectTreeModal = () => {
+  const toggleSelectTreeModal = useCallback(() => {
     setOpenSelectTreeModal(!openSelectTreeModal);
-  };
+  }, []);
 
-  const openRecord = () => {
+  const openRecord = useCallback(() => {
     navigation.navigate("Record");
-  };
-
-  useEffect(() => {
-    if (value != undefined) {
-      setProgress(value);
-    }
-  }, [value]);
+  }, []);
 
   useEffect(() => {
     if (tree) {
@@ -62,9 +50,8 @@ export default function HomeScreen({ navigation }) {
           ...treeData,
           seed: modifiedSeed,
         };
-        console.log(modifiedTree);
+        // console.log("Modified tree: ", modifiedTree);
         setTree(modifiedTree);
-        // console.log("index.js");
       }
     }
 
@@ -106,11 +93,7 @@ export default function HomeScreen({ navigation }) {
 
       {/* Date */}
       <View
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          margin: 15,
-        }}
+        style={{ alignItems: "center", justifyContent: "center", margin: 15 }}
       >
         <Text style={{ color: "#787878", fontWeight: 700 }}>
           {getCurrentDate()}
@@ -119,7 +102,6 @@ export default function HomeScreen({ navigation }) {
 
       <Tab
         openRecord={openRecord}
-        progress={progress}
         toggleSelectTreeModal={toggleSelectTreeModal}
       />
 

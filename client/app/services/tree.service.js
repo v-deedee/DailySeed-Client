@@ -78,7 +78,7 @@ export const findTree = async (day, month, year) => {
 
 export const buyTree = async (seedId) => {
   try {
-    console.log(seedId);
+    // console.log(seedId);
     const response = await authApi.post(`/api/seed/buy`, { id: seedId });
     return response.data;
   } catch (error) {

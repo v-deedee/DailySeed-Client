@@ -1,10 +1,10 @@
+import { memo, useState } from "react";
 import {
   View,
   useWindowDimensions,
   TouchableOpacity,
   Animated,
 } from "react-native";
-import { useState } from "react";
 import { TabView, SceneMap } from "react-native-tab-view";
 
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
@@ -13,7 +13,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import TreeScreen from "./TreeScreen";
 import NoteScreen from "./NoteScreen";
 
-export default function Tab({ openRecord, progress, toggleSelectTreeModal }) {
+const Tab = memo(({ openRecord, toggleSelectTreeModal }) => {
   const layout = useWindowDimensions();
 
   const [index, setIndex] = useState(0);
@@ -23,13 +23,13 @@ export default function Tab({ openRecord, progress, toggleSelectTreeModal }) {
   ]);
 
   const renderScene = SceneMap({
-    tree: () =>
-      TreeScreen({
-        openRecord: openRecord,
-        progress: progress,
-        toggleSelectTreeModal: toggleSelectTreeModal,
-      }),
-    image: NoteScreen,
+    tree: () => (
+      <TreeScreen
+        openRecord={openRecord}
+        toggleSelectTreeModal={toggleSelectTreeModal}
+      />
+    ),
+    image: () => <NoteScreen />,
   });
 
   const _renderTabBar = (props) => {
@@ -98,4 +98,6 @@ export default function Tab({ openRecord, progress, toggleSelectTreeModal }) {
       initialLayout={{ width: layout.width }}
     />
   );
-}
+});
+
+export default Tab;
