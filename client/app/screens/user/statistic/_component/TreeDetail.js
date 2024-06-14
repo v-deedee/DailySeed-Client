@@ -6,6 +6,9 @@ import {
   Image,
   ImageBackground,
   ActivityIndicator,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView
 } from "react-native";
 import { getTree } from ".../../../../../services/tree.service";
 import { Skeleton } from "@rneui/themed";
@@ -33,21 +36,6 @@ export default function TreeDetail({ treeID }) {
     fetchData();
   }, [treeID]);
 
-  // const getPhaseDescription = (phase) => {
-  //     switch (phase) {
-  //         case 1:
-  //             return "Cây chết";
-  //         case 2:
-  //             return "Cây sống";
-  //         case 3:
-  //             return "Cây tốt";
-  //         case 4:
-  //             return "Cực tốt";
-  //         default:
-  //             return "Không xác định";
-  //     }
-  // };
-
   const phaseStyle = {
     1: { width: 50, height: 50, top: "5%" },
     2: { width: 60, height: 60, top: "5%" },
@@ -65,10 +53,6 @@ export default function TreeDetail({ treeID }) {
           <ActivityIndicator />
         ) : (
           <>
-            {/* <Text style={{ color: '#533718', fontWeight: 'bold' }}>
-                            {getPhaseDescription(treeInfo?.seed?.phase)}
-                        </Text> */}
-
             <Image
               source={{ uri: `${CLOUDINARY_BASE_URL}${imgURL}` }}
               style={[{ top: "0%" }, phaseStyle[treeInfo?.seed?.phase]]}
@@ -77,7 +61,7 @@ export default function TreeDetail({ treeID }) {
         )}
       </ImageBackground>
       {!isLoading && (
-        <View style={styles.contentContainer}>
+        <View>
           <View style={styles.treeStatusContainer}>
             <Text style={{ color: "#6d4100", fontWeight: "bold" }}>
               Score: {treeInfo?.tree?.score}
@@ -93,13 +77,50 @@ export default function TreeDetail({ treeID }) {
             </Text>
           </View>
 
-          {treeInfo?.habits?.map((habit) => (
-            <View key={habit.id} style={styles.infoContainer}>
-              <Text style={{ color: "#e3dcc5", fontWeight: "bold" }}>
-                {habit.icon} {habit.name}: {habit.selected.name}
-              </Text>
+          {treeInfo?.tree?.picture &&
+            <View>
+              {treeInfo?.habits?.map((habit) => (
+                <View key={habit.id} style={styles.infoContainer}>
+                  <Text style={{ color: "#e3dcc5", fontWeight: "bold" }}>
+                    {habit.icon} {habit.name}: {habit.selected.name}
+                  </Text>
+                </View>
+              ))}
+
+              <View
+                style={{
+                  margin: 20,
+                  marginTop: 0,
+                  padding: 20,
+                  paddingTop: 5,
+                  backgroundColor: "#fcf0be",
+                  borderRadius: 20,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      fontWeight: "400",
+                      marginBottom: 10,
+                      color: "#333",
+                      fontSize: 16,
+                    }}
+                  >
+                    {treeInfo?.tree?.note}
+                  </Text>
+                  <Image source={{ uri: `${CLOUDINARY_BASE_URL}${treeInfo?.tree?.picture}` }} style={styles.image} />
+                </View>
+              </View>
             </View>
-          ))}
+          }
         </View>
       )}
     </View>
@@ -134,5 +155,12 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     marginBottom: 10,
+  },
+  image: {
+    width: "100%",
+    aspectRatio: "1/1",
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#eee",
   },
 });
