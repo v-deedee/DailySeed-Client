@@ -22,9 +22,11 @@ import { HabitContext } from "../../../contexts/habit.context";
 import { EmojiPicker } from "../../../components/EmojiPicker/EmojiPicker";
 import { createHabit, updateHabit } from "../../../services/habit.service";
 import { color } from "../../../utils/utils";
+import { TreeContext } from "../../../contexts/tree.context";
 
 export default function EditScreen({ navigation }) {
-  const { habits, setHabits } = useContext(HabitContext);
+  const { habits, setHabits, fetchHabits } = useContext(HabitContext);
+  const { tree } = useContext(TreeContext);
   const route = useRoute();
   const [currentHabit, setCurrentHabit] = useState({
     id: -1,
@@ -156,6 +158,7 @@ export default function EditScreen({ navigation }) {
       );
       setHabits(updatedHabits);
     }
+    fetchHabits(tree.tree.id);
     setIsLoading(false);
     navigation.navigate("Record");
   };
@@ -261,7 +264,7 @@ export default function EditScreen({ navigation }) {
             {/* criteria header: Title + Add level button */}
             <View style={styles.levelHeader}>
               {/* Title */}
-              <Text style={{ fontWeight: 700 }}>criteria: </Text>
+              <Text style={{ fontWeight: 700 }}>Criteria: </Text>
 
               {/* Add level button */}
               <TouchableOpacity

@@ -21,6 +21,14 @@ import { color, getCurrentDate } from ".../../../utils/utils";
 import { trackHabit } from ".../../../services/habit.service";
 import { TreeContext } from ".../../../contexts/tree.context";
 
+function getNextNDays(currentTimestamp, n) {
+  let date = new Date(currentTimestamp);
+
+  date.setDate(date.getDate() + n);
+
+  return date;
+}
+
 export default function RecordScreen({ navigation }) {
   const [openDelHabitModal, setOpenDelHabitModal] = useState(false);
   const { tree, setTree } = useContext(TreeContext);
@@ -31,13 +39,12 @@ export default function RecordScreen({ navigation }) {
   const [values, setValues] = useState(new Array(20).fill(0));
 
   const [renderValues, setRenderValues] = useState(new Array(20).fill(0));
-  const [daysLeft, setDaysLeft] = useState([]);
   const { habits, setHabits } = useContext(HabitContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // console.log(habits)
+    console.log("Current habits: ", habits);
     if (habits && habits.length) {
       const initialValues = habits.map((habit) => {
         if (!habit.selected) return 0;
@@ -68,8 +75,6 @@ export default function RecordScreen({ navigation }) {
 
         return updatedValues;
       });
-
-      setDaysLeft(new Array(habits.length).fill(4)); // Số ngày còn lại mặc định là 4
     }
   }, [habits]);
 
@@ -180,19 +185,33 @@ export default function RecordScreen({ navigation }) {
               {/* Action */}
               <View style={styles.actionIconBox}>
                 <TouchableOpacity
-                  style={styles.actionIcon}
+                  style={
+                    new Date() < getNextNDays(habit.updatedAt, habit.duration)
+                      ? [styles.actionIcon, { opacity: 0.5 }]
+                      : styles.actionIcon
+                  }
                   onPress={() => {
                     editHabit(index);
                   }}
+                  disabled={
+                    new Date() < getNextNDays(habit.updatedAt, habit.duration)
+                  }
                 >
                   <Feather name="edit" color="#fff" size={15} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.actionIcon}
+                  style={
+                    new Date() < getNextNDays(habit.updatedAt, habit.duration)
+                      ? [styles.actionIcon, { opacity: 0.5 }]
+                      : styles.actionIcon
+                  }
                   onPress={() => {
                     setCurrentHabitId(index);
                     toggleDelHabitModal();
                   }}
+                  disabled={
+                    new Date() < getNextNDays(habit.updatedAt, habit.duration)
+                  }
                 >
                   <MaterialIcons name="delete" color="#fff" size={15} />
                 </TouchableOpacity>
@@ -218,7 +237,14 @@ export default function RecordScreen({ navigation }) {
                       fontWeight: 700,
                     }}
                   >
-                    {daysLeft[index]} days left
+                    {new Date() < getNextNDays(habit.updatedAt, habit.duration)
+                      ? Math.round(
+                          (getNextNDays(habit.updatedAt, habit.duration) -
+                            new Date()) /
+                            (24 * 60 * 60 * 1000),
+                        )
+                      : 0}{" "}
+                    days left
                   </Text>
                 </View>
               </View>
