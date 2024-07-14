@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "DailySeed-Client",
-    "slug": "DailySeed-Client",
+    "name": "DailySeed",
+    "slug": "dailyseed",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo/logo.png",
@@ -17,9 +17,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo/logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "package": "com.deedee1508.DailySeedClient"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,8 +39,8 @@
           "icon": "./assets/logo/logo.png",
           "color": "#000000",
           "sounds": [
-            "./local/assets/notification-sound.wav",
-            "./local/assets/notification-sound-other.wav"
+            "./assets/notification_sound.wav",
+            "./assets/notification_sound_other.wav"
           ]
         }
       ]
@@ -49,6 +51,11 @@
       "androidMode": "default",
       "androidCollapsedTitle": "Updates from Colab.notes",
       "iosDisplayInForeground": true
-    }  
+    },
+    "extra": {
+      "eas": {
+        "projectId": "00309b16-fb8d-46f9-8c25-0042159f7948"
+      }
+    }
   }
 }

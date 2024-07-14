@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   View,
@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { register } from "../../services/user.service";
-import { UserContext } from "../../contexts/user.context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -42,7 +41,6 @@ const RegisterScreen = ({ navigation }) => {
     resolver: zodResolver(formSchema),
   });
 
-  const { setUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data) => {
@@ -50,7 +48,6 @@ const RegisterScreen = ({ navigation }) => {
     const { confirm, ...registerData } = data;
     const response = await register(registerData);
     if (response.ok) {
-      setUser(data);
       navigation.navigate("Login");
       Alert.alert("Success", "Account registered successfully");
     } else {
