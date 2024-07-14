@@ -62,7 +62,7 @@ export default function NoteScreen() {
 
         const file = {
           uri: imageFile.uri,
-          type: imageFile.type,
+          type: imageFile.mimeType,
           name:
             imageFile.fileName || `filename.${imageFile.uri.split(".").pop()}`,
         };
