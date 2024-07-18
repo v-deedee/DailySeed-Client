@@ -33,10 +33,8 @@ export default function ShopCard({
   const { user, setUser } = useContext(UserContext);
 
   const handleBuyTree = async () => {
-    // console.log(user);
     setIsLoading(true); // Start loading
     const data = await buyTree(id);
-    // console.log(data);
     setIsLoading(false); // End loading
     if (data.ok) {
       Alert.alert("Your purchase was successful.");

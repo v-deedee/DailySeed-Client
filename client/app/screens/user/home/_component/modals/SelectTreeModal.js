@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Dialog, CheckBox } from "@rneui/themed";
 import { useContext, useEffect, useState } from "react";
@@ -36,7 +37,6 @@ export default function SelectTreeModal({ isOpen, toggle, openRecord }) {
   }, [seeds]);
 
   const handleSeedSelect = (seed, index) => {
-    // console.log(seed);
     setType(index + 1);
     setSelectedSeed(seed);
   };
@@ -45,14 +45,13 @@ export default function SelectTreeModal({ isOpen, toggle, openRecord }) {
     setIsLoading(true);
     try {
       const newTree = await createTree(selectedSeed.id);
-      console.log("Selected tree: ", newTree);
       if (newTree) {
         setTree(newTree);
         await fetchHabits(newTree.tree.id);
         openRecord();
       }
     } catch (error) {
-      console.error("Error creating tree:", error);
+      Alert.alert("Error creating tree:", error);
     }
     setIsLoading(false);
   };

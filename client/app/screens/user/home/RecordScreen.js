@@ -44,7 +44,6 @@ export default function RecordScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Current habits: ", habits);
     if (habits && habits.length) {
       const initialValues = habits.map((habit) => {
         if (!habit.selected) return 0;
@@ -54,7 +53,6 @@ export default function RecordScreen({ navigation }) {
           ? criteriaIds.indexOf(selectedId)
           : 0;
       });
-      // console.log(initialValues)
       setValues((prevValues) => {
         const updatedValues = [...prevValues];
         initialValues.forEach((value, index) => {
@@ -101,7 +99,6 @@ export default function RecordScreen({ navigation }) {
         score: habit.criteria[values[index]].score,
       };
     });
-    // console.log(habitData);
 
     const treeData = await trackHabit(tree.tree.id, habitData);
     if (treeData) {

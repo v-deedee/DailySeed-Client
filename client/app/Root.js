@@ -1,5 +1,11 @@
 import { useState, useEffect, useContext } from "react";
-import { SafeAreaView, View, ActivityIndicator } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  ActivityIndicator,
+  StatusBar,
+  Alert,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 
 import { getUserByToken } from "./services/user.service";
@@ -34,6 +40,7 @@ export default function Root() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar />
       {isLoading ? (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}

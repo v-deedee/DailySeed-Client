@@ -50,7 +50,6 @@ export default function HomeScreen({ navigation }) {
           ...treeData,
           seed: modifiedSeed,
         };
-        // console.log("Modified tree: ", modifiedTree);
         setTree(modifiedTree);
       }
     }

@@ -47,7 +47,6 @@ export default function PaymentModal({ isVisible, onClose, amount, coin }) {
         Alert.alert("Payment failed", error.message);
       } else {
         const profile = await handlePaymentSuccess(coin);
-        console.log(profile);
         setUser({ user: user.user, profile: profile });
         Alert.alert("Payment successful", "Your payment was successful!");
         onClose();

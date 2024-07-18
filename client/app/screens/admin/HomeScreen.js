@@ -30,7 +30,6 @@ export default function HomeScreen() {
   const [phase3Image, setPhase3Image] = useState(null);
   const [phase4Image, setPhase4Image] = useState(null);
 
-
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(() => {
@@ -40,14 +39,12 @@ export default function HomeScreen() {
     }, 2000);
   }, []);
 
-
   const handleCreateSeed = async () => {
     const formData = new FormData();
     formData.append("name", seedName);
     formData.append("price", seedPrice);
 
     if (phase1Image) {
-      // console.log(phase1Image);
       formData.append("assets", {
         uri: phase1Image.replace("file://", ""),
         name: "ph1",
@@ -84,7 +81,8 @@ export default function HomeScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}
+    <ScrollView
+      style={styles.container}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -207,13 +205,14 @@ export default function HomeScreen() {
               style={[styles.modalButton, { backgroundColor: "#ccc" }]}
               onPress={() => setShowModal(false)}
             >
-              <Text style={{ fontWeight: "bold", color: "#474838" }}>Cancel</Text>
+              <Text style={{ fontWeight: "bold", color: "#474838" }}>
+                Cancel
+              </Text>
             </TouchableOpacity>
           </View>
         </Dialog>
       </View>
     </ScrollView>
-
   );
 }
 

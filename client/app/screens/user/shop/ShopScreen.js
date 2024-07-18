@@ -8,10 +8,7 @@ import { UserContext } from "../../../contexts/user.context";
 export default function ShopScreen() {
   const [index, setIndex] = useState(0);
   const { user } = useContext(UserContext);
-  useEffect(() => {
-    console.log(user.profile.money);
-    console.log(user);
-  }, [user]);
+
   return (
     <View style={styles.container}>
       <View>
